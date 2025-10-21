@@ -28,10 +28,13 @@
         <el-button size="small" type="primary" @click="handlePublish" style="padding:13px 12px;">发布<span class="el-icon-arrow-down" style="margin-left:5px;"></span></el-button>
         <div class="popover-operation" v-if="showOperation">
           <div>
-            <el-radio :label="'private'" v-model="scope">私密发布：仅自己可见</el-radio>
+            <el-radio :label="'private'" v-model="scope">私密发布为应用：仅自己可见</el-radio>
           </div>
           <div>
-            <el-radio :label="'public'" v-model="scope">公开发布：组织内可见</el-radio>
+            <el-radio :label="'organization'" v-model="scope">公开发布为应用：组织内可见</el-radio>
+          </div>
+          <div>
+            <el-radio :label="'public'" v-model="scope">公开发布为应用：组织内可见</el-radio>
           </div>
           <div class="saveBtn">
             <el-button size="mini" type="primary" @click="savePublish">保 存</el-button>
@@ -620,7 +623,7 @@ export default {
   border-bottom:1px solid #dbdbdb;
   .popover-operation{
     position:absolute;
-    bottom:-100px;
+    bottom:-122px;
     right:20px;
     background:#fff;
     box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.3);
