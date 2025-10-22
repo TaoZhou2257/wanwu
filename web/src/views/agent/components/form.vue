@@ -356,6 +356,29 @@
             </span>
           </p>
         </div>
+        <div class="block prompt-box link-box">
+          <p class="block-title tool-title">
+            <span>
+              视觉
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="允许用户上传图片，并进行图文问答。"
+                placement="top"
+              >
+                <span class="el-icon-question question-tips"></span>
+              </el-tooltip>
+            </span>
+            <span class="common-add">
+              <span class="el-icon-s-operation"></span>
+              <span
+                class="handleBtn"
+                style="margin-right:10px;"
+                @click="showVisualSet"
+              >配置</span>
+            </span>
+          </p>
+        </div>
       </div>
       <!-- 问答调试 -->
       <div class="drawer-test">
@@ -407,6 +430,11 @@
       ref="knowledgeSelect"
       @getKnowledgeData="getKnowledgeData"
     />
+    <!-- 视图设置 -->
+    <visualSet
+      ref="visualSet"
+      @sendVisual="sendVisual"
+    />
     <!-- 元数据设置 -->
     <el-dialog
       :visible.sync="metaSetVisible"
@@ -445,6 +473,7 @@ import { store } from "@/store/index";
 import { mapGetters } from "vuex";
 import CreateIntelligent from "@/components/createApp/createIntelligent";
 import setSafety from "@/components/setSafety";
+import visualSet from "./visualSet";
 import metaSet from "@/components/metaSet";
 import ModelSet from "./modelSetDialog";
 import { selectModelList, getRerankList } from "@/api/modelAccess";
@@ -457,8 +486,8 @@ import {
   putAgentInfo,
   enableWorkFlow,
   enableAction,
-  deleteCustom,
-  enableCustom,
+  delCustomBuiltIn,
+  switchCustomBuiltIn
 } from "@/api/agent";
 import ToolDiaglog from "./toolDialog";
 import LinkDialog from "./linkDialog";
@@ -476,6 +505,7 @@ export default {
     ToolDiaglog,
     LinkDialog,
     setSafety,
+    visualSet,
     knowledgeSetDialog,
     knowledgeSelect,
     metaSet,
@@ -499,6 +529,7 @@ export default {
             "onlineSearchConfig",
             "safetyConfig",
             "recommendQuestion",
+            "visionConfig"
           ];
 
           const changed = props.some((prop) => {
@@ -547,6 +578,10 @@ export default {
         prologue: "", //开场白
         instructions: "", //系统提示词
         knowledgebases: [],
+        visionConfig:{//视觉配置
+          picNum: 3,
+          maxPicNum:6
+        },
         knowledgeConfig: {
           keywordPriority: 0.8, //关键词权重
           matchType: "mix", //vector（向量检索）、text（文本检索）、mix（混合检索：向量+文本）
@@ -654,6 +689,12 @@ export default {
     store.dispatch("app/initState");
   },
   methods: {
+    showVisualSet(){
+      this.$refs.visualSet.showDialog(this.editForm.visionConfig);
+    },
+    sendVisual(data){
+      this.editForm.visionConfig.picNum = data.picNum;
+    },
     handleModelChange(val) {
       this.setModelInfo(val);
     },
@@ -755,13 +796,15 @@ export default {
       } else if (type === "mcp") {
         this.mcpSwitch(n.mcpId, enable);
       } else {
-        this.customSwitch(n.customId, enable);
+        this.customSwitch(n, enable);
       }
     },
-    customSwitch(customToolId, enable) {
-      enableCustom({
+    customSwitch(n, enable) {
+      switchCustomBuiltIn({
         assistantId: this.editForm.assistantId,
-        customToolId,
+        actionName:n.actionName,
+        toolId:n.toolId,
+        toolType:n.toolType,
         enable,
       })
         .then((res) => {
@@ -874,11 +917,11 @@ export default {
       } else if (type === "mcp") {
         this.mcpRemove(n.mcpId);
       } else {
-        this.customRemove(n.customId);
+        this.customRemove(n);
       }
     },
-    customRemove(customToolId) {
-      deleteCustom({ assistantId: this.editForm.assistantId, customToolId })
+    customRemove(n) {
+      delCustomBuiltIn({ assistantId: this.editForm.assistantId, toolId: n.toolId, toolType: n.toolType,actionName:n.actionName})
         .then((res) => {
           if (res.code === 0) {
             this.$message.success("删除成功");
@@ -953,6 +996,7 @@ export default {
         },
         onlineSearchConfig: this.editForm.onlineSearchConfig,
         safetyConfig: this.editForm.safetyConfig,
+        visionConfig: {picNum:this.editForm.visionConfig.picNum},
         rerankConfig: rerankInfo
           ? {
               displayName: rerankInfo.displayName,

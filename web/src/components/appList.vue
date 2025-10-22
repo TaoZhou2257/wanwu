@@ -170,7 +170,7 @@
 
 <script>
 import { AppType } from "@/utils/commonSet";
-import { deleteApp, appCancelPublish, copyAgnetTemplate, appPublish,copyTextQues } from "@/api/appspace";
+import { deleteApp, appCancelPublish, copyAgnetTemplate, appPublish,copyTextQues,copyAgentApp } from "@/api/appspace";
 import { copyWorkFlow, publishWorkFlow, copyExample, exportWorkflow } from "@/api/workflow";
 import { setFavorite } from "@/api/explore";
 export default {
@@ -394,7 +394,13 @@ export default {
       this.handleDelete();
     },
     intelligentCopy(row){
-      console.log(row)
+      copyAgentApp({assistantId:row.appId}).then(res=>{
+        if(res.code === 0){
+          const id = res.data.assistantId;
+          this.$message.success('复制成功');
+          this.$router.push({path:`/agent/test?id=${id}`})
+        }
+      }).catch(()=>{})
     },
     intelligentOperation(method, row) {
       switch (method) {
