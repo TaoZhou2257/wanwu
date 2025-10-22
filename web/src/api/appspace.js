@@ -102,4 +102,12 @@ export const copyTextQues = (data)=>{
         data
     })
 };
+//复制智能体应用
+export const copyAgentApp = (data)=>{
+    return request({
+        url: `${BASE_URL}/assistant/copy`,
+        method: 'post',
+        data
+    })
+};
 
