@@ -395,6 +395,9 @@ export default {
       this.row = row;
       this.handleDelete();
     },
+    intelligentCopy(row){
+      console.log(row)
+    },
     intelligentOperation(method, row) {
       switch (method) {
         case "edit":
@@ -404,6 +407,10 @@ export default {
         case "delete":
           // 智能体删除
           this.intelligentDelete(row);
+          break;
+        case "copy":
+          // 智能体复制
+          this.intelligentCopy(row);
           break;
         case "cancelPublish":
           this.cancelPublish(row);
@@ -430,8 +437,9 @@ export default {
     txtQuesCopy(row){
       copyTextQues({ragId:row.appId}).then(res=>{
         if(res.code === 0){
+          const id = res.data.ragId;
           this.$message.success('复制成功');
-          this.$emit("reloadData");
+          this.$router.push({path:`/rag/test?id=${id}`})
         }
       }).catch(()=>{})
     },

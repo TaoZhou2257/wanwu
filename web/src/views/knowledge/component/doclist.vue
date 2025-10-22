@@ -424,7 +424,7 @@ export default {
         }
       )
         .then(async () => {
-          let jsondata = {docIdList:[data.docId]}
+          let jsondata = {docIdList:[data.docId],knowledgeId:this.docQuery.knowledgeId,}
           this.loading = true;
           let res = await delDocItem(jsondata);
           if (res.code === 0) {

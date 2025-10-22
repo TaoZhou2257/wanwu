@@ -13,6 +13,11 @@
                 >
                 </el-table-column>
                 <el-table-column
+                  prop="description"
+                  label="描述"
+                >
+                </el-table-column>
+                <el-table-column
                   prop="suffix"
                   label="访问Url"
                 >
@@ -71,6 +76,11 @@
               :rules="[{ required: true, message: '请输入应用名称', trigger: 'blur' }]"
             >
               <el-input v-model="form.name" placeholder="请输入应用名称"></el-input>
+            </el-form-item>
+            <el-form-item label="应用描述" 
+              prop="description"
+            >
+              <el-input v-model="form.description" placeholder="请输入应用描述" type="textarea" :rows="2"></el-input>
             </el-form-item>
             <el-form-item label="过期时间" prop="expiredAt">
                <el-date-picker
@@ -169,6 +179,7 @@ export default {
             disclaimerEnable:false,
             expiredAt:'',
             name:'',
+            description:'',
             privacyPolicy:'',
             privacyPolicyEnable:false
           },
