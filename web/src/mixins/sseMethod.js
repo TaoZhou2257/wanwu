@@ -458,6 +458,7 @@ export default {
                             "thinkText":i18n.t('agent.thinking'),
                             'toolText':'使用工具中...',
                             "isOpen":true,
+                            "showScrollBtn":null,
                             "citations":[]
                         }
 

@@ -48,8 +48,8 @@
                   class="echo-doc-box"
                   v-if="hasFiles(n)"
                 >
-                <el-button v-show="canScroll" icon="el-icon-arrow-left " @click="prev($event)" circle class="scroll-btn left" size="mini" type="primary"></el-button>
-                 <div class="imgList" :ref="`imgList-${i}`" :style="{justifyContent: !canScroll ? 'center':'flex-end'}">
+                <el-button v-show="canScroll(i,n.showScrollBtn)" icon="el-icon-arrow-left " @click="prev($event,i)" circle class="scroll-btn left" size="mini" type="primary"></el-button>
+                 <div class="imgList" :ref="`imgList-${i}`">
                  <div v-for="(file,j) in n.fileList" :key="`${j}sdsl`" class="docInfo-img-container">
                       <img v-if="hasImgs(n,file)"
                         :src="file.fileUrl"
@@ -67,7 +67,7 @@
                   </div>
                  </div>
                  </div>
-                 <el-button v-show="canScroll" icon="el-icon-arrow-right" @click="next($event)" circle class="scroll-btn right" size="mini" type="primary"></el-button>
+                 <el-button v-show="canScroll(i,n.showScrollBtn)" icon="el-icon-arrow-right" @click="next($event,i)" circle class="scroll-btn right" size="mini" type="primary"></el-button>
                 </div>
               </div>
 
@@ -370,9 +370,6 @@ export default {
       },
       imgConfig: ["jpeg", "PNG", "png", "JPG", "jpg", "bmp", "webp"],
       audioConfig: ["mp3", "wav"],
-      debounceTimer: null,
-      canScroll:false,
-      isCheckingScroll: false
     };
   },
   computed: {
@@ -398,56 +395,53 @@ export default {
       container.removeEventListener("scroll", this.handleScroll);
     }
     clearTimeout(this.scrollTimeout);
+    
     // 移除图片错误事件监听器
     if (this.imageErrorHandler) {
       document.body.removeEventListener("error", this.imageErrorHandler, true);
     }
   },
-  updated() {
-    if (!this.isCheckingScroll) {
-    this.checkScrollable();
-    }
-  },
   methods: {
-    checkScrollable() {
-      this.isCheckingScroll = true;
-      this.$nextTick(() => {
-        Object.keys(this.$refs).forEach(key => {
-        if (key.startsWith('imgList-')) {
-            const container = this.$refs[key][0];
-            if (container) {
-              this.canScroll = container.scrollWidth > container.clientWidth
-            }
-          }
-        });
-        this.$nextTick(() => {
-          this.isCheckingScroll = false;
-        })
+    canScroll(i,showScrollBtn) {
+      if (showScrollBtn !== null) {
+        return showScrollBtn;
+      }
+      this.$nextTick(()=>{
+        const refKey = `imgList-${i}`;
+        const containerArray = this.$refs[refKey];
+        if (containerArray && containerArray.length > 0) {
+          const container = containerArray[0];
+          const canScrollNow = container.scrollWidth > container.clientWidth;
+          this.$set(this.session_data.history[i], 'showScrollBtn', canScrollNow);
+          return canScrollNow;
+        }
       })
+
+      return false;
     },
-    prev(e){
+    prev(e,i){
       e.stopPropagation()
-      Object.keys(this.$refs).forEach(key => {
-        if (key.startsWith('imgList-')) {
-            const container = this.$refs[key];
-            container[0].scrollBy({
-              left: -200,
-              behavior: "smooth",
-            });
-          }
-      });
+      const refKey = `imgList-${i}`;
+      const containerArray = this.$refs[refKey];
+      if (containerArray && containerArray.length > 0) {
+        const container = containerArray[0];
+        container.scrollBy({
+          left: -200,
+          behavior: "smooth",
+        });
+      }
     },
-    next(e){
+    next(e,i){
       e.stopPropagation()
-      Object.keys(this.$refs).forEach(key => {
-        if (key.startsWith('imgList-')) {
-            const container = this.$refs[key];
-            container[0].scrollBy({
-              left: 200,
-              behavior: "smooth",
-            });
-          }
-      });
+      const refKey = `imgList-${i}`;
+      const containerArray = this.$refs[refKey];
+      if (containerArray && containerArray.length > 0) {
+        const container = containerArray[0];
+        container.scrollBy({
+          left: 200,
+          behavior: "smooth",
+        });
+      }
     },
     hasFiles(n){
        return n.fileList && n.fileList.length > 0;
@@ -1045,8 +1039,9 @@ export default {
             gap: 10px;
             overflow-x:hidden;
             scroll-behavior: smooth;
-            display: flex;
+            display:flex;
             flex-wrap: nowrap;
+            flex-direction: row-reverse;
           }
           .docInfo-container{
             display: flex;

@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { getUserPower,editUserPower } from "@/api/knowledge";
+import { getUserPower,editUserPower,delUserPower } from "@/api/knowledge";
 import { POWER_TYPE } from "@/views/knowledge/config";
 export default {
   name: 'PowerList',
@@ -186,8 +186,12 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // 删除逻辑
-        this.$message.success('删除成功')
+        delUserPower({knowledgeId:this.knowledgeId,permissionId:row.permissionId}).then(res => {
+          if(res.code === 0){
+            this.$message.success('删除成功')
+            this.getUserPower()
+          }
+        }).catch(() => {})
       }).catch(() => {
         this.$message.info('已取消删除')
       })
