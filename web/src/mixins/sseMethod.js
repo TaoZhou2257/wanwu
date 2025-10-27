@@ -40,6 +40,7 @@ export default {
             isStoped : false,
             access_token:'',
             runResponse: "",
+            processedLength: 0,  // 追踪已处理的文本长度
         };
     },
     created() {
@@ -206,6 +207,7 @@ export default {
                 pending: true, 
                 responseLoading: true, 
                 requestFileUrls:[],
+                fileList:this.fileList,
                 pendingResponse:''
             }
             this.$refs['session-com'].pushHistory(params)
@@ -260,7 +262,7 @@ export default {
                         let data;
                         try {
                             data = JSON.parse(e.data);
-                            console.log('===>',new Date().getTime(), data);
+                            // console.log('===>',new Date().getTime(), data);
                         } catch (error) {
                             return; // 如果解析失败，直接返回，不处理这条消息
                         }
@@ -293,17 +295,18 @@ export default {
                                     commonData,
                                     (worldObj,search_list) => {
                                         this.setStoreSessionStatus(0)
-                                        let newChunk = convertLatexSyntax(worldObj.world)
-                                        endStr += newChunk
-                                        endStr = parseSub(endStr, lastIndex)
+                                        endStr += worldObj.world
+                                        endStr = convertLatexSyntax(endStr)
+                                        endStr = parseSub(endStr, lastIndex)   
+                                        console.log('===>',md.render(endStr))                       
                                         let fillData = {
                                             ...commonData,
                                             "response": md.render(endStr),
                                             oriResponse:endStr,
                                             finish:worldObj.finish,
                                             searchList:(search_list && search_list.length) ? search_list.map(n => ({
-                                                  ...n, // 复制原有的对象属性
-                                                  snippet: md.render(n.snippet) // 对snippet进行Markdown渲染
+                                                  ...n,
+                                                  snippet: md.render(n.snippet)
                                                 }))
                                             : []
                                         }
@@ -341,6 +344,7 @@ export default {
                     this.setStoreSessionStatus(-1)//关闭后改变状态
                 }
             });
+                      
         },
         doSend(params) {
             this.stopBtShow = true
@@ -374,6 +378,7 @@ export default {
             this.$refs['session-com'].pushHistory(params)
 
             let endStr = ''
+            this.processedLength = 0  // 重置处理长度
             this._print = new Print({
                 onPrintEnd: () => {
                 }
@@ -473,8 +478,8 @@ export default {
                                     commonData,
                                     (worldObj,search_list) => {
                                         this.setStoreSessionStatus(0)
-                                        let newChunk = convertLatexSyntax(worldObj.world)
-                                        endStr += newChunk
+                                        endStr += worldObj.world
+                                        endStr = convertLatexSyntax(endStr)
                                         endStr = parseSub(endStr, lastIndex)
                                         const finalResponse = String(endStr)
                                         let fillData = {
@@ -483,8 +488,8 @@ export default {
                                             finish:worldObj.finish,
                                             oriResponse:endStr,
                                             searchList:(search_list && search_list.length) ? search_list.map(n => ({
-                                                  ...n, // 复制原有的对象属性
-                                                  snippet: md.render(n.snippet) // 对snippet进行Markdown渲染
+                                                  ...n,
+                                                  snippet: md.render(n.snippet)
                                                 }))
                                             : []
                                         }
@@ -498,11 +503,13 @@ export default {
                                                 this.$refs['session-com'].replaceLastData(lastIndex, fillData)
                                             }
                                             this.setStoreSessionStatus(-1)
+                                            this.processedLength = 0
                                         }
                                         if(worldObj.isEnd && worldObj.finish === 1){
                                           this.setStoreSessionStatus(-1)
+                                          this.processedLength = 0
                                        }
-                                })
+                                    })
 
                             this.$nextTick(()=>{
                                 this.$refs['session-com'].scrollBottom()

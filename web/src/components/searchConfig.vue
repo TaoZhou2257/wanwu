@@ -121,7 +121,7 @@
               </el-slider>
             </el-col>
           </el-row>
-          <el-row v-if="showHistory(item)">
+          <el-row>
             <el-col>
               <span class="content-name">最长上下文</span>
               <el-tooltip

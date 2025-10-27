@@ -43,7 +43,7 @@
           <template slot-scope="scope">
             <div class="action-buttons">
               <!-- 管理员权限：只显示转让按钮 -->
-              <template v-if="scope.row.permissionType === 20">
+              <template v-if="scope.row.permissionType === 20 && !scope.row.editing">
                 <el-button
                   type="text"
                   size="small"
@@ -139,7 +139,6 @@ export default {
       }).catch(() => {})
     },
     handleEdit(row) {
-      // 进入编辑模式
       row.editing = true
       row.originalType = row.type // 保存原始值
     },

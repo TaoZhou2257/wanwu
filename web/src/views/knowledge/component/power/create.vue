@@ -143,45 +143,6 @@ export default {
         label: 'userName'
       },
       treeData: [],
-      // 测试数据（已注释）
-      // treeData: [
-      //     {
-      //       "userId": "15",
-      //       "userName": "wangliang"
-      //     },
-      //     {
-      //       "userId": "11",
-      //       "userName": "zqf"
-      //     },
-      //     {
-      //       "userId": "9",
-      //       "userName": "lih652"
-      //     },
-      //     {
-      //       "userId": "8",
-      //       "userName": "wxm"
-      //     },
-      //     {
-      //       "userId": "7",
-      //       "userName": "daxin"
-      //     },
-      //     {
-      //       "userId": "6",
-      //       "userName": "wuxk26"
-      //     },
-      //     {
-      //       "userId": "4",
-      //       "userName": "stcs"
-      //     },
-      //     {
-      //       "userId": "3",
-      //       "userName": "lwb"
-      //     },
-      //     {
-      //       "userId": "2",
-      //       "userName": "ztq"
-      //     }
-      // ],
       selectedUsers: [],
       isSettingChecked: false
     }
@@ -243,9 +204,10 @@ export default {
         if(res.code === 0){
            var userList = res.data.userInfoList || [];
            var orgIdValue = res.data.orgId;
-           // 给每一项添加 orgId
+           // 给每一项添加 orgId 和 id 字段
            self.treeData = userList.map(function(item) {
              item.orgId = orgIdValue;
+             item.id = item.userId;  // 确保有 id 字段，与 userId 保持一致，用于树节点的 key
              return item;
            });
            // 加载完数据后，设置当前组织已选中的用户
@@ -260,6 +222,14 @@ export default {
       //获取当前组织id
       var currentOrgId = this.selectedOrganization;
       
+      // 确保有组织选择
+      if (!currentOrgId) {
+        if (this.$refs.tree) {
+          this.$refs.tree.setCheckedKeys([]);
+        }
+        return;
+      }
+      
       // 找出当前组织ID下已选中的用户ID列表
       // 必须同时匹配用户的 orgId 和当前选择的组织 ID
       var checkedUserIds = this.selectedUsers
@@ -267,7 +237,11 @@ export default {
           return user.orgId === currentOrgId;
         })
         .map(function(user) {
-          return user.id;
+          // 兼容 id 和 userId 两种字段
+          return user.id || user.userId;
+        })
+        .filter(function(id) {
+          return id != null && id !== undefined && id !== '';
         });
       
       // 设置树形控件的选中状态
@@ -324,11 +298,13 @@ export default {
       var addedUserIds = {};
       
       checkedNodes.forEach(function(node) {
-        if (node.userId && !addedUserIds[node.userId]) {
-          addedUserIds[node.userId] = true;
+        // 使用 id 字段（已经与 userId 保持一致）
+        const nodeId = node.id || node.userId;
+        if (nodeId && !addedUserIds[nodeId]) {
+          addedUserIds[nodeId] = true;
           currentOrgUsers.push({
-            id: node.userId,
-            name: node.userName,
+            id: nodeId,
+            name: node.userName || node.name,
             orgId: node.orgId,
             organization: currentOrgName
           });
@@ -370,34 +346,41 @@ export default {
       this.selectedUsers = this.selectedUsers.filter(u => u.id !== user.id)
     },
     removeSelectedUser(user) {
-      this.selectedUsers = this.selectedUsers.filter(u => u.id !== user.id)
+      // 使用 userId 或 id 都能删除
+      const userId = user.userId || user.id;
+      this.selectedUsers = this.selectedUsers.filter(u => {
+        const uId = u.userId || u.id;
+        return uId !== userId;
+      });
       
-      this.updateTreeSelection(user.id, false)
+      this.updateTreeSelection(userId, false);
       
       this.$nextTick(() => {
         if (this.$refs.tree) {
           if (this.transferMode) {
-            this.$refs.tree.setCheckedKeys([])
+            this.$refs.tree.setCheckedKeys([]);
           } else {
-            const checkedKeys = this.$refs.tree.getCheckedKeys()
-            const newCheckedKeys = checkedKeys.filter(key => key !== user.id)
-            this.$refs.tree.setCheckedKeys(newCheckedKeys)
+            const checkedKeys = this.$refs.tree.getCheckedKeys();
+            const newCheckedKeys = checkedKeys.filter(key => key !== userId);
+            this.$refs.tree.setCheckedKeys(newCheckedKeys);
           }
         }
-      })
+      });
     },
     updateTreeSelection(userId, selected) {
       const updateNode = (nodes) => {
         nodes.forEach(node => {
-          if (node.id === userId) {
-            node.selected = selected
+          // 兼容 id 和 userId 两种字段
+          const nodeId = node.id || node.userId;
+          if (nodeId === userId) {
+            node.selected = selected;
           }
           if (node.children) {
-            updateNode(node.children)
+            updateNode(node.children);
           }
-        })
-      }
-      updateNode(this.treeData)
+        });
+      };
+      updateNode(this.treeData);
     },
     updateSelectedNodeBackground() {
       this.$nextTick(() => {
