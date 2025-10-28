@@ -13,9 +13,40 @@ import (
 	mcp_util "github.com/UnicomAI/wanwu/internal/bff-service/pkg/mcp-util"
 	"github.com/UnicomAI/wanwu/pkg/constant"
 	grpc_util "github.com/UnicomAI/wanwu/pkg/grpc-util"
-	openapi3_util "github.com/UnicomAI/wanwu/pkg/openapi3-util"
 	"github.com/gin-gonic/gin"
 )
+
+func StartMCPServer(ctx context.Context) error {
+	mcpServerList, err := mcp.GetMCPServerList(ctx, &mcp_service.GetMCPServerListReq{
+		Identity: &mcp_service.Identity{},
+	})
+	if err != nil {
+		return err
+	}
+	for _, mcpServerInfo := range mcpServerList.List {
+		mcpServerToolList, err := mcp.GetMCPServerToolList(ctx, &mcp_service.GetMCPServerToolListReq{
+			McpServerId: mcpServerInfo.McpServerId,
+		})
+		if err != nil {
+			return err
+		}
+		var mcpTools []*mcp_util.McpTool
+		for _, tool := range mcpServerToolList.List {
+			tools, err := mcp_util.CreateMcpTools(ctx, tool.Schema, convertMcpApiAuth(tool.ApiAuth), []string{tool.Name})
+			if err != nil {
+				return err
+			}
+			mcpTools = append(mcpTools, tools...)
+		}
+		if err = mcp_util.StartMCPServer(ctx, mcpServerInfo.McpServerId); err != nil {
+			return err
+		}
+		if err = mcp_util.RegisterMCPServerTools(mcpServerInfo.McpServerId, mcpTools); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 func CreateMCPServer(ctx *gin.Context, userID, orgID string, req request.MCPServerCreateReq) error {
 	resp, err := mcp.CreateMCPServer(ctx.Request.Context(), &mcp_service.CreateMCPServerReq{
@@ -89,7 +120,6 @@ func DeleteMCPServer(ctx *gin.Context, mcpServerId string) error {
 	if err != nil {
 		return err
 	}
-	// 关闭 mcp server
 	err = mcp_util.ShutDownMCPServer(ctx, mcpServerId)
 	if err != nil {
 		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_shutdown_err", err.Error())
@@ -119,36 +149,17 @@ func GetMCPServerList(ctx *gin.Context, userID, orgID, name string) (*response.L
 }
 
 func CreateMCPServerTool(ctx *gin.Context, req request.MCPServerToolCreateReq) error {
-	toolInfo := &ToolInfo{
-		Id:          req.Id,
-		ToolType:    req.Type,
-		MethodNames: []string{req.MethodName},
-	}
-	if req.Type == constant.MCPServerToolTypeCustomTool {
-		info, err := mcp.GetCustomToolInfo(ctx.Request.Context(), &mcp_service.GetCustomToolInfoReq{
-			CustomToolId: req.Id,
-		})
-		if err != nil {
-			return err
+	var builder mcpServerToolBuilder
+	switch req.Type {
+	case constant.MCPServerToolTypeCustomTool:
+		builder = &mcpServerCustomToolBuilder{
+			customToolID: req.Id,
 		}
-		toolInfo.Name = info.Name
+	default:
+		// TODO
 	}
-	schema, err := CreateMcpSchema(ctx, req.MCPServerID, toolInfo)
-	if err != nil || schema == nil {
-		return err
-	}
-	_, err = mcp.CreateMCPServerTool(ctx.Request.Context(), &mcp_service.CreateMCPServerToolReq{
-		McpServerId:         req.MCPServerID,
-		McpServiceToolInfos: schema.McpServerTool,
-	})
-	if err != nil {
-		return err
-	}
-	err = mcp_util.RegisterMCPServerTools(req.MCPServerID, schema.McpTool)
-	if err != nil {
-		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_register_tool_err", err.Error())
-	}
-	return err
+
+	return createMCPServerTool(ctx, req.MCPServerID, builder, []string{req.MethodName})
 }
 
 func UpdateMCPServerTool(ctx *gin.Context, req request.MCPServerToolUpdateReq) error {
@@ -161,25 +172,30 @@ func UpdateMCPServerTool(ctx *gin.Context, req request.MCPServerToolUpdateReq) e
 	if tool.Name == req.MethodName && tool.Desc == req.Desc {
 		return nil
 	}
-	schema, err := UpdateMcpSchema(req, tool)
-	if err != nil || schema == nil || len(schema.McpServerTool) < 1 {
-		return err
-	}
-	mcpServerTool := schema.McpServerTool[0]
-	_, err = mcp.UpdateMCPServerTool(ctx.Request.Context(), &mcp_service.UpdateMCPServerToolReq{
-		McpServerToolId: mcpServerTool.McpServerToolId,
-		Name:            mcpServerTool.Name,
-		Desc:            mcpServerTool.Desc,
-		Schema:          mcpServerTool.Schema,
-	})
+
+	mcpTool, err := mcp_util.CreateMcpTool(ctx.Request.Context(), tool.Schema, convertMcpApiAuth(tool.ApiAuth), tool.Name)
 	if err != nil {
 		return err
 	}
+	mcpTool, err = mcpTool.Update(ctx.Request.Context(), req.MethodName, req.Desc)
+	if err != nil {
+		return grpc_util.ErrorStatus(err_code.Code_BFFGeneral, err.Error())
+	}
+
+	if _, err = mcp.UpdateMCPServerTool(ctx.Request.Context(), &mcp_service.UpdateMCPServerToolReq{
+		McpServerToolId: req.MCPServerToolID,
+		Name:            mcpTool.Name(),
+		Desc:            mcpTool.Desc(),
+		Schema:          mcpTool.Schema(),
+	}); err != nil {
+		return err
+	}
+
 	err = mcp_util.UnRegisterMCPServerTools(tool.McpServerId, []string{tool.Name})
 	if err != nil {
 		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_unregister_tool_err", err.Error())
 	}
-	err = mcp_util.RegisterMCPServerTools(tool.McpServerId, schema.McpTool)
+	err = mcp_util.RegisterMCPServerTools(tool.McpServerId, []*mcp_util.McpTool{mcpTool})
 	if err != nil {
 		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_register_tool_err", err.Error())
 	}
@@ -187,7 +203,7 @@ func UpdateMCPServerTool(ctx *gin.Context, req request.MCPServerToolUpdateReq) e
 }
 
 func DeleteMCPServerTool(ctx *gin.Context, mcpServerToolId string) error {
-	info, err := mcp.GetMCPServerTool(ctx.Request.Context(), &mcp_service.GetMCPServerToolReq{
+	toolInfo, err := mcp.GetMCPServerTool(ctx.Request.Context(), &mcp_service.GetMCPServerToolReq{
 		McpServerToolId: mcpServerToolId,
 	})
 	if err != nil {
@@ -199,7 +215,7 @@ func DeleteMCPServerTool(ctx *gin.Context, mcpServerToolId string) error {
 	if err != nil {
 		return err
 	}
-	err = mcp_util.UnRegisterMCPServerTools(info.McpServerId, []string{info.Name})
+	err = mcp_util.UnRegisterMCPServerTools(toolInfo.McpServerId, []string{toolInfo.Name})
 	if err != nil {
 		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_unregister_tool_err", err.Error())
 	}
@@ -207,77 +223,24 @@ func DeleteMCPServerTool(ctx *gin.Context, mcpServerToolId string) error {
 }
 
 func CreateMCPServerOpenAPITool(ctx *gin.Context, userID, orgID string, req request.MCPServerOpenAPIToolCreate) error {
-	schema, err := CreateMcpSchema(ctx, req.MCPServerID, &ToolInfo{
-		Name:        req.Name,
-		ToolType:    constant.MCPServerToolTypeOpenAPI,
-		MethodNames: req.MethodNames,
-		Schema:      req.Schema,
-		ApiAuth:     req.ApiAuth,
-	})
-	if err != nil || schema == nil {
-		return err
-	}
-	_, err = mcp.CreateMCPServerTool(ctx.Request.Context(), &mcp_service.CreateMCPServerToolReq{
-		McpServerId:         req.MCPServerID,
-		McpServiceToolInfos: schema.McpServerTool,
-	})
-	if err != nil {
-		return err
-	}
-	err = mcp_util.RegisterMCPServerTools(req.MCPServerID, schema.McpTool)
-	if err != nil {
-		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_register_tool_err", err.Error())
-	}
-	return err
-}
-
-func GetMCPServerCustomToolSelect(ctx *gin.Context, userID, orgID, name string) (*response.ListResult, error) {
-	resp, err := mcp.GetCustomToolList(ctx.Request.Context(), &mcp_service.GetCustomToolListReq{
-		Identity: &mcp_service.Identity{
-			UserId: userID,
-			OrgId:  orgID,
-		},
-		Name: name,
-	})
-	if err != nil {
-		return nil, err
-	}
-	var list []response.MCPServerCustomToolSelect
-	for _, item := range resp.List {
-		info, err := mcp.GetCustomToolInfo(ctx.Request.Context(), &mcp_service.GetCustomToolInfoReq{
-			CustomToolId: item.CustomToolId,
-		})
-		if err != nil {
-			return nil, err
-		}
-		apis, err := GetSchemaActions(ctx, info.Schema)
-		if err != nil {
-			continue
-		}
-		toolList := toMCPServerCustomToolSelect(item, apis)
-		list = append(list, toolList...)
-	}
-	return &response.ListResult{
-		List:  list,
-		Total: int64(len(list)),
-	}, nil
+	return createMCPServerTool(ctx, req.MCPServerID, &mcpServerOpenapiSchemaBuilder{
+		name:   req.Name,
+		schema: req.Schema,
+		auth:   req.ApiAuth,
+	}, req.MethodNames)
 }
 
 func GetMCPServerSSE(ctx *gin.Context, mcpServerId string, key string) error {
-	if !mcp_util.CheckMCPServerExist(mcpServerId) {
-		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_not_exist")
-	}
 	queryParams := ctx.Request.URL.Query()
 	queryParams.Set("key", key)
 	ctx.Request.URL.RawQuery = queryParams.Encode()
-	mcp_util.GetMCPServerSSEHandler(mcpServerId).HandleSSE().ServeHTTP(ctx.Writer, ctx.Request)
+	if err := mcp_util.HandleSSE(mcpServerId, ctx.Writer, ctx.Request); err != nil {
+		return grpc_util.ErrorStatus(err_code.Code_BFFGeneral, err.Error())
+	}
 	return nil
 }
 
 func GetMCPServerMessage(ctx *gin.Context, mcpServerId string) error {
-	if !mcp_util.CheckMCPServerExist(mcpServerId) {
-		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_not_exist")
-	}
 	var body []byte
 	if cb, ok := ctx.Get(gin.BodyBytesKey); ok {
 		if cbb, ok := cb.([]byte); ok {
@@ -288,14 +251,14 @@ func GetMCPServerMessage(ctx *gin.Context, mcpServerId string) error {
 		// 调用前再次确保Body可用（防止中间件已读取）
 		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	}
-	mcp_util.GetMCPServerSSEHandler(mcpServerId).HandleMessage().ServeHTTP(ctx.Writer, ctx.Request)
+
+	if err := mcp_util.HandleMessage(mcpServerId, ctx.Writer, ctx.Request); err != nil {
+		return grpc_util.ErrorStatus(err_code.Code_BFFGeneral, err.Error())
+	}
 	return nil
 }
 
 func GetMCPServerStreamable(ctx *gin.Context, mcpServerId string) error {
-	if !mcp_util.CheckMCPServerExist(mcpServerId) {
-		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_not_exist")
-	}
 	var body []byte
 	if cb, ok := ctx.Get(gin.BodyBytesKey); ok {
 		if cbb, ok := cb.([]byte); ok {
@@ -306,90 +269,58 @@ func GetMCPServerStreamable(ctx *gin.Context, mcpServerId string) error {
 		// 调用前再次确保Body可用（防止中间件已读取）
 		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	}
-	mcp_util.GetMCPServerStreamableHandler(mcpServerId).HandleMCP().ServeHTTP(ctx.Writer, ctx.Request)
-	return nil
-}
-
-func StartMCPServer(ctx context.Context) error {
-	err := mcp_util.Init(ctx)
-	if err != nil {
-		return err
-	}
-	mcpServerList, err := mcp.GetMCPServerList(ctx, &mcp_service.GetMCPServerListReq{
-		Identity: &mcp_service.Identity{
-			OrgId:  "",
-			UserId: "",
-		},
-	})
-	if err != nil {
-		return err
-	}
-	for _, mcpServerInfo := range mcpServerList.List {
-		mcpServerToolList, err := mcp.GetMCPServerToolList(ctx, &mcp_service.GetMCPServerToolListReq{
-			McpServerId: mcpServerInfo.McpServerId,
-		})
-		if err != nil {
-			return err
-		}
-		mcpTools := make([]*mcp_util.McpTool, 0)
-		for _, tool := range mcpServerToolList.List {
-			doc, err := mcp_util.ParseOpenApiContent(tool.Schema)
-			if err != nil {
-				return err
-			}
-			mcpTool := &mcp_util.McpTool{}
-			mcpTool.Tool = mcp_util.ConvertMcpTool(doc, tool.Name)
-			mcpTool.Handle = mcp_util.ConvertMcpHandler(doc, tool.Name, &mcp_util.APIAuth{
-				Type:  tool.ApiAuth.AuthType,
-				In:    tool.ApiAuth.AuthIn,
-				Name:  tool.ApiAuth.AuthName,
-				Value: tool.ApiAuth.AuthValue,
-			})
-			mcpTools = append(mcpTools, mcpTool)
-		}
-		err = mcp_util.StartMCPServer(ctx, mcpServerInfo.McpServerId)
-		if err != nil {
-			return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_start_err", err.Error())
-		}
-		err = mcp_util.RegisterMCPServerTools(mcpServerInfo.McpServerId, mcpTools)
-		if err != nil {
-			return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_register_tool_err", err.Error())
-		}
+	if err := mcp_util.HandleStreamable(mcpServerId, ctx.Writer, ctx.Request); err != nil {
+		return grpc_util.ErrorStatus(err_code.Code_BFFGeneral, err.Error())
 	}
 	return nil
 }
 
-// internal
+// --- internal ---
 
-func GetSchemaActions(ctx *gin.Context, schema string) ([]response.CustomToolActionInfo, error) {
-	doc, err := openapi3_util.LoadFromData([]byte(schema))
+func createMCPServerTool(ctx *gin.Context, mcpServerID string, builder mcpServerToolBuilder, operationIDs []string) error {
+	if !mcp_util.CheckMCPServerExist(mcpServerID) {
+		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_not_exist")
+	}
+
+	schema, auth, err := builder.GetOpenapiSchema(ctx)
 	if err != nil {
-		return nil, grpc_util.ErrorStatus(err_code.Code_BFFInvalidArg, err.Error())
+		return grpc_util.ErrorStatus(err_code.Code_BFFGeneral, err.Error())
 	}
-	if err := openapi3_util.ValidateDoc(ctx.Request.Context(), doc); err != nil {
-		return nil, grpc_util.ErrorStatus(err_code.Code_BFFInvalidArg, err.Error())
-	}
-	list := openapiSchema2ToolList(doc)
-	return list, nil
-}
 
-func toMCPServerCustomToolSelect(item *mcp_service.GetCustomToolItem, apis []response.CustomToolActionInfo) []response.MCPServerCustomToolSelect {
-	var list []response.MCPServerCustomToolSelect
-	var methods []response.MCPServerCustomToolApi
-	for _, api := range apis {
-		methods = append(methods, response.MCPServerCustomToolApi{
-			MethodName:  api.Name,
-			Description: api.Desc,
+	tools, err := mcp_util.CreateMcpTools(ctx.Request.Context(), schema, auth, operationIDs)
+	if err != nil {
+		return grpc_util.ErrorStatus(err_code.Code_BFFGeneral, err.Error())
+	}
+
+	var toolInfos []*mcp_service.MCPServerToolInfo
+	for _, tool := range tools {
+		toolInfos = append(toolInfos, &mcp_service.MCPServerToolInfo{
+			McpServerId: mcpServerID,
+			Type:        builder.MCPServerToolType(),
+			AppToolId:   builder.AppID(),
+			AppToolName: builder.AppName(),
+			Name:        tool.Name(),
+			Desc:        tool.Desc(),
+			Schema:      tool.Schema(),
+			ApiAuth: &mcp_service.ApiAuth{
+				AuthType:  tool.Auth().Type,
+				AuthIn:    tool.Auth().In,
+				AuthName:  tool.Auth().Name,
+				AuthValue: tool.Auth().Value,
+			},
 		})
 	}
-	list = append(list, response.MCPServerCustomToolSelect{
-		UniqueId:     constant.MCPServerToolTypeCustomTool + "-" + item.CustomToolId,
-		CustomToolId: item.CustomToolId,
-		Name:         item.Name,
-		Description:  item.Description,
-		Methods:      methods,
-	})
-	return list
+	if _, err = mcp.CreateMCPServerTool(ctx.Request.Context(), &mcp_service.CreateMCPServerToolReq{
+		McpServerId:         mcpServerID,
+		McpServiceToolInfos: toolInfos,
+	}); err != nil {
+		return err
+	}
+
+	if err = mcp_util.RegisterMCPServerTools(mcpServerID, tools); err != nil {
+		return grpc_util.ErrorStatusWithKey(err_code.Code_BFFGeneral, "bff_mcp_server_register_tool_err", err.Error())
+	}
+	return err
 }
 
 func toMCPServerInfo(ctx *gin.Context, mcpServerInfo *mcp_service.MCPServerInfo) response.MCPServerInfo {
@@ -424,4 +355,31 @@ func toMCPServerDetail(ctx *gin.Context, mcpServerInfo *mcp_service.MCPServerInf
 		StreamableExample: mcpServerInfo.StreamableExample,
 		Tools:             mcpServerTools,
 	}
+}
+
+func convertMcpApiAuth(auth *mcp_service.ApiAuth) *mcp_util.APIAuth {
+	return &mcp_util.APIAuth{
+		Type:  auth.GetAuthType(),
+		In:    auth.GetAuthIn(),
+		Name:  auth.GetAuthName(),
+		Value: auth.GetAuthValue(),
+	}
+}
+
+func convertToolApiAuth(auth *mcp_service.ApiAuthWebRequest) *mcp_util.APIAuth {
+	ret := &mcp_util.APIAuth{}
+	if auth != nil && auth.Type != "" && auth.Type != "None" {
+		ret.Type = "API Key"
+		ret.In = "header"
+		if auth.AuthType == "Custom" {
+			if auth.CustomHeaderName != "" {
+				ret.Name = auth.CustomHeaderName
+				ret.Value = auth.ApiKey
+			}
+		} else {
+			ret.Name = "Authorization"
+			ret.Value = "Bearer " + auth.ApiKey
+		}
+	}
+	return ret
 }

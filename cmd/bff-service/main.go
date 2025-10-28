@@ -14,6 +14,7 @@ import (
 	"github.com/UnicomAI/wanwu/internal/bff-service/config"
 	"github.com/UnicomAI/wanwu/internal/bff-service/pkg/ahocorasick"
 	assistant_template "github.com/UnicomAI/wanwu/internal/bff-service/pkg/assistant-template"
+	mcp_util "github.com/UnicomAI/wanwu/internal/bff-service/pkg/mcp-util"
 	"github.com/UnicomAI/wanwu/internal/bff-service/server/http/handler"
 	http_client "github.com/UnicomAI/wanwu/pkg/http-client"
 	"github.com/UnicomAI/wanwu/pkg/i18n"
@@ -71,6 +72,7 @@ func main() {
 	if err := ahocorasick.Init(true); err != nil {
 		log.Fatalf("init aho-corasick err: %v", err)
 	}
+
 	// doc-center
 	if err := service.InitDocCenter(); err != nil {
 		log.Fatalf("init doc-center err: %v", err)
@@ -86,11 +88,6 @@ func main() {
 		log.Fatalf("init minio err: %v", err)
 	}
 
-	// init workflow http client
-	if err := http_client.InitWorkflow(); err != nil {
-		log.Fatalf("init http client err: %v", err)
-	}
-
 	// init proxy minio http client
 	if err := http_client.InitProxyMinio(); err != nil {
 		log.Fatalf("init http client err: %v", err)
@@ -99,6 +96,11 @@ func main() {
 	// init model provider
 	mp.Init(config.Cfg().Server.CallbackUrl)
 
+	// init mcp server
+	if err := mcp_util.Init(ctx); err != nil {
+		log.Fatalf("init mcp server err: %v", err)
+	}
+
 	// init assistant template
 	if err := assistant_template.Init(ctx); err != nil {
 		log.Fatalf("init assistant template err: %v", err)
@@ -106,11 +108,6 @@ func main() {
 
 	// start http handler
 	handler.Start(ctx)
-
-	// start mcp server
-	if err := service.StartMCPServer(ctx); err != nil {
-		log.Fatalf("start mcp server err: %v", err)
-	}
 
 	// shutdown
 	sc := make(chan os.Signal, 1)

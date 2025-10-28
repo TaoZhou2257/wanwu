@@ -3,6 +3,7 @@ package mcp_util
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"sync"
 
@@ -36,18 +37,6 @@ func Init(ctx context.Context) error {
 	return nil
 }
 
-func GetMCPServerSSEHandler(mcpServerId string) *transport.SSEHandler {
-	msMgr.mu.RLock()
-	defer msMgr.mu.RUnlock()
-	return msMgr.mcpServers[mcpServerId].sseHandler
-}
-
-func GetMCPServerStreamableHandler(mcpServerId string) *transport.StreamableHTTPHandler {
-	msMgr.mu.RLock()
-	defer msMgr.mu.RUnlock()
-	return msMgr.mcpServers[mcpServerId].streamableHandler
-}
-
 func CheckMCPServerExist(mcpServerId string) bool {
 	msMgr.mu.RLock()
 	defer msMgr.mu.RUnlock()
@@ -55,13 +44,18 @@ func CheckMCPServerExist(mcpServerId string) bool {
 	return exist
 }
 
+// --- mcp server ---
+
 func StartMCPServer(ctx context.Context, mcpServerId string) error {
 	if msMgr == nil {
-		return fmt.Errorf("mcp server manager is nil")
+		return fmt.Errorf("mcp server manager not init")
 	}
-	if CheckMCPServerExist(mcpServerId) {
-		return fmt.Errorf("mcp server already exist")
+	msMgr.mu.Lock()
+	defer msMgr.mu.Unlock()
+	if _, ok := msMgr.mcpServers[mcpServerId]; ok {
+		return fmt.Errorf("mcp server(%v) already exist", mcpServerId)
 	}
+
 	messageUrl, err := url.JoinPath(config.Cfg().Server.ApiBaseUrl, "/openapi/v1/mcp/server/message")
 	if err != nil {
 		return fmt.Errorf("join message url error: %v", err)
@@ -84,8 +78,7 @@ func StartMCPServer(ctx context.Context, mcpServerId string) error {
 	if err != nil {
 		return fmt.Errorf("new server with error: %v", err)
 	}
-	msMgr.mu.Lock()
-	defer msMgr.mu.Unlock()
+
 	msMgr.mcpServers[mcpServerId] = &mcpServer{
 		sseServer:           sseSrv,
 		sseHandler:          sseHandler,
@@ -97,46 +90,102 @@ func StartMCPServer(ctx context.Context, mcpServerId string) error {
 	return nil
 }
 
-func RegisterMCPServerTools(mcpServerId string, tools []*McpTool) error {
-	if !CheckMCPServerExist(mcpServerId) {
-		return fmt.Errorf("mcp server doesn't exist")
+func ShutDownMCPServer(ctx context.Context, mcpServerId string) error {
+	if msMgr == nil {
+		return fmt.Errorf("mcp server manager not init")
 	}
 	msMgr.mu.Lock()
 	defer msMgr.mu.Unlock()
-	for _, mcpTool := range tools {
-		msMgr.mcpServers[mcpServerId].sseServer.RegisterTool(mcpTool.Tool, mcpTool.Handle)
-		msMgr.mcpServers[mcpServerId].streamableServer.RegisterTool(mcpTool.Tool, mcpTool.Handle)
+	server, ok := msMgr.mcpServers[mcpServerId]
+	if !ok {
+		return fmt.Errorf("mcp server(%v) not exist", mcpServerId)
+	}
+
+	err := server.sseServer.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
+	err = server.streamableServer.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
+
+	delete(msMgr.mcpServers, mcpServerId)
+	return nil
+}
+
+// --- mcp server tool ---
+
+func RegisterMCPServerTools(mcpServerId string, tools []*McpTool) error {
+	if msMgr == nil {
+		return fmt.Errorf("mcp server manager not init")
+	}
+	msMgr.mu.Lock()
+	defer msMgr.mu.Unlock()
+	server, ok := msMgr.mcpServers[mcpServerId]
+	if !ok {
+		return fmt.Errorf("mcp server(%v) not exist", mcpServerId)
+	}
+
+	for _, tool := range tools {
+		server.sseServer.RegisterTool(tool.tool, tool.handler)
+		server.streamableServer.RegisterTool(tool.tool, tool.handler)
 	}
 	return nil
 }
 
 func UnRegisterMCPServerTools(mcpServerId string, tools []string) error {
-	if !CheckMCPServerExist(mcpServerId) {
-		return fmt.Errorf("mcp server doesn't exist")
+	if msMgr == nil {
+		return fmt.Errorf("mcp server manager not init")
 	}
 	msMgr.mu.Lock()
 	defer msMgr.mu.Unlock()
+	server, ok := msMgr.mcpServers[mcpServerId]
+	if !ok {
+		return fmt.Errorf("mcp server(%v) not exist", mcpServerId)
+	}
+
 	for _, tool := range tools {
-		msMgr.mcpServers[mcpServerId].sseServer.UnregisterTool(tool)
-		msMgr.mcpServers[mcpServerId].streamableServer.UnregisterTool(tool)
+		server.sseServer.UnregisterTool(tool)
+		server.streamableServer.UnregisterTool(tool)
 	}
 	return nil
 }
 
-func ShutDownMCPServer(ctx context.Context, mcpServerId string) error {
-	if !CheckMCPServerExist(mcpServerId) {
-		return fmt.Errorf("mcp server doesn't exist")
+// --- mcp server handler ---
+
+func HandleSSE(mcpServerId string, resp http.ResponseWriter, req *http.Request) error {
+	server, ok := getMcpServer(mcpServerId)
+	if !ok {
+		return fmt.Errorf("mcp server(%v) not exist", mcpServerId)
 	}
-	msMgr.mu.Lock()
-	defer msMgr.mu.Unlock()
-	err := msMgr.mcpServers[mcpServerId].sseServer.Shutdown(ctx)
-	if err != nil {
-		return err
-	}
-	err = msMgr.mcpServers[mcpServerId].streamableServer.Shutdown(ctx)
-	if err != nil {
-		return err
-	}
-	delete(msMgr.mcpServers, mcpServerId)
+	server.sseHandler.HandleSSE().ServeHTTP(resp, req)
 	return nil
+}
+
+func HandleMessage(mcpServerId string, resp http.ResponseWriter, req *http.Request) error {
+	server, ok := getMcpServer(mcpServerId)
+	if !ok {
+		return fmt.Errorf("mcp server(%v) not exist", mcpServerId)
+	}
+	server.sseHandler.HandleMessage().ServeHTTP(resp, req)
+	return nil
+}
+
+func HandleStreamable(mcpServerId string, resp http.ResponseWriter, req *http.Request) error {
+	server, ok := getMcpServer(mcpServerId)
+	if !ok {
+		return fmt.Errorf("mcp server(%v) not exist", mcpServerId)
+	}
+	server.streamableHandler.HandleMCP().ServeHTTP(resp, req)
+	return nil
+}
+
+// --- internal ---
+
+func getMcpServer(mcpServerId string) (*mcpServer, bool) {
+	msMgr.mu.RLock()
+	defer msMgr.mu.RUnlock()
+	server, ok := msMgr.mcpServers[mcpServerId]
+	return server, ok
 }

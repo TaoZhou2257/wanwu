@@ -19,7 +19,7 @@ type Config struct {
 	Tools   []*ToolConfig `json:"tools" mapstructure:"tools"`
 	McpCfg  McpCfg        `json:"mcp" mapstructure:"mcp"`
 	ToolCfg ToolCfg       `json:"tool" mapstructure:"tool"`
-	App    App           `json:"app" mapstructure:"app"`
+	App     App           `json:"app" mapstructure:"app"`
 }
 
 type App struct {
