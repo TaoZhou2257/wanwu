@@ -20,6 +20,12 @@
               <img  class="logo" :src="require('@/assets/imgs/knowledgeIcon.png')" />
               <p :class="['smartDate']">{{n.docCount || 0}}个文档</p>
           </div>
+          <span class="tag-app tag-knowledge">{{n.share?'公开':'私密'}}</span>
+          <img
+            class="tag-img"
+            src="@/assets/imgs/rectangle.png"
+            alt=""
+          />
           <div class="info rl">
             <p class="name" :title="n.name">
               {{n.name}}
@@ -203,6 +209,9 @@ export default {
     }
     .tagList:hover{
         color:$color;
+    }
+    .tag-knowledge{
+      background:#826fff!important;
     }
   }
 }

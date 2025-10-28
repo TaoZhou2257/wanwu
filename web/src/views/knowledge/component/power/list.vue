@@ -43,7 +43,7 @@
           <template slot-scope="scope">
             <div class="action-buttons">
               <!-- 系统管理员权限：只显示转让按钮 -->
-              <template v-if="scope.row.permissionType === 30 && !scope.row.editing">
+              <template v-if="scope.row.transfer && !scope.row.editing">
                 <el-button
                   type="text"
                   size="small"

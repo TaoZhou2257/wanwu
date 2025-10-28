@@ -94,7 +94,11 @@ export default {
     showDialog() {
       this.currentView = "list";
       this.dialogVisible = true;
-      this.$refs.powerList.getUserPower()
+      this.$nextTick(() => {
+        if (this.$refs.powerList) {
+            this.$refs.powerList.getUserPower()
+        }
+    })
     },
     showCreate() {
       this.currentView = "create";
