@@ -6,6 +6,7 @@ import (
 	"io"
 
 	app_service "github.com/UnicomAI/wanwu/api/proto/app-service"
+	assistant_service "github.com/UnicomAI/wanwu/api/proto/assistant-service"
 	err_code "github.com/UnicomAI/wanwu/api/proto/err-code"
 	mcp_service "github.com/UnicomAI/wanwu/api/proto/mcp-service"
 	"github.com/UnicomAI/wanwu/internal/bff-service/model/request"
@@ -13,6 +14,7 @@ import (
 	mcp_util "github.com/UnicomAI/wanwu/internal/bff-service/pkg/mcp-util"
 	"github.com/UnicomAI/wanwu/pkg/constant"
 	grpc_util "github.com/UnicomAI/wanwu/pkg/grpc-util"
+	openapi3_util "github.com/UnicomAI/wanwu/pkg/openapi3-util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -107,7 +109,17 @@ func GetMCPServerDetail(ctx *gin.Context, mcpServerId string) (*response.MCPServ
 }
 
 func DeleteMCPServer(ctx *gin.Context, mcpServerId string) error {
-	_, err := app.DeleteApp(ctx.Request.Context(), &app_service.DeleteAppReq{
+	// 删除智能体表AssistantMCPServer相关记录
+	_, err := assistant.AssistantMCPDeleteByMCPId(ctx.Request.Context(), &assistant_service.AssistantMCPDeleteByMCPIdReq{
+		McpId:   mcpServerId,
+		McpType: constant.MCPTypeMCPServer,
+	})
+	if err != nil {
+		return err
+	}
+
+	// 删除MCPServer相关
+	_, err = app.DeleteApp(ctx.Request.Context(), &app_service.DeleteAppReq{
 		AppId:   mcpServerId,
 		AppType: constant.AppTypeMCPServer,
 	})
@@ -228,6 +240,39 @@ func CreateMCPServerOpenAPITool(ctx *gin.Context, userID, orgID string, req requ
 		schema: req.Schema,
 		auth:   req.ApiAuth,
 	}, req.MethodNames)
+}
+
+func GetMCPServerCustomToolSelect(ctx *gin.Context, userID, orgID, name string) (*response.ListResult, error) {
+	resp, err := mcp.GetCustomToolList(ctx.Request.Context(), &mcp_service.GetCustomToolListReq{
+		Identity: &mcp_service.Identity{
+			UserId: userID,
+			OrgId:  orgID,
+		},
+		Name: name,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var list []response.MCPServerCustomToolSelect
+	for _, item := range resp.List {
+		info, err := mcp.GetCustomToolInfo(ctx.Request.Context(), &mcp_service.GetCustomToolInfoReq{
+			CustomToolId: item.CustomToolId,
+		})
+		if err != nil {
+			return nil, err
+		}
+		doc, err := openapi3_util.LoadFromData(ctx.Request.Context(), []byte(info.Schema))
+		if err != nil {
+			return nil, grpc_util.ErrorStatus(err_code.Code_BFFInvalidArg, err.Error())
+		}
+		apis := openapiSchema2ToolList(doc)
+		toolList := toMCPServerCustomToolSelect(item, apis)
+		list = append(list, toolList...)
+	}
+	return &response.ListResult{
+		List:  list,
+		Total: int64(len(list)),
+	}, nil
 }
 
 func GetMCPServerSSE(ctx *gin.Context, mcpServerId string, key string) error {
@@ -382,4 +427,23 @@ func convertToolApiAuth(auth *mcp_service.ApiAuthWebRequest) *mcp_util.APIAuth {
 		}
 	}
 	return ret
+}
+
+func toMCPServerCustomToolSelect(item *mcp_service.GetCustomToolItem, apis []response.CustomToolActionInfo) []response.MCPServerCustomToolSelect {
+	var list []response.MCPServerCustomToolSelect
+	var methods []response.MCPServerCustomToolApi
+	for _, api := range apis {
+		methods = append(methods, response.MCPServerCustomToolApi{
+			MethodName:  api.Name,
+			Description: api.Desc,
+		})
+	}
+	list = append(list, response.MCPServerCustomToolSelect{
+		UniqueId:     constant.MCPServerToolTypeCustomTool + "-" + item.CustomToolId,
+		CustomToolId: item.CustomToolId,
+		Name:         item.Name,
+		Description:  item.Description,
+		Methods:      methods,
+	})
+	return list
 }

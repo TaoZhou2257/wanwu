@@ -36,6 +36,10 @@ func registerTool(apiV1 *gin.RouterGroup) {
 	mid.Sub("tool").Reg(apiV1, "/tool/action/list", http.MethodGet, v1.GetToolActionList, "智能体工具action下拉列表（自定义与内置）")
 	mid.Sub("tool").Reg(apiV1, "/tool/action/detail", http.MethodGet, v1.GetToolActionDetail, "智能体工具action详情（自定义与内置）")
 
+	// 自定义MCP与MCP Server
+	mid.Sub("tool").Reg(apiV1, "/mcp/select", http.MethodGet, v1.GetMCPSelect, "智能体mcp下拉列表")
+	mid.Sub("tool").Reg(apiV1, "/mcp/action/list", http.MethodGet, v1.GetMCPActionList, "获取MCP Tool列表")
+
 	// MCP Server
 	mid.Sub("tool").Reg(apiV1, "/mcp/server", http.MethodPost, v1.CreateMCPServer, "创建MCP服务")
 	mid.Sub("tool").Reg(apiV1, "/mcp/server", http.MethodGet, v1.GetMCPServer, "获取MCP服务详情")
@@ -46,4 +50,5 @@ func registerTool(apiV1 *gin.RouterGroup) {
 	mid.Sub("tool").Reg(apiV1, "/mcp/server/tool", http.MethodPut, v1.UpdateMCPServerTool, "更新MCP服务工具")
 	mid.Sub("tool").Reg(apiV1, "/mcp/server/tool", http.MethodDelete, v1.DeleteMCPServerTool, "删除MCP服务工具")
 	mid.Sub("tool").Reg(apiV1, "/mcp/server/tool/openapi", http.MethodPost, v1.CreateMCPServerOpenAPITool, "创建openapi工具")
+	mid.Sub("tool").Reg(apiV1, "/mcp/server/tool/custom/select", http.MethodGet, v1.GetMCPServerCustomToolSelect, "获取MCP服务自定义工具列表（用于下拉选择）")
 }

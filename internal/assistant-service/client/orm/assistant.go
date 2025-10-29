@@ -60,18 +60,22 @@ func (c *Client) DeleteAssistant(ctx context.Context, assistantID uint32) *err_c
 		if err := sqlopt.WithAssistantID(assistantID).Apply(tx).Delete(&model.AssistantMCP{}).Error; err != nil {
 			return toErrStatus("assistant_delete", err.Error())
 		}
-		if err := sqlopt.WithAssistantID(assistantID).Apply(tx).Delete(&model.AssistantCustom{}).Error; err != nil {
+		if err := sqlopt.WithAssistantID(assistantID).Apply(tx).Delete(&model.AssistantTool{}).Error; err != nil {
 			return toErrStatus("assistant_delete", err.Error())
 		}
 		return nil
 	})
 }
 
-func (c *Client) GetAssistant(ctx context.Context, assistantID uint32) (*model.Assistant, *err_code.Status) {
+func (c *Client) GetAssistant(ctx context.Context, assistantID uint32, userID, orgID string) (*model.Assistant, *err_code.Status) {
 	var assistant *model.Assistant
 	return assistant, c.transaction(ctx, func(tx *gorm.DB) *err_code.Status {
 		assistant = &model.Assistant{}
-		if err := sqlopt.WithID(assistantID).Apply(tx).First(assistant).Error; err != nil {
+		query := sqlopt.SQLOptions(
+			sqlopt.WithID(assistantID),
+			sqlopt.DataPerm(userID, orgID),
+		).Apply(tx)
+		if err := query.First(assistant).Error; err != nil {
 			return toErrStatus("assistant_get", err.Error())
 		}
 		return nil
@@ -92,7 +96,7 @@ func (c *Client) GetAssistantList(ctx context.Context, userID, orgID string, nam
 	var assistants []*model.Assistant
 	var count int64
 	return assistants, count, c.transaction(ctx, func(tx *gorm.DB) *err_code.Status {
-		query := sqlopt.DataPerm(tx.Model(&model.Assistant{}), userID, orgID)
+		query := sqlopt.DataPerm(userID, orgID).Apply(tx.Model(&model.Assistant{}))
 
 		if name != "" {
 			query = query.Where("name LIKE ?", "%"+name+"%")
@@ -138,7 +142,7 @@ func (c *Client) CheckSameAssistantName(ctx context.Context, userID, orgID, name
 	})
 }
 
-func (c *Client) CopyAssistant(ctx context.Context, assistant *model.Assistant, workflows []*model.AssistantWorkflow, mcps []*model.AssistantMCP, customTools []*model.AssistantCustom) (uint32, *err_code.Status) {
+func (c *Client) CopyAssistant(ctx context.Context, assistant *model.Assistant, workflows []*model.AssistantWorkflow, mcps []*model.AssistantMCP, customTools []*model.AssistantTool) (uint32, *err_code.Status) {
 	// 智能体名称前缀
 	prefix := assistant.Name + "_"
 
@@ -198,11 +202,11 @@ func (c *Client) CopyAssistant(ctx context.Context, assistant *model.Assistant, 
 		}
 
 		// 复制并保存新智能体自定义工具
-		for _, customTool := range customTools {
-			customTool.ID = 0
-			customTool.AssistantId = newAssistantId
-			if err = tx.Create(&customTool).Error; err != nil {
-				return toErrStatus("assistant_custom_tool_create", err.Error())
+		for _, tool := range customTools {
+			tool.ID = 0
+			tool.AssistantId = newAssistantId
+			if err = tx.Create(&tool).Error; err != nil {
+				return toErrStatus("assistant_tool_create", err.Error())
 			}
 		}
 		return nil
