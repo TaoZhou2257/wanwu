@@ -15,7 +15,7 @@ import (
 //	@Security		JWT
 //	@Accept			json
 //	@Produce		json
-//	@Param			data	body		request.KnowledgeOrgSelectReq	true	"知识库组织列表请求参数"
+//	@Param			data	query		request.KnowledgeOrgSelectReq	true	"知识库组织列表请求参数"
 //	@Success		200		{object}	response.Response{data=response.KnowOrgInfo}
 //	@Router			/knowledge/org [get]
 func SelectKnowledgeOrg(ctx *gin.Context) {
@@ -36,7 +36,7 @@ func SelectKnowledgeOrg(ctx *gin.Context) {
 //	@Security		JWT
 //	@Accept			json
 //	@Produce		json
-//	@Param			data	body		request.KnowledgeUserSelectReq	true	"知识库用户权限列表请求参数"
+//	@Param			data	query		request.KnowledgeUserSelectReq	true	"知识库用户权限列表请求参数"
 //	@Success		200		{object}	response.Response{data=response.KnowledgeUserPermissionResp}
 //	@Router			/knowledge/user [get]
 func SelectKnowledgeUserPermit(ctx *gin.Context) {
@@ -57,7 +57,7 @@ func SelectKnowledgeUserPermit(ctx *gin.Context) {
 //	@Security		JWT
 //	@Accept			json
 //	@Produce		json
-//	@Param			data	body		request.KnowledgeUserNoPermitSelectReq	true	"没有知识库用户列表请求参数"
+//	@Param			data	query		request.KnowledgeUserNoPermitSelectReq	true	"没有知识库用户列表请求参数"
 //	@Success		200		{object}	response.Response{data=response.KnowOrgUserInfoResp}
 //	@Router			/knowledge/user/no/permit [get]
 func SelectKnowledgeUserNoPermit(ctx *gin.Context) {

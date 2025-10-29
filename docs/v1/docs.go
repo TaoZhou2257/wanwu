@@ -3437,13 +3437,10 @@ const docTemplate = `{
                 "summary": "获取知识库异步上传任务提示",
                 "parameters": [
                     {
-                        "description": "获取知识库异步上传任务提示请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.QueryKnowledgeReq"
-                        }
+                        "type": "string",
+                        "name": "knowledgeId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3476,13 +3473,32 @@ const docTemplate = `{
                 "summary": "获取文档列表",
                 "parameters": [
                     {
-                        "description": "文档列表查询请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.DocListReq"
-                        }
+                        "type": "string",
+                        "name": "docName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "knowledgeId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前状态  -1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3725,13 +3741,16 @@ const docTemplate = `{
                 "summary": "获取子分段列表",
                 "parameters": [
                     {
-                        "description": "获取子分段列表查询请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.DocChildListReq"
-                        }
+                        "type": "string",
+                        "name": "contentId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "docId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3932,13 +3951,21 @@ const docTemplate = `{
                 "summary": "获取文档切分结果",
                 "parameters": [
                     {
-                        "description": "获取文档切分结果请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.DocSegmentListReq"
-                        }
+                        "type": "string",
+                        "name": "docId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4163,13 +4190,20 @@ const docTemplate = `{
                 "summary": "查询知识库关键词列表",
                 "parameters": [
                     {
-                        "description": "关键词列表查询请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.ListKeywordsReq"
-                        }
+                        "type": "string",
+                        "description": "用于搜索【问题中的关键词】/【文档中的词语】",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4313,13 +4347,9 @@ const docTemplate = `{
                 "summary": "查询知识库关键词详情",
                 "parameters": [
                     {
-                        "description": "关键词列表查询请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.GetKeywordsDetailReq"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4352,13 +4382,10 @@ const docTemplate = `{
                 "summary": "获取知识库元数据",
                 "parameters": [
                     {
-                        "description": "获取知识库元数据请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.GetKnowledgeMetaSelectReq"
-                        }
+                        "type": "string",
+                        "name": "knowledgeId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4493,13 +4520,11 @@ const docTemplate = `{
                 "summary": "知识库组织列表",
                 "parameters": [
                     {
-                        "description": "知识库组织列表请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.KnowledgeOrgSelectReq"
-                        }
+                        "type": "string",
+                        "description": "知识库id",
+                        "name": "knowledgeId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4595,12 +4620,9 @@ const docTemplate = `{
                 "summary": "查询知识库分隔符列表",
                 "parameters": [
                     {
-                        "description": "查询知识库分隔符列表参数",
-                        "name": "data",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/request.GetKnowledgeSplitterReq"
-                        }
+                        "type": "string",
+                        "name": "splitterName",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4756,13 +4778,14 @@ const docTemplate = `{
                 "summary": "查询知识库标签列表",
                 "parameters": [
                     {
-                        "description": "查询知识库请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.KnowledgeTagSelectReq"
-                        }
+                        "type": "string",
+                        "name": "knowledgeId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "tagName",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4969,13 +4992,10 @@ const docTemplate = `{
                 "summary": "查询标签绑定知识库数量",
                 "parameters": [
                     {
-                        "description": "查询tag绑定数量参数请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.TagBindCountReq"
-                        }
+                        "type": "string",
+                        "name": "tagId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5020,13 +5040,11 @@ const docTemplate = `{
                 "summary": "知识库用户权限列表",
                 "parameters": [
                     {
-                        "description": "知识库用户权限列表请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.KnowledgeUserSelectReq"
-                        }
+                        "type": "string",
+                        "description": "知识库id",
+                        "name": "knowledgeId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5227,13 +5245,24 @@ const docTemplate = `{
                 "summary": "没有知识库用户列表",
                 "parameters": [
                     {
-                        "description": "没有知识库用户列表请求参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.KnowledgeUserNoPermitSelectReq"
-                        }
+                        "type": "string",
+                        "description": "知识库id",
+                        "name": "knowledgeId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "选择组织id",
+                        "name": "orgId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否是转让列表",
+                        "name": "transfer",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -12146,21 +12175,6 @@ const docTemplate = `{
                 }
             }
         },
-        "request.DocChildListReq": {
-            "type": "object",
-            "required": [
-                "contentId",
-                "docId"
-            ],
-            "properties": {
-                "contentId": {
-                    "type": "string"
-                },
-                "docId": {
-                    "type": "string"
-                }
-            }
-        },
         "request.DocImportReq": {
             "type": "object",
             "required": [
@@ -12242,31 +12256,6 @@ const docTemplate = `{
                 "docUrl": {
                     "description": "文档url",
                     "type": "string"
-                }
-            }
-        },
-        "request.DocListReq": {
-            "type": "object",
-            "required": [
-                "knowledgeId",
-                "pageSize"
-            ],
-            "properties": {
-                "docName": {
-                    "type": "string"
-                },
-                "knowledgeId": {
-                    "type": "string"
-                },
-                "pageNo": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "当前状态  -1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败",
-                    "type": "integer"
                 }
             }
         },
@@ -12381,24 +12370,6 @@ const docTemplate = `{
                 }
             }
         },
-        "request.DocSegmentListReq": {
-            "type": "object",
-            "required": [
-                "docId",
-                "pageSize"
-            ],
-            "properties": {
-                "docId": {
-                    "type": "string"
-                },
-                "pageNo": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                }
-            }
-        },
         "request.EmbeddingModel": {
             "type": "object",
             "required": [
@@ -12423,33 +12394,6 @@ const docTemplate = `{
                 },
                 "appType": {
                     "description": "应用类型",
-                    "type": "string"
-                }
-            }
-        },
-        "request.GetKeywordsDetailReq": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "request.GetKnowledgeMetaSelectReq": {
-            "type": "object",
-            "required": [
-                "knowledgeId"
-            ],
-            "properties": {
-                "knowledgeId": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.GetKnowledgeSplitterReq": {
-            "type": "object",
-            "properties": {
-                "splitterName": {
                     "type": "string"
                 }
             }
@@ -12626,18 +12570,6 @@ const docTemplate = `{
                 }
             }
         },
-        "request.KnowledgeOrgSelectReq": {
-            "type": "object",
-            "required": [
-                "knowledgeId"
-            ],
-            "properties": {
-                "knowledgeId": {
-                    "description": "知识库id",
-                    "type": "string"
-                }
-            }
-        },
         "request.KnowledgeSelectReq": {
             "type": "object",
             "properties": {
@@ -12649,17 +12581,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "request.KnowledgeTagSelectReq": {
-            "type": "object",
-            "properties": {
-                "knowledgeId": {
-                    "type": "string"
-                },
-                "tagName": {
-                    "type": "string"
                 }
             }
         },
@@ -12733,19 +12654,20 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "knowledgeId",
-                "knowledgeUserList"
+                "knowledgeUser"
             ],
             "properties": {
                 "knowledgeId": {
                     "description": "知识库id",
                     "type": "string"
                 },
-                "knowledgeUserList": {
+                "knowledgeUser": {
                     "description": "知识库用户信息",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/request.KnowledgeUserInfo"
-                    }
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/request.KnowledgeUserInfo"
+                        }
+                    ]
                 }
             }
         },
@@ -12769,54 +12691,6 @@ const docTemplate = `{
                 },
                 "userId": {
                     "type": "string"
-                }
-            }
-        },
-        "request.KnowledgeUserNoPermitSelectReq": {
-            "type": "object",
-            "required": [
-                "knowledgeId",
-                "orgId"
-            ],
-            "properties": {
-                "knowledgeId": {
-                    "description": "知识库id",
-                    "type": "string"
-                },
-                "orgId": {
-                    "description": "选择组织id",
-                    "type": "string"
-                },
-                "transfer": {
-                    "description": "是否是转让列表",
-                    "type": "boolean"
-                }
-            }
-        },
-        "request.KnowledgeUserSelectReq": {
-            "type": "object",
-            "required": [
-                "knowledgeId"
-            ],
-            "properties": {
-                "knowledgeId": {
-                    "description": "知识库id",
-                    "type": "string"
-                }
-            }
-        },
-        "request.ListKeywordsReq": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "description": "用于搜索【问题中的关键词】/【文档中的词语】",
-                    "type": "string"
-                },
-                "pageNo": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
                 }
             }
         },
@@ -13317,17 +13191,6 @@ const docTemplate = `{
                 }
             }
         },
-        "request.QueryKnowledgeReq": {
-            "type": "object",
-            "required": [
-                "knowledgeId"
-            ],
-            "properties": {
-                "knowledgeId": {
-                    "type": "string"
-                }
-            }
-        },
         "request.RagBrief": {
             "type": "object",
             "required": [
@@ -13575,17 +13438,6 @@ const docTemplate = `{
                 },
                 "tableName": {
                     "description": "敏感词表名称(请求非必填)",
-                    "type": "string"
-                }
-            }
-        },
-        "request.TagBindCountReq": {
-            "type": "object",
-            "required": [
-                "tagId"
-            ],
-            "properties": {
-                "tagId": {
                     "type": "string"
                 }
             }
@@ -15556,6 +15408,10 @@ const docTemplate = `{
                     "description": "权限类型: -1 删除此用户权限；0: 查看权限; 10: 编辑权限; 20: 授权权限,数值不连续的原因防止后续有中间权限，目前逻辑 授权权限\u003e编辑权限\u003e查看权限",
                     "type": "integer"
                 },
+                "transfer": {
+                    "description": "是否显示转让按钮",
+                    "type": "boolean"
+                },
                 "userId": {
                     "type": "string"
                 },
@@ -17112,7 +16968,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/v1",
 	Schemes:          []string{},
 	Title:            "AI Agent Productivity Platform API",
-	Description:      "## HTTP Header\r\n| Header        | 说明      |\r\n| ------------- | --------- |\r\n| Authorization | JWT token |\r\n| X-Language    | 语言Code  |\r\n| X-Org-Id      | 组织ID    |\r\n| X-Client-Id   | 客户端标识|\r\n\r\n## HTTP Status\r\n| HTTP Status             | 说明                   |\r\n| ----------------------- | ---------------------- |\r\n| 200, StatusOK           | 请求返回成功           |\r\n| 400, StatusBadRequest   | 请求返回失败，用于业务 |\r\n| 401, StatusUnauthorized | JWT认证失败            |\r\n| 403, StatusForbidden    | 没有权限               |\r\n\r\n## 权限-菜单对应表\r\n| 一级权限        | 二级权限  | 三级权限 | 一级菜单 | 二级菜单 | 三级菜单 |\r\n|-------------|-------|------|------|------|------|\r\n| guest       |       |      | 【访客】 |      |      |\r\n| common      |       |      | 【通用】 |      |      |\r\n| permission  |       |      | 权限管理 |      |      |\r\n| permission  | user  |      | 权限管理 | 用户管理 |      |\r\n| permission  | org   |      | 权限管理 | 组织管理 |      |\r\n| permission  | role  |      | 权限管理 | 角色管理 |      |\r\n\r\n## `/v1/user/permission`返回用例\r\n```json\r\n{\r\n  \"code\": 0,\r\n  \"data\": {\r\n    \"orgPermission\": {\r\n      \"org\": {\"id\": \"test-org-id\", \"name\": \"test-org-name\"},\r\n      \"permissions\": [\r\n        {\"perm\": \"permission\"},\r\n        {\"perm\": \"permission.user\"},\r\n        {\"perm\": \"permission.org\"},\r\n        {\"perm\": \"permission.role\"}\r\n      ]\r\n    }\r\n  },\r\n  \"msg\": \"操作成功\"\r\n}\r\n```",
+	Description:      "## HTTP Header\n| Header        | 说明      |\n| ------------- | --------- |\n| Authorization | JWT token |\n| X-Language    | 语言Code  |\n| X-Org-Id      | 组织ID    |\n| X-Client-Id   | 客户端标识|\n\n## HTTP Status\n| HTTP Status             | 说明                   |\n| ----------------------- | ---------------------- |\n| 200, StatusOK           | 请求返回成功           |\n| 400, StatusBadRequest   | 请求返回失败，用于业务 |\n| 401, StatusUnauthorized | JWT认证失败            |\n| 403, StatusForbidden    | 没有权限               |\n\n## 权限-菜单对应表\n| 一级权限        | 二级权限  | 三级权限 | 一级菜单 | 二级菜单 | 三级菜单 |\n|-------------|-------|------|------|------|------|\n| guest       |       |      | 【访客】 |      |      |\n| common      |       |      | 【通用】 |      |      |\n| permission  |       |      | 权限管理 |      |      |\n| permission  | user  |      | 权限管理 | 用户管理 |      |\n| permission  | org   |      | 权限管理 | 组织管理 |      |\n| permission  | role  |      | 权限管理 | 角色管理 |      |\n\n## `/v1/user/permission`返回用例\n```json\n{\n  \"code\": 0,\n  \"data\": {\n    \"orgPermission\": {\n      \"org\": {\"id\": \"test-org-id\", \"name\": \"test-org-name\"},\n      \"permissions\": [\n        {\"perm\": \"permission\"},\n        {\"perm\": \"permission.user\"},\n        {\"perm\": \"permission.org\"},\n        {\"perm\": \"permission.role\"}\n      ]\n    }\n  },\n  \"msg\": \"操作成功\"\n}\n```",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -187,8 +187,8 @@ func ResponseDetail(ctx *gin.Context, httpStatus int, code codes.Code, data inte
 	ctx.JSON(httpStatus, resp)
 }
 
-// ResponseDirect 直接返回透传返回数据
-func ResponseDirect(ctx *gin.Context, httpStatus int, data []byte) {
+// ResponseRawByte 直接返回[]byte数据
+func ResponseRawByte(ctx *gin.Context, httpStatus int, data []byte) {
 	ctx.Set(STATUS, httpStatus)
 	ctx.Set(RESULT, string(data))
 	ctx.Data(httpStatus, "application/json; charset=utf-8", data)

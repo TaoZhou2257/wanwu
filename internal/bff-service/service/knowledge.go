@@ -1,11 +1,15 @@
 package service
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"time"
+
 	iam_service "github.com/UnicomAI/wanwu/api/proto/iam-service"
 	knowledgebase_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-service"
 	"github.com/UnicomAI/wanwu/internal/bff-service/config"
@@ -14,17 +18,9 @@ import (
 	http_client "github.com/UnicomAI/wanwu/pkg/http-client"
 	"github.com/UnicomAI/wanwu/pkg/log"
 	"github.com/gin-gonic/gin"
-	"io"
-	"net/http"
-	"time"
 )
 
-const (
-	InitialBufferSize = 64 * 1024        // 初始缓冲区大小：64KB
-	MaxBufferCapacity = 10 * 1024 * 1024 // 最大缓冲区容量：10MB
-)
-
-var httpClient = http_client.CreateDefault()
+var knowHttp = http_client.CreateDefault()
 
 // SelectKnowledgeList 查询知识库列表，主要根据userId 查询用户所有知识库
 func SelectKnowledgeList(ctx *gin.Context, userId, orgId string, req *request.KnowledgeSelectReq) (*response.KnowledgeListResp, error) {
@@ -279,16 +275,18 @@ func buildKnowledgeInfoList(ctx *gin.Context, knowledgeListResp *knowledgebase_s
 			CreateAt:         knowledge.CreatedAt,
 			PermissionType:   knowledge.PermissionType,
 			CreateUserId:     knowledge.CreateUserId,
-			Share:            share, //数量大于才是分享，因为权限记录中有一条是记录创建者权限
+			Share:            share, //数量大于1才是分享，因为权限记录中有一条是记录创建者权限
 		})
 	}
 	return &response.KnowledgeListResp{KnowledgeList: list}
 }
 
+//nolint:staticcheck
 func buildShareOrgName(share bool, orgName string) string {
 	if share {
-		if orgName == "--- 系统 ---" {
-			return "系统"
+		if strings.Contains(orgName, "---") {
+			// "--- 系统 ---" => "系统"
+			return strings.TrimSpace(strings.Trim(orgName, "---"))
 		}
 		return orgName
 	}
@@ -418,7 +416,7 @@ func requestRagSearchKnowledgeBase(ctx context.Context, req *request.RagSearchKn
 	if err != nil {
 		return response.CommonRagKnowledgeError(err)
 	}
-	result, err := httpClient.PostJsonOriResp(ctx, &http_client.HttpRequestParams{
+	result, err := knowHttp.PostJsonOriResp(ctx, &http_client.HttpRequestParams{
 		Url:        url,
 		Body:       paramsByte,
 		MonitorKey: "rag_search_knowledge_base",
@@ -435,7 +433,7 @@ func requestRagSearchKnowledgeBase(ctx context.Context, req *request.RagSearchKn
 }
 
 func requestRagKnowledgeStreamChat(ctx *gin.Context, req *request.RagKnowledgeChatReq) error {
-	params, err := buildHttpParams(req)
+	params, err := buildRagKnowledgeChatHttpParams(req)
 	if err != nil {
 		log.Errorf("build http params fail %s", err.Error())
 		return err
@@ -447,7 +445,7 @@ func requestRagKnowledgeStreamChat(ctx *gin.Context, req *request.RagKnowledgeCh
 		}
 	}()
 
-	resp, err := httpClient.PostJsonOriResp(ctx, params)
+	resp, err := knowHttp.PostJsonOriResp(ctx, params)
 	if err != nil {
 		errMsg := fmt.Sprintf("error: 调用下游服务异常: %v", err)
 		log.Errorf(errMsg)
@@ -472,50 +470,7 @@ func requestRagKnowledgeStreamChat(ctx *gin.Context, req *request.RagKnowledgeCh
 	return writeSSE(ctx, resp)
 }
 
-func writeSSE(ctx *gin.Context, resp *http.Response) error {
-	// 设置 SSE 响应头
-	setSSEHeaders(ctx)
-
-	// 使用固定缓冲区读取
-	buffer := make([]byte, 8192) // 8KB 缓冲区
-	reader := bufio.NewReader(resp.Body)
-
-	for {
-		select {
-		case <-ctx.Done():
-			// 客户端断开连接
-			return errors.New("ctx connect close")
-		default:
-			n, err := reader.Read(buffer)
-
-			if n > 0 {
-				if _, err := ctx.Writer.Write(buffer[:n]); err != nil {
-					// 客户端可能已断开
-					return err
-				}
-				ctx.Writer.Flush()
-			}
-
-			if err != nil {
-				if err == io.EOF {
-					return nil // 正常结束
-				}
-				log.Errorf("读取错误writeSSE: %v", err)
-				return err
-			}
-		}
-	}
-}
-
-func setSSEHeaders(c *gin.Context) {
-	c.Header("Content-Type", "text/event-stream")
-	c.Header("Cache-Control", "no-cache")
-	c.Header("Connection", "keep-alive")
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("X-Accel-Buffering", "no") // 针对 Nginx 代理
-}
-
-func buildHttpParams(req *request.RagKnowledgeChatReq) (*http_client.HttpRequestParams, error) {
+func buildRagKnowledgeChatHttpParams(req *request.RagKnowledgeChatReq) (*http_client.HttpRequestParams, error) {
 	url := fmt.Sprintf("%s%s", config.Cfg().RagKnowledgeConfig.ChatEndpoint, config.Cfg().RagKnowledgeConfig.KnowledgeChatUri)
 	body, err := json.Marshal(req)
 	if err != nil {

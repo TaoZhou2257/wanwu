@@ -305,7 +305,7 @@ func SearchKnowledgeBase(ctx *gin.Context) {
 		return
 	}
 	resp, httpStatus := service.RagSearchKnowledgeBase(ctx, &req)
-	gin_util.ResponseDirect(ctx, httpStatus, resp)
+	gin_util.ResponseRawByte(ctx, httpStatus, resp)
 }
 
 // KnowledgeStreamSearch
@@ -328,7 +328,7 @@ func KnowledgeStreamSearch(ctx *gin.Context) {
 	err := service.KnowledgeStreamSearch(ctx, &req)
 	if err != nil {
 		resp, httpStatus := response.CommonRagKnowledgeError(err)
-		gin_util.ResponseDirect(ctx, httpStatus, resp)
+		gin_util.ResponseRawByte(ctx, httpStatus, resp)
 		return
 	}
 }

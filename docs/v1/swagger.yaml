@@ -1730,16 +1730,6 @@ definitions:
     required:
     - tableId
     type: object
-  request.DocChildListReq:
-    properties:
-      contentId:
-        type: string
-      docId:
-        type: string
-    required:
-    - contentId
-    - docId
-    type: object
   request.DocImportReq:
     properties:
       docAnalyzer:
@@ -1798,23 +1788,6 @@ definitions:
       docUrl:
         description: 文档url
         type: string
-    type: object
-  request.DocListReq:
-    properties:
-      docName:
-        type: string
-      knowledgeId:
-        type: string
-      pageNo:
-        type: integer
-      pageSize:
-        type: integer
-      status:
-        description: 当前状态  -1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败
-        type: integer
-    required:
-    - knowledgeId
-    - pageSize
     type: object
   request.DocMetaData:
     properties:
@@ -1895,18 +1868,6 @@ definitions:
     - docId
     - labels
     type: object
-  request.DocSegmentListReq:
-    properties:
-      docId:
-        type: string
-      pageNo:
-        type: integer
-      pageSize:
-        type: integer
-    required:
-    - docId
-    - pageSize
-    type: object
   request.EmbeddingModel:
     properties:
       modelId:
@@ -1925,23 +1886,6 @@ definitions:
     required:
     - appId
     - appType
-    type: object
-  request.GetKeywordsDetailReq:
-    properties:
-      id:
-        type: integer
-    type: object
-  request.GetKnowledgeMetaSelectReq:
-    properties:
-      knowledgeId:
-        type: string
-    required:
-    - knowledgeId
-    type: object
-  request.GetKnowledgeSplitterReq:
-    properties:
-      splitterName:
-        type: string
     type: object
   request.GetModelRequest:
     properties:
@@ -2061,14 +2005,6 @@ definitions:
     - docIdList
     - knowledgeId
     type: object
-  request.KnowledgeOrgSelectReq:
-    properties:
-      knowledgeId:
-        description: 知识库id
-        type: string
-    required:
-    - knowledgeId
-    type: object
   request.KnowledgeSelectReq:
     properties:
       name:
@@ -2077,13 +2013,6 @@ definitions:
         items:
           type: string
         type: array
-    type: object
-  request.KnowledgeTagSelectReq:
-    properties:
-      knowledgeId:
-        type: string
-      tagName:
-        type: string
     type: object
   request.KnowledgeTransferUserAdminReq:
     properties:
@@ -2135,14 +2064,13 @@ definitions:
       knowledgeId:
         description: 知识库id
         type: string
-      knowledgeUserList:
+      knowledgeUser:
+        allOf:
+        - $ref: '#/definitions/request.KnowledgeUserInfo'
         description: 知识库用户信息
-        items:
-          $ref: '#/definitions/request.KnowledgeUserInfo'
-        type: array
     required:
     - knowledgeId
-    - knowledgeUserList
+    - knowledgeUser
     type: object
   request.KnowledgeUserInfo:
     properties:
@@ -2160,39 +2088,6 @@ definitions:
     required:
     - orgId
     - userId
-    type: object
-  request.KnowledgeUserNoPermitSelectReq:
-    properties:
-      knowledgeId:
-        description: 知识库id
-        type: string
-      orgId:
-        description: 选择组织id
-        type: string
-      transfer:
-        description: 是否是转让列表
-        type: boolean
-    required:
-    - knowledgeId
-    - orgId
-    type: object
-  request.KnowledgeUserSelectReq:
-    properties:
-      knowledgeId:
-        description: 知识库id
-        type: string
-    required:
-    - knowledgeId
-    type: object
-  request.ListKeywordsReq:
-    properties:
-      name:
-        description: 用于搜索【问题中的关键词】/【文档中的词语】
-        type: string
-      pageNo:
-        type: integer
-      pageSize:
-        type: integer
     type: object
   request.Login:
     properties:
@@ -2541,13 +2436,6 @@ definitions:
         description: 发布类型(public:系统公开发布,organization:组织公开发布,private:私密发布)
         type: string
     type: object
-  request.QueryKnowledgeReq:
-    properties:
-      knowledgeId:
-        type: string
-    required:
-    - knowledgeId
-    type: object
   request.RagBrief:
     properties:
       avatar:
@@ -2714,13 +2602,6 @@ definitions:
         type: string
     required:
     - tableId
-    type: object
-  request.TagBindCountReq:
-    properties:
-      tagId:
-        type: string
-    required:
-    - tagId
     type: object
   request.ToolSquareAPIKeyReq:
     properties:
@@ -4048,6 +3929,9 @@ definitions:
         description: '权限类型: -1 删除此用户权限；0: 查看权限; 10: 编辑权限; 20: 授权权限,数值不连续的原因防止后续有中间权限，目前逻辑
           授权权限>编辑权限>查看权限'
         type: integer
+      transfer:
+        description: 是否显示转让按钮
+        type: boolean
       userId:
         type: string
       userName:
@@ -5067,24 +4951,51 @@ definitions:
     type: object
 info:
   contact: {}
-  description: "## HTTP Header\r\n| Header        | 说明      |\r\n| ------------- |
-    --------- |\r\n| Authorization | JWT token |\r\n| X-Language    | 语言Code  |\r\n|
-    X-Org-Id      | 组织ID    |\r\n| X-Client-Id   | 客户端标识|\r\n\r\n## HTTP Status\r\n|
-    HTTP Status             | 说明                   |\r\n| -----------------------
-    | ---------------------- |\r\n| 200, StatusOK           | 请求返回成功           |\r\n|
-    400, StatusBadRequest   | 请求返回失败，用于业务 |\r\n| 401, StatusUnauthorized | JWT认证失败
-    \           |\r\n| 403, StatusForbidden    | 没有权限               |\r\n\r\n## 权限-菜单对应表\r\n|
-    一级权限        | 二级权限  | 三级权限 | 一级菜单 | 二级菜单 | 三级菜单 |\r\n|-------------|-------|------|------|------|------|\r\n|
-    guest       |       |      | 【访客】 |      |      |\r\n| common      |       |      |
-    【通用】 |      |      |\r\n| permission  |       |      | 权限管理 |      |      |\r\n|
-    permission  | user  |      | 权限管理 | 用户管理 |      |\r\n| permission  | org   |      |
-    权限管理 | 组织管理 |      |\r\n| permission  | role  |      | 权限管理 | 角色管理 |      |\r\n\r\n##
-    `/v1/user/permission`返回用例\r\n```json\r\n{\r\n  \"code\": 0,\r\n  \"data\": {\r\n
-    \   \"orgPermission\": {\r\n      \"org\": {\"id\": \"test-org-id\", \"name\":
-    \"test-org-name\"},\r\n      \"permissions\": [\r\n        {\"perm\": \"permission\"},\r\n
-    \       {\"perm\": \"permission.user\"},\r\n        {\"perm\": \"permission.org\"},\r\n
-    \       {\"perm\": \"permission.role\"}\r\n      ]\r\n    }\r\n  },\r\n  \"msg\":
-    \"操作成功\"\r\n}\r\n```"
+  description: |-
+    ## HTTP Header
+    | Header        | 说明      |
+    | ------------- | --------- |
+    | Authorization | JWT token |
+    | X-Language    | 语言Code  |
+    | X-Org-Id      | 组织ID    |
+    | X-Client-Id   | 客户端标识|
+
+    ## HTTP Status
+    | HTTP Status             | 说明                   |
+    | ----------------------- | ---------------------- |
+    | 200, StatusOK           | 请求返回成功           |
+    | 400, StatusBadRequest   | 请求返回失败，用于业务 |
+    | 401, StatusUnauthorized | JWT认证失败            |
+    | 403, StatusForbidden    | 没有权限               |
+
+    ## 权限-菜单对应表
+    | 一级权限        | 二级权限  | 三级权限 | 一级菜单 | 二级菜单 | 三级菜单 |
+    |-------------|-------|------|------|------|------|
+    | guest       |       |      | 【访客】 |      |      |
+    | common      |       |      | 【通用】 |      |      |
+    | permission  |       |      | 权限管理 |      |      |
+    | permission  | user  |      | 权限管理 | 用户管理 |      |
+    | permission  | org   |      | 权限管理 | 组织管理 |      |
+    | permission  | role  |      | 权限管理 | 角色管理 |      |
+
+    ## `/v1/user/permission`返回用例
+    ```json
+    {
+      "code": 0,
+      "data": {
+        "orgPermission": {
+          "org": {"id": "test-org-id", "name": "test-org-name"},
+          "permissions": [
+            {"perm": "permission"},
+            {"perm": "permission.user"},
+            {"perm": "permission.org"},
+            {"perm": "permission.role"}
+          ]
+        }
+      },
+      "msg": "操作成功"
+    }
+    ```
   title: AI Agent Productivity Platform API
   version: v0.0.1
 paths:
@@ -7104,12 +7015,10 @@ paths:
       - application/json
       description: 获取知识库异步上传任务提示：有正在执行的异步上传任务/最近一次上传任务的失败信息
       parameters:
-      - description: 获取知识库异步上传任务提示请求参数
-        in: body
-        name: data
+      - in: query
+        name: knowledgeId
         required: true
-        schema:
-          $ref: '#/definitions/request.QueryKnowledgeReq'
+        type: string
       produces:
       - application/json
       responses:
@@ -7128,12 +7037,24 @@ paths:
       - application/json
       description: 获取知识库文档列表，不展示状态为无效（-1）的文档数据
       parameters:
-      - description: 文档列表查询请求参数
-        in: body
-        name: data
+      - in: query
+        name: docName
+        type: string
+      - in: query
+        name: knowledgeId
         required: true
-        schema:
-          $ref: '#/definitions/request.DocListReq'
+        type: string
+      - in: query
+        name: pageNo
+        type: integer
+      - in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 当前状态  -1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败
+        in: query
+        name: status
+        type: integer
       produces:
       - application/json
       responses:
@@ -7279,12 +7200,14 @@ paths:
       - application/json
       description: 获取子分段列表
       parameters:
-      - description: 获取子分段列表查询请求参数
-        in: body
-        name: data
+      - in: query
+        name: contentId
         required: true
-        schema:
-          $ref: '#/definitions/request.DocChildListReq'
+        type: string
+      - in: query
+        name: docId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -7404,12 +7327,17 @@ paths:
       - application/json
       description: 获取文档切分结果
       parameters:
-      - description: 获取文档切分结果请求参数
-        in: body
-        name: data
+      - in: query
+        name: docId
         required: true
-        schema:
-          $ref: '#/definitions/request.DocSegmentListReq'
+        type: string
+      - in: query
+        name: pageNo
+        type: integer
+      - in: query
+        name: pageSize
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -7562,12 +7490,16 @@ paths:
       - application/json
       description: 查询知识库关键词列表
       parameters:
-      - description: 关键词列表查询请求参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.ListKeywordsReq'
+      - description: 用于搜索【问题中的关键词】/【文档中的词语】
+        in: query
+        name: name
+        type: string
+      - in: query
+        name: pageNo
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
@@ -7632,12 +7564,9 @@ paths:
       - application/json
       description: 查询知识库关键词详情
       parameters:
-      - description: 关键词列表查询请求参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.GetKeywordsDetailReq'
+      - in: query
+        name: id
+        type: integer
       produces:
       - application/json
       responses:
@@ -7656,12 +7585,10 @@ paths:
       - application/json
       description: 获取知识库元数据
       parameters:
-      - description: 获取知识库元数据请求参数
-        in: body
-        name: data
+      - in: query
+        name: knowledgeId
         required: true
-        schema:
-          $ref: '#/definitions/request.GetKnowledgeMetaSelectReq'
+        type: string
       produces:
       - application/json
       responses:
@@ -7738,12 +7665,11 @@ paths:
       - application/json
       description: 知识库组织列表
       parameters:
-      - description: 知识库组织列表请求参数
-        in: body
-        name: data
+      - description: 知识库id
+        in: query
+        name: knowledgeId
         required: true
-        schema:
-          $ref: '#/definitions/request.KnowledgeOrgSelectReq'
+        type: string
       produces:
       - application/json
       responses:
@@ -7819,11 +7745,9 @@ paths:
       - application/json
       description: 查询知识库分隔符列表
       parameters:
-      - description: 查询知识库分隔符列表参数
-        in: body
-        name: data
-        schema:
-          $ref: '#/definitions/request.GetKnowledgeSplitterReq'
+      - in: query
+        name: splitterName
+        type: string
       produces:
       - application/json
       responses:
@@ -7916,12 +7840,12 @@ paths:
       - application/json
       description: 查询知识库标签列表
       parameters:
-      - description: 查询知识库请求参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.KnowledgeTagSelectReq'
+      - in: query
+        name: knowledgeId
+        type: string
+      - in: query
+        name: tagName
+        type: string
       produces:
       - application/json
       responses:
@@ -8020,12 +7944,10 @@ paths:
       - application/json
       description: 查询标签绑定知识库数量
       parameters:
-      - description: 查询tag绑定数量参数请求参数
-        in: body
-        name: data
+      - in: query
+        name: tagId
         required: true
-        schema:
-          $ref: '#/definitions/request.TagBindCountReq'
+        type: string
       produces:
       - application/json
       responses:
@@ -8049,12 +7971,11 @@ paths:
       - application/json
       description: 知识库用户权限列表
       parameters:
-      - description: 知识库用户权限列表请求参数
-        in: body
-        name: data
+      - description: 知识库id
+        in: query
+        name: knowledgeId
         required: true
-        schema:
-          $ref: '#/definitions/request.KnowledgeUserSelectReq'
+        type: string
       produces:
       - application/json
       responses:
@@ -8174,12 +8095,20 @@ paths:
       - application/json
       description: 没有知识库用户列表
       parameters:
-      - description: 没有知识库用户列表请求参数
-        in: body
-        name: data
+      - description: 知识库id
+        in: query
+        name: knowledgeId
         required: true
-        schema:
-          $ref: '#/definitions/request.KnowledgeUserNoPermitSelectReq'
+        type: string
+      - description: 选择组织id
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: 是否是转让列表
+        in: query
+        name: transfer
+        type: boolean
       produces:
       - application/json
       responses:

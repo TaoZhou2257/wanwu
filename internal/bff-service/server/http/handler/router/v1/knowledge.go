@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"github.com/UnicomAI/wanwu/internal/bff-service/server/http/middleware"
 	"net/http"
 
 	v1 "github.com/UnicomAI/wanwu/internal/bff-service/server/http/handler/v1"
+	"github.com/UnicomAI/wanwu/internal/bff-service/server/http/middleware"
 	mid "github.com/UnicomAI/wanwu/pkg/gin-util/mid-wrap"
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func registerKnowledge(apiV1 *gin.RouterGroup) {
 	mid.Sub("knowledge").Reg(apiV1, "/knowledge/doc/list", http.MethodGet, v1.GetDocList, "获取文档列表", middleware.AuthKnowledge("knowledgeId", middleware.KnowledgeView))
 	mid.Sub("knowledge").Reg(apiV1, "/knowledge/doc/import", http.MethodPost, v1.ImportDoc, "上传文档", middleware.AuthKnowledge("knowledgeId", middleware.KnowledgeEdit))
 	mid.Sub("knowledge").Reg(apiV1, "/knowledge/doc/import/tip", http.MethodGet, v1.GetDocImportTip, "获取知识库文档上传状态", middleware.AuthKnowledge("knowledgeId", middleware.KnowledgeView))
-	//通用校验不好做改内部校验
+	// 知识库文档，以下通用校验不好做改内部校验
 	mid.Sub("knowledge").Reg(apiV1, "/knowledge/doc", http.MethodDelete, v1.DeleteDoc, "删除文档", middleware.AuthKnowledge("knowledgeId", middleware.KnowledgeEdit))
 	mid.Sub("knowledge").Reg(apiV1, "/knowledge/doc/meta", http.MethodPost, v1.UpdateDocMetaData, "更新文档元数据", middleware.AuthKnowledgeIfHas("knowledgeId", middleware.KnowledgeEdit))
 	mid.Sub("knowledge").Reg(apiV1, "/knowledge/doc/meta/batch", http.MethodPost, v1.BatchUpdateDocMetaData, "批量更新文档元数据", middleware.AuthKnowledgeIfHas("knowledgeId", middleware.KnowledgeEdit))
