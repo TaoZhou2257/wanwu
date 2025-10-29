@@ -53,18 +53,3 @@ type WorkflowTemplateOverviewItem struct {
 type WorkflowTemplateTrends struct {
 	Browse StatisticChart `json:"browse"` // 工作流模板浏览数据趋势
 }
-
-type StatisticChart struct {
-	TableName string               `json:"tableName"` // 统计表名字
-	Lines     []StatisticChartLine `json:"lines"`     // 统计表中线段集合
-}
-
-type StatisticChartLine struct {
-	LineName string                   `json:"lineName"` // 线段名字
-	Items    []StatisticChartLineItem `json:"items"`    // 线段横纵坐标值
-}
-
-type StatisticChartLineItem struct {
-	Key   string  `json:"key"`
-	Value float32 `json:"value"`
-}

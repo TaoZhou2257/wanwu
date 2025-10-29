@@ -99,8 +99,8 @@ message ClientOverviewItem {
 }
 
 message ClientOverViewInfo{
-    ClientOverviewItem activeClient = 1; // 活跃
-    ClientOverviewItem newClient = 2; // 新增
+    ClientOverviewItem activeClient = 1;   // 活跃
+    ClientOverviewItem additionClient = 2; // 新增
 }
 
 message ClientTrendInfo{

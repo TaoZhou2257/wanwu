@@ -3230,10 +3230,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/response.ClientOverviewItem'
         description: 新增客户端
-      totalClient:
-        allOf:
-        - $ref: '#/definitions/response.ClientOverviewItem'
-        description: 累计客户端
     type: object
   response.ClientOverviewItem:
     properties:

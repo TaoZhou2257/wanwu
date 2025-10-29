@@ -3,6 +3,7 @@ package operate
 import (
 	"context"
 
+	"github.com/UnicomAI/wanwu/api/proto/common"
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
 	operate_service "github.com/UnicomAI/wanwu/api/proto/operate-service"
 	"github.com/UnicomAI/wanwu/internal/operate-service/client/orm"
@@ -34,26 +35,42 @@ func (s *Service) GetClientTrend(ctx context.Context, req *operate_service.GetCl
 	}, nil
 }
 
-func (s *Service) GetCumulativeClientOverview(ctx context.Context, req *operate_service.GetCumulativeClientOverviewReq) (*operate_service.ClientOverViewInfo, error) {
-	stats, err := s.cli.GetCumulativeClientOverview(ctx, req.EndAt)
+func (s *Service) GetCumulativeClient(ctx context.Context, req *operate_service.GetCumulativeClientReq) (*operate_service.GetCumulativeClientResp, error) {
+	total, err := s.cli.GetCumulativeClient(ctx, req.EndAt)
 	if err != nil {
 		return nil, errStatus(errs.Code_OperateRecord, err)
 	}
-	return toCumulativeClientOverviewInfo(stats), nil
+	return &operate_service.GetCumulativeClientResp{Total: total}, nil
 }
 
-func convertStatisticChart(trend *orm.ClientTrends) *operate_service.StatisticChart {
-	pbChart := &operate_service.StatisticChart{
+// --- internal ---
+
+func toClientOverviewInfo(stats *orm.ClientOverView) *operate_service.ClientOverViewInfo {
+	ret := &operate_service.ClientOverViewInfo{
+		ActiveClient: &operate_service.ClientOverviewItem{
+			Value:            stats.ActiveClient.Value,
+			PeriodOverperiod: stats.ActiveClient.PeriodOverPeriod,
+		},
+		NewClient: &operate_service.ClientOverviewItem{
+			Value:            stats.NewClient.Value,
+			PeriodOverperiod: stats.NewClient.PeriodOverPeriod,
+		},
+	}
+	return ret
+}
+
+func convertStatisticChart(trend *orm.ClientTrends) *common.StatisticChart {
+	pbChart := &common.StatisticChart{
 		TableName:  trend.Client.TableName,
-		ChartLines: make([]*operate_service.StatisticChartLine, 0, len(trend.Client.Lines)),
+		ChartLines: make([]*common.StatisticChartLine, 0, len(trend.Client.Lines)),
 	}
 	for _, respLine := range trend.Client.Lines {
-		pbLine := &operate_service.StatisticChartLine{
+		pbLine := &common.StatisticChartLine{
 			LineName: respLine.LineName,
-			Items:    make([]*operate_service.StatisticChartLineItem, 0, len(respLine.Items)),
+			Items:    make([]*common.StatisticChartLineItem, 0, len(respLine.Items)),
 		}
 		for _, respItem := range respLine.Items {
-			pbLine.Items = append(pbLine.Items, &operate_service.StatisticChartLineItem{
+			pbLine.Items = append(pbLine.Items, &common.StatisticChartLineItem{
 				Key:   respItem.Key,
 				Value: respItem.Value,
 			})
@@ -61,28 +78,4 @@ func convertStatisticChart(trend *orm.ClientTrends) *operate_service.StatisticCh
 		pbChart.ChartLines = append(pbChart.ChartLines, pbLine)
 	}
 	return pbChart
-}
-
-// --- internal ---
-func toClientOverviewInfo(stats *orm.ClientOverView) *operate_service.ClientOverViewInfo {
-	ret := &operate_service.ClientOverViewInfo{
-		ActiveClient: &operate_service.ClientOverviewItem{
-			Value:            stats.ActiveClient.Value,
-			PeriodOverperiod: stats.ActiveClient.PeriodOverPeriod,
-		},
-		AdditionClient: &operate_service.ClientOverviewItem{
-			Value:            stats.AdditionClient.Value,
-			PeriodOverperiod: stats.AdditionClient.PeriodOverPeriod,
-		},
-	}
-	return ret
-}
-
-func toCumulativeClientOverviewInfo(stats *orm.ClientOverView) *operate_service.ClientOverViewInfo {
-	ret := &operate_service.ClientOverViewInfo{
-		TotalClient: &operate_service.ClientOverviewItem{
-			Value: stats.TotalClient.Value,
-		},
-	}
-	return ret
 }

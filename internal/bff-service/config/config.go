@@ -16,33 +16,33 @@ var (
 )
 
 type Config struct {
-	Server            ServerConfig            `json:"server" mapstructure:"server"`
-	Log               LogConfig               `json:"log" mapstructure:"log"`
-	JWT               JWTConfig               `json:"jwt" mapstructure:"jwt"`
-	Decrypt           DecryptPasswd           `json:"decrypt-passwd" mapstructure:"decrypt-passwd"`
-	I18n              i18n.Config             `json:"i18n" mapstructure:"i18n"`
-	AssistantTemplate AssistantTemplateConfig `json:"assistant-template" mapstructure:"assistant-template"`
-	CustomInfo        CustomInfoConfig        `json:"custom-info" mapstructure:"custom-info"`
-	DocCenter         DocCenterConfig         `json:"doc-center" mapstructure:"doc-center"`
-	DefaultIcon       DefaultIconConfig       `json:"default-icon" mapstructure:"default-icon"`
+	Server                 ServerConfig               `json:"server" mapstructure:"server"`
+	Log                    LogConfig                  `json:"log" mapstructure:"log"`
+	JWT                    JWTConfig                  `json:"jwt" mapstructure:"jwt"`
+	Decrypt                DecryptPasswd              `json:"decrypt-passwd" mapstructure:"decrypt-passwd"`
+	I18n                   i18n.Config                `json:"i18n" mapstructure:"i18n"`
+	AssistantTemplate      AssistantTemplateConfig    `json:"assistant-template" mapstructure:"assistant-template"`
+	CustomInfo             CustomInfoConfig           `json:"custom-info" mapstructure:"custom-info"`
+	DocCenter              DocCenterConfig            `json:"doc-center" mapstructure:"doc-center"`
+	DefaultIcon            DefaultIconConfig          `json:"default-icon" mapstructure:"default-icon"`
+	WorkflowTemplatePath   WorkflowTemplatePathConfig `json:"workflow-template" mapstructure:"workflow-template"`
+	WorkflowTemplateConfig []*WorkflowTempConfig      `json:"workflows" mapstructure:"workflows"`
 	// middleware
 	Minio minio.Config `json:"minio" mapstructure:"minio"`
 	Redis redis.Config `json:"redis" mapstructure:"redis"`
 	// microservice
-	Iam                    ServiceConfig                   `json:"iam" mapstructure:"iam"`
-	Model                  ModelConfig                     `json:"model" mapstructure:"model"`
-	MCP                    ServiceConfig                   `json:"mcp" mapstructure:"mcp"`
-	App                    ServiceConfig                   `json:"app" mapstructure:"app"`
-	Knowledge              ServiceConfig                   `json:"knowledge" mapstructure:"knowledge"`
-	Rag                    ServiceConfig                   `json:"rag" mapstructure:"rag"`
-	Assistant              ServiceConfig                   `json:"assistant" mapstructure:"assistant"`
-	Operate                ServiceConfig                   `json:"operate" mapstructure:"operate"`
-	Agent                  AgentServiceConfig              `json:"agent" mapstructure:"agent"`
-	WorkflowTemplatePath   WorkflowTemplatePathConfig      `json:"workflow-template" mapstructure:"workflow-template"`
-	Workflow               WorkflowServiceConfig           `json:"workflow" mapstructure:"workflow"`
-	WorkflowTemplateConfig []*WorkflowTempConfig           `json:"workflows" mapstructure:"workflows"`
-	AgentScopeWorkFlow     AgentScopeWorkFlowServiceConfig `json:"agentscope-workflow" mapstructure:"agentscope-workflow"`
-	RagKnowledgeConfig     RagKnowledgeConfig              `json:"rag-knowledge" mapstructure:"rag-knowledge"`
+	Iam                ServiceConfig                   `json:"iam" mapstructure:"iam"`
+	Model              ModelConfig                     `json:"model" mapstructure:"model"`
+	MCP                ServiceConfig                   `json:"mcp" mapstructure:"mcp"`
+	App                ServiceConfig                   `json:"app" mapstructure:"app"`
+	Knowledge          ServiceConfig                   `json:"knowledge" mapstructure:"knowledge"`
+	Rag                ServiceConfig                   `json:"rag" mapstructure:"rag"`
+	Assistant          ServiceConfig                   `json:"assistant" mapstructure:"assistant"`
+	Operate            ServiceConfig                   `json:"operate" mapstructure:"operate"`
+	Agent              AgentServiceConfig              `json:"agent" mapstructure:"agent"`
+	Workflow           WorkflowServiceConfig           `json:"workflow" mapstructure:"workflow"`
+	AgentScopeWorkFlow AgentScopeWorkFlowServiceConfig `json:"agentscope-workflow" mapstructure:"agentscope-workflow"`
+	RagKnowledgeConfig RagKnowledgeConfig              `json:"rag-knowledge" mapstructure:"rag-knowledge"`
 }
 
 type ServerConfig struct {
@@ -87,12 +87,15 @@ type RagKnowledgeConfig struct {
 }
 
 type WorkflowTemplatePathConfig struct {
-	ConfigPath   string `json:"configPath" mapstructure:"configPath"`
+	ServerMode string `json:"server_mode" mapstructure:"server_mode"`
+	ConfigPath string `json:"configPath" mapstructure:"configPath"`
+
+	GlobalWebListUrl string `json:"global_web_list_url" mapstructure:"global_web_list_url"`
+
 	ListUrl      string `json:"server_url" mapstructure:"server_url"`
 	DownloadUrl  string `json:"download_url" mapstructure:"download_url"`
 	DetailUrl    string `json:"detail_url" mapstructure:"detail_url"`
 	RecommendUrl string `json:"recommend_url" mapstructure:"recommend_url"`
-	ServerMode   string `json:"server_mode" mapstructure:"server_mode"`
 }
 
 type WorkflowServiceConfig struct {

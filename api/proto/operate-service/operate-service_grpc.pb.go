@@ -20,14 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OperateService_CreateSystemCustomTab_FullMethodName       = "/operate_service.OperateService/CreateSystemCustomTab"
-	OperateService_CreateSystemCustomLogin_FullMethodName     = "/operate_service.OperateService/CreateSystemCustomLogin"
-	OperateService_CreateSystemCustomHome_FullMethodName      = "/operate_service.OperateService/CreateSystemCustomHome"
-	OperateService_GetSystemCustom_FullMethodName             = "/operate_service.OperateService/GetSystemCustom"
-	OperateService_AddClientRecord_FullMethodName             = "/operate_service.OperateService/AddClientRecord"
-	OperateService_GetClientOverview_FullMethodName           = "/operate_service.OperateService/GetClientOverview"
-	OperateService_GetClientTrend_FullMethodName              = "/operate_service.OperateService/GetClientTrend"
-	OperateService_GetCumulativeClientOverview_FullMethodName = "/operate_service.OperateService/GetCumulativeClientOverview"
+	OperateService_CreateSystemCustomTab_FullMethodName   = "/operate_service.OperateService/CreateSystemCustomTab"
+	OperateService_CreateSystemCustomLogin_FullMethodName = "/operate_service.OperateService/CreateSystemCustomLogin"
+	OperateService_CreateSystemCustomHome_FullMethodName  = "/operate_service.OperateService/CreateSystemCustomHome"
+	OperateService_GetSystemCustom_FullMethodName         = "/operate_service.OperateService/GetSystemCustom"
+	OperateService_AddClientRecord_FullMethodName         = "/operate_service.OperateService/AddClientRecord"
+	OperateService_GetClientOverview_FullMethodName       = "/operate_service.OperateService/GetClientOverview"
+	OperateService_GetClientTrend_FullMethodName          = "/operate_service.OperateService/GetClientTrend"
+	OperateService_GetCumulativeClient_FullMethodName     = "/operate_service.OperateService/GetCumulativeClient"
 )
 
 // OperateServiceClient is the client API for OperateService service.
@@ -44,7 +44,7 @@ type OperateServiceClient interface {
 	// 客户端统计趋势
 	GetClientTrend(ctx context.Context, in *GetClientTrendReq, opts ...grpc.CallOption) (*ClientTrendInfo, error)
 	// 累计客户端统计总览
-	GetCumulativeClientOverview(ctx context.Context, in *GetCumulativeClientOverviewReq, opts ...grpc.CallOption) (*ClientOverViewInfo, error)
+	GetCumulativeClient(ctx context.Context, in *GetCumulativeClientReq, opts ...grpc.CallOption) (*GetCumulativeClientResp, error)
 }
 
 type operateServiceClient struct {
@@ -125,10 +125,10 @@ func (c *operateServiceClient) GetClientTrend(ctx context.Context, in *GetClient
 	return out, nil
 }
 
-func (c *operateServiceClient) GetCumulativeClientOverview(ctx context.Context, in *GetCumulativeClientOverviewReq, opts ...grpc.CallOption) (*ClientOverViewInfo, error) {
+func (c *operateServiceClient) GetCumulativeClient(ctx context.Context, in *GetCumulativeClientReq, opts ...grpc.CallOption) (*GetCumulativeClientResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ClientOverViewInfo)
-	err := c.cc.Invoke(ctx, OperateService_GetCumulativeClientOverview_FullMethodName, in, out, cOpts...)
+	out := new(GetCumulativeClientResp)
+	err := c.cc.Invoke(ctx, OperateService_GetCumulativeClient_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ type OperateServiceServer interface {
 	// 客户端统计趋势
 	GetClientTrend(context.Context, *GetClientTrendReq) (*ClientTrendInfo, error)
 	// 累计客户端统计总览
-	GetCumulativeClientOverview(context.Context, *GetCumulativeClientOverviewReq) (*ClientOverViewInfo, error)
+	GetCumulativeClient(context.Context, *GetCumulativeClientReq) (*GetCumulativeClientResp, error)
 	mustEmbedUnimplementedOperateServiceServer()
 }
 
@@ -181,8 +181,8 @@ func (UnimplementedOperateServiceServer) GetClientOverview(context.Context, *Get
 func (UnimplementedOperateServiceServer) GetClientTrend(context.Context, *GetClientTrendReq) (*ClientTrendInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetClientTrend not implemented")
 }
-func (UnimplementedOperateServiceServer) GetCumulativeClientOverview(context.Context, *GetCumulativeClientOverviewReq) (*ClientOverViewInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCumulativeClientOverview not implemented")
+func (UnimplementedOperateServiceServer) GetCumulativeClient(context.Context, *GetCumulativeClientReq) (*GetCumulativeClientResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCumulativeClient not implemented")
 }
 func (UnimplementedOperateServiceServer) mustEmbedUnimplementedOperateServiceServer() {}
 func (UnimplementedOperateServiceServer) testEmbeddedByValue()                        {}
@@ -331,20 +331,20 @@ func _OperateService_GetClientTrend_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OperateService_GetCumulativeClientOverview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCumulativeClientOverviewReq)
+func _OperateService_GetCumulativeClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCumulativeClientReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OperateServiceServer).GetCumulativeClientOverview(ctx, in)
+		return srv.(OperateServiceServer).GetCumulativeClient(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OperateService_GetCumulativeClientOverview_FullMethodName,
+		FullMethod: OperateService_GetCumulativeClient_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OperateServiceServer).GetCumulativeClientOverview(ctx, req.(*GetCumulativeClientOverviewReq))
+		return srv.(OperateServiceServer).GetCumulativeClient(ctx, req.(*GetCumulativeClientReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -385,8 +385,8 @@ var OperateService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OperateService_GetClientTrend_Handler,
 		},
 		{
-			MethodName: "GetCumulativeClientOverview",
-			Handler:    _OperateService_GetCumulativeClientOverview_Handler,
+			MethodName: "GetCumulativeClient",
+			Handler:    _OperateService_GetCumulativeClient_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

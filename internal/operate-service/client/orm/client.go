@@ -29,8 +29,8 @@ func NewClient(db *gorm.DB) (*Client, error) {
 	// auto migrate
 	if err := db.AutoMigrate(
 		model.SystemCustom{},
-		model.ClientStats{},
-		model.ActiveClientStats{},
+		model.ClientRecord{},
+		model.ClientDailyStats{},
 	); err != nil {
 		return nil, err
 	}
@@ -74,19 +74,9 @@ type HomeConfig struct {
 	BgColor  string `json:"bgColor"`  // 平台背景颜色
 }
 
-type ClientStats struct {
-	Date  string
-	Value int32
-}
-
-type WorkflowTemplateAdditionClientStats struct {
-	Date           string
-	AdditionClient string
-}
 type ClientOverView struct {
-	ActiveClient   ClientOverviewItem `json:"activeClient"`   // 日活跃人数
-	TotalClient    ClientOverviewItem `json:"totalClient"`    // 当前在线人数
-	AdditionClient ClientOverviewItem `json:"additionClient"` // 峰值在线人数
+	ActiveClient ClientOverviewItem `json:"activeClient"` // 日活跃人数
+	NewClient    ClientOverviewItem `json:"newClient"`    // 日新增人数
 }
 
 type ClientOverviewItem struct {

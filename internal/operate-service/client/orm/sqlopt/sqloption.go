@@ -48,6 +48,15 @@ func WithUserID(userID string) SQLOption {
 	})
 }
 
+func WithClientID(userID string) SQLOption {
+	return funcSQLOption(func(db *gorm.DB) *gorm.DB {
+		if userID != "" {
+			return db.Where("client_id = ?", userID)
+		}
+		return db
+	})
+}
+
 func WithKey(key string) SQLOption {
 	return funcSQLOption(func(db *gorm.DB) *gorm.DB {
 		if key != "" {

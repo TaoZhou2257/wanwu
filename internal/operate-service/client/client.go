@@ -15,5 +15,5 @@ type IClient interface {
 	AddClientRecord(ctx context.Context, clientId string) *err_code.Status
 	GetClientOverview(ctx context.Context, startDate, endDate string) (*orm.ClientOverView, *err_code.Status)
 	GetClientTrend(ctx context.Context, startDate, endDate string) (*orm.ClientTrends, *err_code.Status)
-	GetCumulativeClientOverview(ctx context.Context, date string) (*orm.ClientOverView, *err_code.Status)
+	GetCumulativeClient(ctx context.Context, endAt int64) (int32, *err_code.Status)
 }

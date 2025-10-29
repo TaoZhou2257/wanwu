@@ -1,9 +1,9 @@
 package model
 
-// ClientStats 统计汇总表
-type ClientStats struct {
-	ID        int64  `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
-	CreatedAt int64  `gorm:"autoCreateTime:milli"`
-	UpdatedAt int64  `gorm:"column:updated_at;not null;default:0" json:"updated_at" `
-	ClientId  string `gorm:"column:client_id;not null;default:0" json:"client_id"`
+// ClientRecord 客户端表
+type ClientRecord struct {
+	ID        int64  `gorm:"primaryKey;autoIncrement"`
+	ClientId  string `gorm:"index:idx_client_id"`
+	CreatedAt int64  `gorm:"index:idx_client_created_at;autoCreateTime:milli"`
+	UpdatedAt int64  `gorm:"index:idx_client_updated_at"`
 }

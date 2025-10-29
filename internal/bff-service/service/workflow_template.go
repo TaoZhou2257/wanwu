@@ -20,19 +20,23 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-const downloadKey = "workflowtemplateDownloadCount"
+const (
+	redisGlobalBrowseKey             = "globalBrowse"
+	redisWorkflowTemplateDownloadKey = "workflowTemplateDownloadCount"
+)
 
 func GetWorkflowTemplateList(ctx *gin.Context, clientId, category, name string) (*response.GetWorkflowTemplateListResp, error) {
 	// 记录工作流模板浏览数据
 	if err := recordTemplateBrowse(ctx.Request.Context()); err != nil {
 		log.Errorf("record template browse count error: %v", err)
 	}
-	_, err := operate.AddClientRecord(ctx, &operate_service.AddClientRecordReq{
+	// 记录client数据
+	if _, err := operate.AddClientRecord(ctx, &operate_service.AddClientRecordReq{
 		ClientId: clientId,
-	})
-	if err != nil {
+	}); err != nil {
 		log.Errorf("get workflow template list record err:%v", err)
 	}
+
 	switch config.Cfg().WorkflowTemplatePath.ServerMode {
 	case "remote":
 		return getRemoteWorkflowTemplateList(ctx, category, name)
@@ -108,6 +112,116 @@ func DownloadWorkflowTemplate(ctx *gin.Context, clientId, templateId string) ([]
 	}
 }
 
+func GetWorkflowTemplateStatistic(ctx *gin.Context, startDate, endDate string) (*response.WorkflowStatistic, error) {
+	// 获取当前周期和上一个周期的日期列表
+	prevDates, currentDates, err := util.PreviousDateRange(startDate, endDate)
+	if err != nil {
+		return nil, fmt.Errorf("get date range error: %v", err)
+	}
+
+	// 获取浏览数据
+	currentBrowseData, err := getBrowseDataFromRedis(ctx.Request.Context(), currentDates)
+	if err != nil {
+		return nil, err
+	}
+	prevBrowseData, err := getBrowseDataFromRedis(ctx.Request.Context(), prevDates)
+	if err != nil {
+		return nil, err
+	}
+
+	// 计算总览数据
+	overview := calculateGlobalBrowseOverview(currentBrowseData, prevBrowseData)
+
+	// 计算趋势数据
+	trend := calculateGlobalBrowseTrend(currentBrowseData, currentDates)
+
+	return &response.WorkflowStatistic{
+		Overview: overview,
+		Trend:    trend,
+	}, nil
+}
+
+// 从Redis获取多个日期的浏览数据
+func getBrowseDataFromRedis(ctx context.Context, dates []string) (map[string]int64, error) {
+	items, err := redis.OP().HGetAll(ctx, redisGlobalBrowseKey)
+	if err != nil {
+		return nil, fmt.Errorf("redis HGetAll key %v fields %v err: %v", redisGlobalBrowseKey, dates, err)
+	}
+
+	data := make(map[string]int64)
+	if len(items) == 0 {
+		return data, nil
+	}
+	for _, date := range dates {
+		for _, item := range items {
+			if item.K == date {
+				data[date] = util.MustI64(item.V)
+				break
+			}
+		}
+		// 如果某个日期没有数据，默认值为0
+		if _, exist := data[date]; !exist {
+			data[date] = 0
+		}
+	}
+
+	return data, nil
+}
+
+// 计算总览数据
+func calculateGlobalBrowseOverview(currentData, prevData map[string]int64) response.WorkflowTemplateOverView {
+	// 计算当前周期总浏览量
+	var currentTotal int64
+	for _, count := range currentData {
+		currentTotal += count
+	}
+
+	// 计算上一个周期总浏览量
+	var prevTotal int64
+	for _, count := range prevData {
+		prevTotal += count
+	}
+
+	// 计算环比
+	var pop float32
+	if prevTotal > 0 {
+		pop = (float32(currentTotal) - float32(prevTotal)) / float32(prevTotal) * 100
+	} else if currentTotal > 0 {
+		// 如果上期为0，本期有数据，增长率为100%
+		pop = 100
+	}
+
+	return response.WorkflowTemplateOverView{
+		Browse: response.WorkflowTemplateOverviewItem{
+			Value:            float32(currentTotal),
+			PeriodOverPeriod: pop,
+		},
+	}
+}
+
+// 计算趋势数据
+func calculateGlobalBrowseTrend(browseData map[string]int64, dates []string) response.WorkflowTemplateTrends {
+	var items []response.StatisticChartLineItem
+	for _, date := range dates {
+		count := browseData[date]
+		items = append(items, response.StatisticChartLineItem{
+			Key:   date,
+			Value: float32(count),
+		})
+	}
+	return response.WorkflowTemplateTrends{
+		Browse: response.StatisticChart{
+			TableName: "工作流模板浏览趋势",
+			Lines: []response.StatisticChartLine{
+				{
+					LineName: "浏览量",
+					Items:    items,
+				},
+			},
+		},
+	}
+}
+
 // --- internal ---
 
 func buildWorkflowTempInfo(ctx context.Context, wtfCfg config.WorkflowTempConfig) *response.WorkflowTemplateInfo {
@@ -147,6 +261,7 @@ func buildWorkflowTempDetail(ctx context.Context, wtfCfg config.WorkflowTempConf
 }
 
 // --- 获取工作流模板列表 ---
+
 func getRemoteWorkflowTemplateList(ctx *gin.Context, category, name string) (*response.GetWorkflowTemplateListResp, error) {
 	client := resty.New()
 	client.SetTimeout(30 * time.Second)
@@ -171,7 +286,7 @@ func getRemoteWorkflowTemplateList(ctx *gin.Context, category, name string) (*re
 			Total: 0,
 			List:  make([]*response.WorkflowTemplateInfo, 0),
 			DownloadLink: response.WorkflowTemplateURL{
-				Url: "todo",
+				Url: config.Cfg().WorkflowTemplatePath.GlobalWebListUrl,
 			},
 		}, nil
 	}
@@ -265,7 +380,6 @@ func getRemoteDownloadWorkflowTemplate(ctx *gin.Context, templateId string) ([]b
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		fmt.Print(resp.StatusCode())
 		return nil, fmt.Errorf("todo")
 	}
 	// 远程调用成功，返回远程结果
@@ -297,9 +411,9 @@ func convertToBytes(data any) ([]byte, error) {
 // 记录模板下载量到单独的Redis Key
 func recordTemplateDownloadCount(ctx context.Context, templateID string) error {
 	// 使用HINCRBY原子性增加模板下载量
-	err := redis.OP().Cli().HIncrBy(ctx, downloadKey, templateID, 1).Err()
+	err := redis.OP().Cli().HIncrBy(ctx, redisWorkflowTemplateDownloadKey, templateID, 1).Err()
 	if err != nil {
-		return fmt.Errorf("redis HIncrBy key %v field %v err: %v", downloadKey, templateID, err)
+		return fmt.Errorf("redis HIncrBy key %v field %v err: %v", redisWorkflowTemplateDownloadKey, templateID, err)
 	}
 	return nil
 }
@@ -307,7 +421,7 @@ func recordTemplateDownloadCount(ctx context.Context, templateID string) error {
 // 根据templateId获取下载量
 func getTemplateDownloadCount(ctx context.Context, templateID string) int32 {
 	// 使用HGet获取指定模板的下载量
-	countStr, err := redis.OP().Cli().HGet(ctx, downloadKey, templateID).Result()
+	countStr, err := redis.OP().Cli().HGet(ctx, redisWorkflowTemplateDownloadKey, templateID).Result()
 	if err != nil {
 		// 键或字段不存在，返回0
 		return 0
@@ -317,16 +431,11 @@ func getTemplateDownloadCount(ctx context.Context, templateID string) int32 {
 
 // 记录模板下载量到单独的Redis Key
 func recordTemplateBrowse(ctx context.Context) error {
-	key := getRedisWorkflowTemplateBrowseKey(util.Time2Date(time.Now().UnixMilli()))
 	// 使用HINCRBY原子性增加模板下载量
-	err := redis.OP().Cli().IncrBy(ctx, key, 1).Err()
+	date := util.Time2Date(time.Now().UnixMilli())
+	err := redis.OP().Cli().HIncrBy(ctx, redisGlobalBrowseKey, date, 1).Err()
 	if err != nil {
-		return fmt.Errorf("redis IncrBy key %v  err: %v", key, err)
+		return fmt.Errorf("redis IncrBy key %v filed %v err: %v", redisGlobalBrowseKey, date, err)
 	}
 	return nil
-}
-
-// 获取Redis键
-func getRedisWorkflowTemplateBrowseKey(date string) string {
-	return fmt.Sprintf("globalBrowse:%s", date)
 }

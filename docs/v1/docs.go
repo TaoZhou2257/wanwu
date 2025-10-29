@@ -14521,14 +14521,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.ClientOverviewItem"
                         }
                     ]
-                },
-                "totalClient": {
-                    "description": "累计客户端",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/response.ClientOverviewItem"
-                        }
-                    ]
                 }
             }
         },
