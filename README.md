@@ -254,8 +254,6 @@ To help you quickly get started with this project, we strongly recommend that yo
 ### &#x1F4F0; TO DO LIST
 
 - [ ] Multi-modal model access
-- [ ] Support custom MCP Server, which means that workflows, agents, or APIs that conform to the OpenAPI specification can be added to the MCP Server for release
-- [ ] Knowledge base sharing
 - [ ] Agent and model evaluation
 - [ ] Agent monitoring statistics
 - [ ] Model experience
