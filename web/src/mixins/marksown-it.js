@@ -49,5 +49,5 @@ export const md = MarkdownIt({
         return htmlCode
     }
 })
-//"output": "mathml" 解决数学公式重复渲染关键参数
+
 md.use(mk, { "throwOnError": false, "errorColor": "#000000", "output": "mathml"})
