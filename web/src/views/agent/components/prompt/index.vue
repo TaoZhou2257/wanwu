@@ -61,7 +61,7 @@
         
         <!-- 全部卡片 -->
         <div 
-          v-if="activeTab === 'recommended'"
+          v-if="!showEmptyState"
           class="prompt-card all-card"
           @click="handleAllClick"
         >
@@ -79,12 +79,20 @@
         </div>
       </div>
     </div>
+    
+    <!-- 提示词列表弹框 -->
+    <promptDialog ref="promptDialog" @use="handleUsePrompt" />
   </div>
 </template>
 
 <script>
+import promptDialog from './promptDialog.vue';
+
 export default {
   name: 'PromptTemplate',
+  components: {
+    promptDialog
+  },
   data() {
     return {
       activeTab: 'recommended',
@@ -112,7 +120,33 @@ export default {
           type: 'skill'
         }
       ],
-      personalCards: []
+      personalCards: [
+        {
+          title: '代码助手',
+          description: '适用于编程开发场景,帮助开发者编写、调试和优化代码,提供技术解决方案',
+          type: 'code'
+        },
+        {
+          title: '内容创作',
+          description: '适用于文案写作、内容创作场景,帮助生成高质量的文章、营销文案和创意内容',
+          type: 'content'
+        },
+        {
+          title: '数据分析',
+          description: '适用于数据处理和分析场景,帮助解读数据、生成报告和提供业务洞察',
+          type: 'analysis'
+        },
+        {
+          title: '教育培训',
+          description: '适用于教学和学习场景,提供知识讲解、习题解答和学习指导',
+          type: 'education'
+        },
+        {
+          title: '客服对话',
+          description: '适用于客户服务场景,提供专业、友好的客服回复,解答用户问题',
+          type: 'service'
+        }
+      ]
     }
   },
   computed: {
@@ -137,8 +171,12 @@ export default {
       this.$emit('card-click', card);
     },
     handleAllClick() {
-      // 触发全部卡片点击事件
-      this.$emit('all-click');
+      // 显示提示词列表弹框
+      this.$refs.promptDialog.showDiglog();
+    },
+    handleUsePrompt(row) {
+      // 处理使用提示词
+      this.$emit('use-prompt', row);
     },
     scrollLeft() {
       const container = this.$refs.cardsContainer;
@@ -359,8 +397,8 @@ export default {
     font-size: 16px;
     font-weight: 600;
     color: #303133;
-    margin-bottom: 12px;
-    line-height: 1.5;
+    margin-bottom: 10px;
+    line-height: 1.2;
   }
   
   .card-description {
@@ -374,6 +412,7 @@ export default {
     text-overflow: ellipsis;
     word-break: break-word;
     max-height: calc(1.6em * 3);
+    min-height: calc(1.6em * 3);
   }
 }
 

@@ -284,9 +284,10 @@
                   v-for="(n, i) in allTools"
                   :key="`${i}ac`"
                 >
-                  <div
-                    class="name"
-                  >
+                  <div class="name">
+                  <div class="toolImg">
+                   <!-- <img :src="'/user/api/'+n.avatar.path"/> -->
+                  </div>
                   <el-tooltip class="item" effect="dark" :content="displayName(n)" placement="top-start">
                     <span>{{ displayName(n).length > 20 ? displayName(n).substring(0, 20) + '...' : displayName(n) }}</span>
                   </el-tooltip>
@@ -1633,6 +1634,18 @@ export default {
       .desc-info{
         color:#ccc;
         margin-left:4px;
+      }
+      .toolImg{
+        width:30px;
+        height:30px;
+        border-radius:50%;
+        background:#eee;
+        margin-right:5px;
+        img{
+          width:100%;
+          height:100%;
+          object-fit: cover;
+        }
       }
 
     }
