@@ -184,9 +184,12 @@ export default {
   position:absolute;
   bottom:0;
   left:0;
+  right:0;
+  width: 100%;
   padding: 10px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .prompt-tabs {
@@ -220,6 +223,8 @@ export default {
   position: relative;
   flex: 1;
   overflow: hidden;
+  width: 100%;
+  min-width: 0;
 }
 
 .cards-container {
@@ -231,6 +236,8 @@ export default {
   scroll-behavior: smooth;
   position: relative;
   align-items: stretch;
+  width: 100%;
+  max-width: 100%;
   
   // 隐藏滚动条
   &::-webkit-scrollbar {
