@@ -209,8 +209,10 @@
         <!-- 右侧内容 -->
         <el-main>
           <div class="page-container">
-            <router-view></router-view>
-            <div id="container" class="qk-container"></div>
+            <div class="right-page-content">
+              <router-view></router-view>
+              <div id="container" class="qk-container"></div>
+            </div>
           </div>
         </el-main>
       </el-container>
@@ -617,7 +619,7 @@ export default {
         position: relative;
         margin: 0!important;
         padding: 0!important;
-        width: 100vh;
+        width: 100%;
         height: 100vh;
         overflow: auto;
         /*background: linear-gradient(1deg, #FFFFFF 42%, #FFFFFF 42%, #EBEDFE 98%, #EEF0FF 98%);
@@ -625,9 +627,11 @@ export default {
         border-left: 0.5px solid #e6e6e6;*/
         .page-container {
           height: 100%;
-          min-width: 1250px;
           overflow: auto;
           padding-right: 2px;
+          .right-page-content {
+            min-width: 1250px;
+          }
         }
       }
       /deep/ .el-menu-item {
