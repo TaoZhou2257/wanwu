@@ -967,23 +967,6 @@ const docTemplate = `{
                 }
             }
         },
-        "request.OnlineSearchConfig": {
-            "type": "object",
-            "properties": {
-                "enable": {
-                    "type": "boolean"
-                },
-                "searchKey": {
-                    "type": "string"
-                },
-                "searchRerankId": {
-                    "type": "string"
-                },
-                "searchUrl": {
-                    "type": "string"
-                }
-            }
-        },
         "request.SensitiveTable": {
             "type": "object",
             "required": [
@@ -1175,14 +1158,6 @@ const docTemplate = `{
                 "name": {
                     "description": "名称",
                     "type": "string"
-                },
-                "onlineSearchConfig": {
-                    "description": "在线搜索配置",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/request.OnlineSearchConfig"
-                        }
-                    ]
                 },
                 "prologue": {
                     "description": "开场白",

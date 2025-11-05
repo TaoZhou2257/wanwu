@@ -403,7 +403,6 @@ type AssistantConfigUpdateReq struct {
 	ModelConfig         *common.AppModelConfig        `protobuf:"bytes,5,opt,name=modelConfig,proto3" json:"modelConfig,omitempty"`                 // 模型配置
 	KnowledgeBaseConfig *AssistantKnowledgeBaseConfig `protobuf:"bytes,6,opt,name=knowledgeBaseConfig,proto3" json:"knowledgeBaseConfig,omitempty"` // 知识库
 	RerankConfig        *common.AppModelConfig        `protobuf:"bytes,7,opt,name=rerankConfig,proto3" json:"rerankConfig,omitempty"`               // Rerank模型
-	OnlineSearchConfig  *AssistantOnlineSearchConfig  `protobuf:"bytes,8,opt,name=onlineSearchConfig,proto3" json:"onlineSearchConfig,omitempty"`   // 在线搜索配置
 	Identity            *Identity                     `protobuf:"bytes,9,opt,name=identity,proto3" json:"identity,omitempty"`
 	SafetyConfig        *AssistantSafetyConfig        `protobuf:"bytes,10,opt,name=safetyConfig,proto3" json:"safetyConfig,omitempty"`
 	VisionConfig        *AssistantVisionConfig        `protobuf:"bytes,11,opt,name=visionConfig,proto3" json:"visionConfig,omitempty"`
@@ -486,13 +485,6 @@ func (x *AssistantConfigUpdateReq) GetKnowledgeBaseConfig() *AssistantKnowledgeB
 func (x *AssistantConfigUpdateReq) GetRerankConfig() *common.AppModelConfig {
 	if x != nil {
 		return x.RerankConfig
-	}
-	return nil
-}
-
-func (x *AssistantConfigUpdateReq) GetOnlineSearchConfig() *AssistantOnlineSearchConfig {
-	if x != nil {
-		return x.OnlineSearchConfig
 	}
 	return nil
 }
@@ -1202,7 +1194,6 @@ type AssistantInfo struct {
 	ModelConfig         *common.AppModelConfig        `protobuf:"bytes,7,opt,name=modelConfig,proto3" json:"modelConfig,omitempty"`                 // 模型配置
 	KnowledgeBaseConfig *AssistantKnowledgeBaseConfig `protobuf:"bytes,8,opt,name=knowledgeBaseConfig,proto3" json:"knowledgeBaseConfig,omitempty"` // 知识库
 	RerankConfig        *common.AppModelConfig        `protobuf:"bytes,9,opt,name=rerankConfig,proto3" json:"rerankConfig,omitempty"`               // Rerank模型
-	OnlineSearchConfig  *AssistantOnlineSearchConfig  `protobuf:"bytes,10,opt,name=onlineSearchConfig,proto3" json:"onlineSearchConfig,omitempty"`  // 在线搜索配置
 	Scope               int32                         `protobuf:"varint,11,opt,name=scope,proto3" json:"scope,omitempty"`
 	WorkFlowInfos       []*AssistantWorkFlowInfos     `protobuf:"bytes,12,rep,name=workFlowInfos,proto3" json:"workFlowInfos,omitempty"`
 	McpInfos            []*AssistantMCPInfos          `protobuf:"bytes,13,rep,name=mcpInfos,proto3" json:"mcpInfos,omitempty"`
@@ -1304,13 +1295,6 @@ func (x *AssistantInfo) GetKnowledgeBaseConfig() *AssistantKnowledgeBaseConfig {
 func (x *AssistantInfo) GetRerankConfig() *common.AppModelConfig {
 	if x != nil {
 		return x.RerankConfig
-	}
-	return nil
-}
-
-func (x *AssistantInfo) GetOnlineSearchConfig() *AssistantOnlineSearchConfig {
-	if x != nil {
-		return x.OnlineSearchConfig
 	}
 	return nil
 }
@@ -4454,7 +4438,7 @@ var file_proto_assistant_service_assistant_service_proto_rawDesc = []byte{
 	0x74, 0x69, 0x74, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x61, 0x73, 0x73,
 	0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x49,
 	0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x52, 0x08, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74,
-	0x79, 0x22, 0xb8, 0x05, 0x0a, 0x18, 0x41, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x43,
+	0x79, 0x22, 0xd8, 0x04, 0x0a, 0x18, 0x41, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x43,
 	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x12, 0x20,
 	0x0a, 0x0b, 0x61, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x49, 0x64, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x49, 0x64,
@@ -4478,13 +4462,7 @@ var file_proto_assistant_service_assistant_service_proto_rawDesc = []byte{
 	0x65, 0x72, 0x61, 0x6e, 0x6b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x07, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x16, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x41, 0x70, 0x70, 0x4d, 0x6f,
 	0x64, 0x65, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x0c, 0x72, 0x65, 0x72, 0x61, 0x6e,
-	0x6b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x5e, 0x0a, 0x12, 0x6f, 0x6e, 0x6c, 0x69, 0x6e,
-	0x65, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x08, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x2e, 0x2e, 0x61, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x5f,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x41, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e,
-	0x74, 0x4f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x43, 0x6f, 0x6e,
-	0x66, 0x69, 0x67, 0x52, 0x12, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x53, 0x65, 0x61, 0x72, 0x63,
-	0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x37, 0x0a, 0x08, 0x69, 0x64, 0x65, 0x6e, 0x74,
+	0x6b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x37, 0x0a, 0x08, 0x69, 0x64, 0x65, 0x6e, 0x74,
 	0x69, 0x74, 0x79, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x61, 0x73, 0x73, 0x69,
 	0x73, 0x74, 0x61, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x49, 0x64,
 	0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x52, 0x08, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79,
@@ -4599,7 +4577,7 @@ var file_proto_assistant_service_assistant_service_proto_rawDesc = []byte{
 	0x0a, 0x08, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x1b, 0x2e, 0x61, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x2e, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x52, 0x08, 0x69,
-	0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x22, 0x99, 0x08, 0x0a, 0x0d, 0x41, 0x73, 0x73, 0x69,
+	0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x22, 0xb9, 0x07, 0x0a, 0x0d, 0x41, 0x73, 0x73, 0x69,
 	0x73, 0x74, 0x61, 0x6e, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x20, 0x0a, 0x0b, 0x61, 0x73, 0x73,
 	0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
 	0x61, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x37, 0x0a, 0x08, 0x69,
@@ -4630,13 +4608,7 @@ var file_proto_assistant_service_assistant_service_proto_rawDesc = []byte{
 	0x3a, 0x0a, 0x0c, 0x72, 0x65, 0x72, 0x61, 0x6e, 0x6b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18,
 	0x09, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x41,
 	0x70, 0x70, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x0c, 0x72,
-	0x65, 0x72, 0x61, 0x6e, 0x6b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x5e, 0x0a, 0x12, 0x6f,
-	0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69,
-	0x67, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2e, 0x2e, 0x61, 0x73, 0x73, 0x69, 0x73, 0x74,
-	0x61, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x41, 0x73, 0x73, 0x69,
-	0x73, 0x74, 0x61, 0x6e, 0x74, 0x4f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x53, 0x65, 0x61, 0x72, 0x63,
-	0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x12, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x53,
-	0x65, 0x61, 0x72, 0x63, 0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x14, 0x0a, 0x05, 0x73,
+	0x65, 0x72, 0x61, 0x6e, 0x6b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x14, 0x0a, 0x05, 0x73,
 	0x63, 0x6f, 0x70, 0x65, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x70,
 	0x65, 0x12, 0x4f, 0x0a, 0x0d, 0x77, 0x6f, 0x72, 0x6b, 0x46, 0x6c, 0x6f, 0x77, 0x49, 0x6e, 0x66,
 	0x6f, 0x73, 0x18, 0x0c, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x61, 0x73, 0x73, 0x69, 0x73,
@@ -5418,134 +5390,132 @@ var file_proto_assistant_service_assistant_service_proto_depIdxs = []int32{
 	64, // 6: assistant_service.AssistantConfigUpdateReq.modelConfig:type_name -> common.AppModelConfig
 	12, // 7: assistant_service.AssistantConfigUpdateReq.knowledgeBaseConfig:type_name -> assistant_service.AssistantKnowledgeBaseConfig
 	64, // 8: assistant_service.AssistantConfigUpdateReq.rerankConfig:type_name -> common.AppModelConfig
-	16, // 9: assistant_service.AssistantConfigUpdateReq.onlineSearchConfig:type_name -> assistant_service.AssistantOnlineSearchConfig
-	1,  // 10: assistant_service.AssistantConfigUpdateReq.identity:type_name -> assistant_service.Identity
-	8,  // 11: assistant_service.AssistantConfigUpdateReq.safetyConfig:type_name -> assistant_service.AssistantSafetyConfig
-	10, // 12: assistant_service.AssistantConfigUpdateReq.visionConfig:type_name -> assistant_service.AssistantVisionConfig
-	9,  // 13: assistant_service.AssistantSafetyConfig.SensitiveTable:type_name -> assistant_service.SensitiveTable
-	1,  // 14: assistant_service.AssistantDeleteReq.identity:type_name -> assistant_service.Identity
-	13, // 15: assistant_service.AssistantKnowledgeBaseConfig.appKnowledgeBaseList:type_name -> assistant_service.AppKnowledgeBase
-	14, // 16: assistant_service.AppKnowledgeBase.metaDataFilterParams:type_name -> assistant_service.MetaDataFilterParams
-	15, // 17: assistant_service.MetaDataFilterParams.metaFilterParams:type_name -> assistant_service.MetaFilterParams
-	1,  // 18: assistant_service.GetAssistantListMyAllReq.identity:type_name -> assistant_service.Identity
-	1,  // 19: assistant_service.AssistantInfo.identity:type_name -> assistant_service.Identity
-	63, // 20: assistant_service.AssistantInfo.assistantBrief:type_name -> common.AppBriefConfig
-	64, // 21: assistant_service.AssistantInfo.modelConfig:type_name -> common.AppModelConfig
-	12, // 22: assistant_service.AssistantInfo.knowledgeBaseConfig:type_name -> assistant_service.AssistantKnowledgeBaseConfig
-	64, // 23: assistant_service.AssistantInfo.rerankConfig:type_name -> common.AppModelConfig
-	16, // 24: assistant_service.AssistantInfo.onlineSearchConfig:type_name -> assistant_service.AssistantOnlineSearchConfig
-	19, // 25: assistant_service.AssistantInfo.workFlowInfos:type_name -> assistant_service.AssistantWorkFlowInfos
-	20, // 26: assistant_service.AssistantInfo.mcpInfos:type_name -> assistant_service.AssistantMCPInfos
-	21, // 27: assistant_service.AssistantInfo.toolInfos:type_name -> assistant_service.AssistantToolInfos
-	8,  // 28: assistant_service.AssistantInfo.safetyConfig:type_name -> assistant_service.AssistantSafetyConfig
-	10, // 29: assistant_service.AssistantInfo.visionConfig:type_name -> assistant_service.AssistantVisionConfig
-	1,  // 30: assistant_service.GetAssistantInfoReq.identity:type_name -> assistant_service.Identity
-	1,  // 31: assistant_service.AssistantCopyReq.identity:type_name -> assistant_service.Identity
-	1,  // 32: assistant_service.AssistantWorkFlowCreateReq.identity:type_name -> assistant_service.Identity
-	1,  // 33: assistant_service.AssistantWorkFlowDeleteReq.identity:type_name -> assistant_service.Identity
-	1,  // 34: assistant_service.AssistantWorkFlowEnableSwitchReq.identity:type_name -> assistant_service.Identity
-	1,  // 35: assistant_service.AssistantMCPCreateReq.identity:type_name -> assistant_service.Identity
-	1,  // 36: assistant_service.AssistantMCPDeleteReq.identity:type_name -> assistant_service.Identity
-	1,  // 37: assistant_service.AssistantMCPDeleteByMCPIdReq.identity:type_name -> assistant_service.Identity
-	1,  // 38: assistant_service.AssistantMCPEnableSwitchReq.identity:type_name -> assistant_service.Identity
-	1,  // 39: assistant_service.AssistantMCPGetListReq.identity:type_name -> assistant_service.Identity
-	32, // 40: assistant_service.AssistantMCPList.assistantMCPInfos:type_name -> assistant_service.AssistantMCPInfo
-	1,  // 41: assistant_service.AssistantToolDeleteByToolIdReq.identity:type_name -> assistant_service.Identity
-	1,  // 42: assistant_service.AssistantToolCreateReq.identity:type_name -> assistant_service.Identity
-	1,  // 43: assistant_service.AssistantToolEnableSwitchReq.identity:type_name -> assistant_service.Identity
-	1,  // 44: assistant_service.AssistantToolConfigReq.identity:type_name -> assistant_service.Identity
-	1,  // 45: assistant_service.ConversationCreateReq.identity:type_name -> assistant_service.Identity
-	1,  // 46: assistant_service.ConversationDeleteReq.identity:type_name -> assistant_service.Identity
-	1,  // 47: assistant_service.GetConversationListReq.identity:type_name -> assistant_service.Identity
-	44, // 48: assistant_service.GetConversationListResp.data:type_name -> assistant_service.ConversationInfo
-	1,  // 49: assistant_service.GetConversationDetailListReq.identity:type_name -> assistant_service.Identity
-	47, // 50: assistant_service.GetConversationDetailListResp.data:type_name -> assistant_service.ConversionDetailInfo
-	48, // 51: assistant_service.ConversionDetailInfo.requestFiles:type_name -> assistant_service.RequestFile
-	50, // 52: assistant_service.AssistantConversionStreamReq.fileInfo:type_name -> assistant_service.ConversionStreamFile
-	1,  // 53: assistant_service.AssistantConversionStreamReq.identity:type_name -> assistant_service.Identity
-	1,  // 54: assistant_service.ConversationDeleteByAssistantIdReq.identity:type_name -> assistant_service.Identity
-	1,  // 55: assistant_service.AssistantWorkFlowDeleteByWorkflowIdReq.identity:type_name -> assistant_service.Identity
-	1,  // 56: assistant_service.CustomPromptCreateReq.identity:type_name -> assistant_service.Identity
-	1,  // 57: assistant_service.CustomPromptDeleteReq.identity:type_name -> assistant_service.Identity
-	1,  // 58: assistant_service.CustomPromptUpdateReq.identity:type_name -> assistant_service.Identity
-	1,  // 59: assistant_service.CustomPromptGetReq.identity:type_name -> assistant_service.Identity
-	1,  // 60: assistant_service.CustomPromptInfo.identity:type_name -> assistant_service.Identity
-	1,  // 61: assistant_service.CustomPromptGetListReq.identity:type_name -> assistant_service.Identity
-	58, // 62: assistant_service.CustomPromptList.customPromptInfos:type_name -> assistant_service.CustomPromptInfo
-	1,  // 63: assistant_service.CustomPromptCopyReq.identity:type_name -> assistant_service.Identity
-	2,  // 64: assistant_service.AssistantService.GetAssistantByIds:input_type -> assistant_service.GetAssistantByIdsReq
-	4,  // 65: assistant_service.AssistantService.AssistantCreate:input_type -> assistant_service.AssistantCreateReq
-	6,  // 66: assistant_service.AssistantService.AssistantUpdate:input_type -> assistant_service.AssistantUpdateReq
-	7,  // 67: assistant_service.AssistantService.AssistantConfigUpdate:input_type -> assistant_service.AssistantConfigUpdateReq
-	11, // 68: assistant_service.AssistantService.AssistantDelete:input_type -> assistant_service.AssistantDeleteReq
-	17, // 69: assistant_service.AssistantService.GetAssistantListMyAll:input_type -> assistant_service.GetAssistantListMyAllReq
-	22, // 70: assistant_service.AssistantService.GetAssistantInfo:input_type -> assistant_service.GetAssistantInfoReq
-	23, // 71: assistant_service.AssistantService.AssistantCopy:input_type -> assistant_service.AssistantCopyReq
-	24, // 72: assistant_service.AssistantService.AssistantWorkFlowCreate:input_type -> assistant_service.AssistantWorkFlowCreateReq
-	25, // 73: assistant_service.AssistantService.AssistantWorkFlowDelete:input_type -> assistant_service.AssistantWorkFlowDeleteReq
-	26, // 74: assistant_service.AssistantService.AssistantWorkFlowEnableSwitch:input_type -> assistant_service.AssistantWorkFlowEnableSwitchReq
-	52, // 75: assistant_service.AssistantService.AssistantWorkFlowDeleteByWorkflowId:input_type -> assistant_service.AssistantWorkFlowDeleteByWorkflowIdReq
-	27, // 76: assistant_service.AssistantService.AssistantMCPCreate:input_type -> assistant_service.AssistantMCPCreateReq
-	28, // 77: assistant_service.AssistantService.AssistantMCPDelete:input_type -> assistant_service.AssistantMCPDeleteReq
-	30, // 78: assistant_service.AssistantService.AssistantMCPEnableSwitch:input_type -> assistant_service.AssistantMCPEnableSwitchReq
-	31, // 79: assistant_service.AssistantService.AssistantMCPGetList:input_type -> assistant_service.AssistantMCPGetListReq
-	29, // 80: assistant_service.AssistantService.AssistantMCPDeleteByMCPId:input_type -> assistant_service.AssistantMCPDeleteByMCPIdReq
-	35, // 81: assistant_service.AssistantService.AssistantToolCreate:input_type -> assistant_service.AssistantToolCreateReq
-	36, // 82: assistant_service.AssistantService.AssistantToolDelete:input_type -> assistant_service.AssistantToolDeleteReq
-	37, // 83: assistant_service.AssistantService.AssistantToolEnableSwitch:input_type -> assistant_service.AssistantToolEnableSwitchReq
-	38, // 84: assistant_service.AssistantService.AssistantToolConfig:input_type -> assistant_service.AssistantToolConfigReq
-	34, // 85: assistant_service.AssistantService.AssistantToolDeleteByToolId:input_type -> assistant_service.AssistantToolDeleteByToolIdReq
-	39, // 86: assistant_service.AssistantService.ConversationCreate:input_type -> assistant_service.ConversationCreateReq
-	41, // 87: assistant_service.AssistantService.ConversationDelete:input_type -> assistant_service.ConversationDeleteReq
-	42, // 88: assistant_service.AssistantService.GetConversationList:input_type -> assistant_service.GetConversationListReq
-	45, // 89: assistant_service.AssistantService.GetConversationDetailList:input_type -> assistant_service.GetConversationDetailListReq
-	49, // 90: assistant_service.AssistantService.AssistantConversionStream:input_type -> assistant_service.AssistantConversionStreamReq
-	51, // 91: assistant_service.AssistantService.ConversationDeleteByAssistantId:input_type -> assistant_service.ConversationDeleteByAssistantIdReq
-	53, // 92: assistant_service.AssistantService.CustomPromptCreate:input_type -> assistant_service.CustomPromptCreateReq
-	55, // 93: assistant_service.AssistantService.CustomPromptDelete:input_type -> assistant_service.CustomPromptDeleteReq
-	56, // 94: assistant_service.AssistantService.CustomPromptUpdate:input_type -> assistant_service.CustomPromptUpdateReq
-	57, // 95: assistant_service.AssistantService.CustomPromptGet:input_type -> assistant_service.CustomPromptGetReq
-	59, // 96: assistant_service.AssistantService.CustomPromptGetList:input_type -> assistant_service.CustomPromptGetListReq
-	61, // 97: assistant_service.AssistantService.CustomPromptCopy:input_type -> assistant_service.CustomPromptCopyReq
-	3,  // 98: assistant_service.AssistantService.GetAssistantByIds:output_type -> assistant_service.AppBriefList
-	5,  // 99: assistant_service.AssistantService.AssistantCreate:output_type -> assistant_service.AssistantCreateResp
-	65, // 100: assistant_service.AssistantService.AssistantUpdate:output_type -> google.protobuf.Empty
-	65, // 101: assistant_service.AssistantService.AssistantConfigUpdate:output_type -> google.protobuf.Empty
-	65, // 102: assistant_service.AssistantService.AssistantDelete:output_type -> google.protobuf.Empty
-	3,  // 103: assistant_service.AssistantService.GetAssistantListMyAll:output_type -> assistant_service.AppBriefList
-	18, // 104: assistant_service.AssistantService.GetAssistantInfo:output_type -> assistant_service.AssistantInfo
-	5,  // 105: assistant_service.AssistantService.AssistantCopy:output_type -> assistant_service.AssistantCreateResp
-	65, // 106: assistant_service.AssistantService.AssistantWorkFlowCreate:output_type -> google.protobuf.Empty
-	65, // 107: assistant_service.AssistantService.AssistantWorkFlowDelete:output_type -> google.protobuf.Empty
-	65, // 108: assistant_service.AssistantService.AssistantWorkFlowEnableSwitch:output_type -> google.protobuf.Empty
-	65, // 109: assistant_service.AssistantService.AssistantWorkFlowDeleteByWorkflowId:output_type -> google.protobuf.Empty
-	65, // 110: assistant_service.AssistantService.AssistantMCPCreate:output_type -> google.protobuf.Empty
-	65, // 111: assistant_service.AssistantService.AssistantMCPDelete:output_type -> google.protobuf.Empty
-	65, // 112: assistant_service.AssistantService.AssistantMCPEnableSwitch:output_type -> google.protobuf.Empty
-	33, // 113: assistant_service.AssistantService.AssistantMCPGetList:output_type -> assistant_service.AssistantMCPList
-	65, // 114: assistant_service.AssistantService.AssistantMCPDeleteByMCPId:output_type -> google.protobuf.Empty
-	65, // 115: assistant_service.AssistantService.AssistantToolCreate:output_type -> google.protobuf.Empty
-	65, // 116: assistant_service.AssistantService.AssistantToolDelete:output_type -> google.protobuf.Empty
-	65, // 117: assistant_service.AssistantService.AssistantToolEnableSwitch:output_type -> google.protobuf.Empty
-	65, // 118: assistant_service.AssistantService.AssistantToolConfig:output_type -> google.protobuf.Empty
-	65, // 119: assistant_service.AssistantService.AssistantToolDeleteByToolId:output_type -> google.protobuf.Empty
-	40, // 120: assistant_service.AssistantService.ConversationCreate:output_type -> assistant_service.ConversationCreateResp
-	65, // 121: assistant_service.AssistantService.ConversationDelete:output_type -> google.protobuf.Empty
-	43, // 122: assistant_service.AssistantService.GetConversationList:output_type -> assistant_service.GetConversationListResp
-	46, // 123: assistant_service.AssistantService.GetConversationDetailList:output_type -> assistant_service.GetConversationDetailListResp
-	0,  // 124: assistant_service.AssistantService.AssistantConversionStream:output_type -> assistant_service.AssistantConversionStreamResp
-	65, // 125: assistant_service.AssistantService.ConversationDeleteByAssistantId:output_type -> google.protobuf.Empty
-	54, // 126: assistant_service.AssistantService.CustomPromptCreate:output_type -> assistant_service.CustomPromptIDResp
-	65, // 127: assistant_service.AssistantService.CustomPromptDelete:output_type -> google.protobuf.Empty
-	65, // 128: assistant_service.AssistantService.CustomPromptUpdate:output_type -> google.protobuf.Empty
-	58, // 129: assistant_service.AssistantService.CustomPromptGet:output_type -> assistant_service.CustomPromptInfo
-	60, // 130: assistant_service.AssistantService.CustomPromptGetList:output_type -> assistant_service.CustomPromptList
-	54, // 131: assistant_service.AssistantService.CustomPromptCopy:output_type -> assistant_service.CustomPromptIDResp
-	98, // [98:132] is the sub-list for method output_type
-	64, // [64:98] is the sub-list for method input_type
-	64, // [64:64] is the sub-list for extension type_name
-	64, // [64:64] is the sub-list for extension extendee
-	0,  // [0:64] is the sub-list for field type_name
+	1,  // 9: assistant_service.AssistantConfigUpdateReq.identity:type_name -> assistant_service.Identity
+	8,  // 10: assistant_service.AssistantConfigUpdateReq.safetyConfig:type_name -> assistant_service.AssistantSafetyConfig
+	10, // 11: assistant_service.AssistantConfigUpdateReq.visionConfig:type_name -> assistant_service.AssistantVisionConfig
+	9,  // 12: assistant_service.AssistantSafetyConfig.SensitiveTable:type_name -> assistant_service.SensitiveTable
+	1,  // 13: assistant_service.AssistantDeleteReq.identity:type_name -> assistant_service.Identity
+	13, // 14: assistant_service.AssistantKnowledgeBaseConfig.appKnowledgeBaseList:type_name -> assistant_service.AppKnowledgeBase
+	14, // 15: assistant_service.AppKnowledgeBase.metaDataFilterParams:type_name -> assistant_service.MetaDataFilterParams
+	15, // 16: assistant_service.MetaDataFilterParams.metaFilterParams:type_name -> assistant_service.MetaFilterParams
+	1,  // 17: assistant_service.GetAssistantListMyAllReq.identity:type_name -> assistant_service.Identity
+	1,  // 18: assistant_service.AssistantInfo.identity:type_name -> assistant_service.Identity
+	63, // 19: assistant_service.AssistantInfo.assistantBrief:type_name -> common.AppBriefConfig
+	64, // 20: assistant_service.AssistantInfo.modelConfig:type_name -> common.AppModelConfig
+	12, // 21: assistant_service.AssistantInfo.knowledgeBaseConfig:type_name -> assistant_service.AssistantKnowledgeBaseConfig
+	64, // 22: assistant_service.AssistantInfo.rerankConfig:type_name -> common.AppModelConfig
+	19, // 23: assistant_service.AssistantInfo.workFlowInfos:type_name -> assistant_service.AssistantWorkFlowInfos
+	20, // 24: assistant_service.AssistantInfo.mcpInfos:type_name -> assistant_service.AssistantMCPInfos
+	21, // 25: assistant_service.AssistantInfo.toolInfos:type_name -> assistant_service.AssistantToolInfos
+	8,  // 26: assistant_service.AssistantInfo.safetyConfig:type_name -> assistant_service.AssistantSafetyConfig
+	10, // 27: assistant_service.AssistantInfo.visionConfig:type_name -> assistant_service.AssistantVisionConfig
+	1,  // 28: assistant_service.GetAssistantInfoReq.identity:type_name -> assistant_service.Identity
+	1,  // 29: assistant_service.AssistantCopyReq.identity:type_name -> assistant_service.Identity
+	1,  // 30: assistant_service.AssistantWorkFlowCreateReq.identity:type_name -> assistant_service.Identity
+	1,  // 31: assistant_service.AssistantWorkFlowDeleteReq.identity:type_name -> assistant_service.Identity
+	1,  // 32: assistant_service.AssistantWorkFlowEnableSwitchReq.identity:type_name -> assistant_service.Identity
+	1,  // 33: assistant_service.AssistantMCPCreateReq.identity:type_name -> assistant_service.Identity
+	1,  // 34: assistant_service.AssistantMCPDeleteReq.identity:type_name -> assistant_service.Identity
+	1,  // 35: assistant_service.AssistantMCPDeleteByMCPIdReq.identity:type_name -> assistant_service.Identity
+	1,  // 36: assistant_service.AssistantMCPEnableSwitchReq.identity:type_name -> assistant_service.Identity
+	1,  // 37: assistant_service.AssistantMCPGetListReq.identity:type_name -> assistant_service.Identity
+	32, // 38: assistant_service.AssistantMCPList.assistantMCPInfos:type_name -> assistant_service.AssistantMCPInfo
+	1,  // 39: assistant_service.AssistantToolDeleteByToolIdReq.identity:type_name -> assistant_service.Identity
+	1,  // 40: assistant_service.AssistantToolCreateReq.identity:type_name -> assistant_service.Identity
+	1,  // 41: assistant_service.AssistantToolEnableSwitchReq.identity:type_name -> assistant_service.Identity
+	1,  // 42: assistant_service.AssistantToolConfigReq.identity:type_name -> assistant_service.Identity
+	1,  // 43: assistant_service.ConversationCreateReq.identity:type_name -> assistant_service.Identity
+	1,  // 44: assistant_service.ConversationDeleteReq.identity:type_name -> assistant_service.Identity
+	1,  // 45: assistant_service.GetConversationListReq.identity:type_name -> assistant_service.Identity
+	44, // 46: assistant_service.GetConversationListResp.data:type_name -> assistant_service.ConversationInfo
+	1,  // 47: assistant_service.GetConversationDetailListReq.identity:type_name -> assistant_service.Identity
+	47, // 48: assistant_service.GetConversationDetailListResp.data:type_name -> assistant_service.ConversionDetailInfo
+	48, // 49: assistant_service.ConversionDetailInfo.requestFiles:type_name -> assistant_service.RequestFile
+	50, // 50: assistant_service.AssistantConversionStreamReq.fileInfo:type_name -> assistant_service.ConversionStreamFile
+	1,  // 51: assistant_service.AssistantConversionStreamReq.identity:type_name -> assistant_service.Identity
+	1,  // 52: assistant_service.ConversationDeleteByAssistantIdReq.identity:type_name -> assistant_service.Identity
+	1,  // 53: assistant_service.AssistantWorkFlowDeleteByWorkflowIdReq.identity:type_name -> assistant_service.Identity
+	1,  // 54: assistant_service.CustomPromptCreateReq.identity:type_name -> assistant_service.Identity
+	1,  // 55: assistant_service.CustomPromptDeleteReq.identity:type_name -> assistant_service.Identity
+	1,  // 56: assistant_service.CustomPromptUpdateReq.identity:type_name -> assistant_service.Identity
+	1,  // 57: assistant_service.CustomPromptGetReq.identity:type_name -> assistant_service.Identity
+	1,  // 58: assistant_service.CustomPromptInfo.identity:type_name -> assistant_service.Identity
+	1,  // 59: assistant_service.CustomPromptGetListReq.identity:type_name -> assistant_service.Identity
+	58, // 60: assistant_service.CustomPromptList.customPromptInfos:type_name -> assistant_service.CustomPromptInfo
+	1,  // 61: assistant_service.CustomPromptCopyReq.identity:type_name -> assistant_service.Identity
+	2,  // 62: assistant_service.AssistantService.GetAssistantByIds:input_type -> assistant_service.GetAssistantByIdsReq
+	4,  // 63: assistant_service.AssistantService.AssistantCreate:input_type -> assistant_service.AssistantCreateReq
+	6,  // 64: assistant_service.AssistantService.AssistantUpdate:input_type -> assistant_service.AssistantUpdateReq
+	7,  // 65: assistant_service.AssistantService.AssistantConfigUpdate:input_type -> assistant_service.AssistantConfigUpdateReq
+	11, // 66: assistant_service.AssistantService.AssistantDelete:input_type -> assistant_service.AssistantDeleteReq
+	17, // 67: assistant_service.AssistantService.GetAssistantListMyAll:input_type -> assistant_service.GetAssistantListMyAllReq
+	22, // 68: assistant_service.AssistantService.GetAssistantInfo:input_type -> assistant_service.GetAssistantInfoReq
+	23, // 69: assistant_service.AssistantService.AssistantCopy:input_type -> assistant_service.AssistantCopyReq
+	24, // 70: assistant_service.AssistantService.AssistantWorkFlowCreate:input_type -> assistant_service.AssistantWorkFlowCreateReq
+	25, // 71: assistant_service.AssistantService.AssistantWorkFlowDelete:input_type -> assistant_service.AssistantWorkFlowDeleteReq
+	26, // 72: assistant_service.AssistantService.AssistantWorkFlowEnableSwitch:input_type -> assistant_service.AssistantWorkFlowEnableSwitchReq
+	52, // 73: assistant_service.AssistantService.AssistantWorkFlowDeleteByWorkflowId:input_type -> assistant_service.AssistantWorkFlowDeleteByWorkflowIdReq
+	27, // 74: assistant_service.AssistantService.AssistantMCPCreate:input_type -> assistant_service.AssistantMCPCreateReq
+	28, // 75: assistant_service.AssistantService.AssistantMCPDelete:input_type -> assistant_service.AssistantMCPDeleteReq
+	30, // 76: assistant_service.AssistantService.AssistantMCPEnableSwitch:input_type -> assistant_service.AssistantMCPEnableSwitchReq
+	31, // 77: assistant_service.AssistantService.AssistantMCPGetList:input_type -> assistant_service.AssistantMCPGetListReq
+	29, // 78: assistant_service.AssistantService.AssistantMCPDeleteByMCPId:input_type -> assistant_service.AssistantMCPDeleteByMCPIdReq
+	35, // 79: assistant_service.AssistantService.AssistantToolCreate:input_type -> assistant_service.AssistantToolCreateReq
+	36, // 80: assistant_service.AssistantService.AssistantToolDelete:input_type -> assistant_service.AssistantToolDeleteReq
+	37, // 81: assistant_service.AssistantService.AssistantToolEnableSwitch:input_type -> assistant_service.AssistantToolEnableSwitchReq
+	38, // 82: assistant_service.AssistantService.AssistantToolConfig:input_type -> assistant_service.AssistantToolConfigReq
+	34, // 83: assistant_service.AssistantService.AssistantToolDeleteByToolId:input_type -> assistant_service.AssistantToolDeleteByToolIdReq
+	39, // 84: assistant_service.AssistantService.ConversationCreate:input_type -> assistant_service.ConversationCreateReq
+	41, // 85: assistant_service.AssistantService.ConversationDelete:input_type -> assistant_service.ConversationDeleteReq
+	42, // 86: assistant_service.AssistantService.GetConversationList:input_type -> assistant_service.GetConversationListReq
+	45, // 87: assistant_service.AssistantService.GetConversationDetailList:input_type -> assistant_service.GetConversationDetailListReq
+	49, // 88: assistant_service.AssistantService.AssistantConversionStream:input_type -> assistant_service.AssistantConversionStreamReq
+	51, // 89: assistant_service.AssistantService.ConversationDeleteByAssistantId:input_type -> assistant_service.ConversationDeleteByAssistantIdReq
+	53, // 90: assistant_service.AssistantService.CustomPromptCreate:input_type -> assistant_service.CustomPromptCreateReq
+	55, // 91: assistant_service.AssistantService.CustomPromptDelete:input_type -> assistant_service.CustomPromptDeleteReq
+	56, // 92: assistant_service.AssistantService.CustomPromptUpdate:input_type -> assistant_service.CustomPromptUpdateReq
+	57, // 93: assistant_service.AssistantService.CustomPromptGet:input_type -> assistant_service.CustomPromptGetReq
+	59, // 94: assistant_service.AssistantService.CustomPromptGetList:input_type -> assistant_service.CustomPromptGetListReq
+	61, // 95: assistant_service.AssistantService.CustomPromptCopy:input_type -> assistant_service.CustomPromptCopyReq
+	3,  // 96: assistant_service.AssistantService.GetAssistantByIds:output_type -> assistant_service.AppBriefList
+	5,  // 97: assistant_service.AssistantService.AssistantCreate:output_type -> assistant_service.AssistantCreateResp
+	65, // 98: assistant_service.AssistantService.AssistantUpdate:output_type -> google.protobuf.Empty
+	65, // 99: assistant_service.AssistantService.AssistantConfigUpdate:output_type -> google.protobuf.Empty
+	65, // 100: assistant_service.AssistantService.AssistantDelete:output_type -> google.protobuf.Empty
+	3,  // 101: assistant_service.AssistantService.GetAssistantListMyAll:output_type -> assistant_service.AppBriefList
+	18, // 102: assistant_service.AssistantService.GetAssistantInfo:output_type -> assistant_service.AssistantInfo
+	5,  // 103: assistant_service.AssistantService.AssistantCopy:output_type -> assistant_service.AssistantCreateResp
+	65, // 104: assistant_service.AssistantService.AssistantWorkFlowCreate:output_type -> google.protobuf.Empty
+	65, // 105: assistant_service.AssistantService.AssistantWorkFlowDelete:output_type -> google.protobuf.Empty
+	65, // 106: assistant_service.AssistantService.AssistantWorkFlowEnableSwitch:output_type -> google.protobuf.Empty
+	65, // 107: assistant_service.AssistantService.AssistantWorkFlowDeleteByWorkflowId:output_type -> google.protobuf.Empty
+	65, // 108: assistant_service.AssistantService.AssistantMCPCreate:output_type -> google.protobuf.Empty
+	65, // 109: assistant_service.AssistantService.AssistantMCPDelete:output_type -> google.protobuf.Empty
+	65, // 110: assistant_service.AssistantService.AssistantMCPEnableSwitch:output_type -> google.protobuf.Empty
+	33, // 111: assistant_service.AssistantService.AssistantMCPGetList:output_type -> assistant_service.AssistantMCPList
+	65, // 112: assistant_service.AssistantService.AssistantMCPDeleteByMCPId:output_type -> google.protobuf.Empty
+	65, // 113: assistant_service.AssistantService.AssistantToolCreate:output_type -> google.protobuf.Empty
+	65, // 114: assistant_service.AssistantService.AssistantToolDelete:output_type -> google.protobuf.Empty
+	65, // 115: assistant_service.AssistantService.AssistantToolEnableSwitch:output_type -> google.protobuf.Empty
+	65, // 116: assistant_service.AssistantService.AssistantToolConfig:output_type -> google.protobuf.Empty
+	65, // 117: assistant_service.AssistantService.AssistantToolDeleteByToolId:output_type -> google.protobuf.Empty
+	40, // 118: assistant_service.AssistantService.ConversationCreate:output_type -> assistant_service.ConversationCreateResp
+	65, // 119: assistant_service.AssistantService.ConversationDelete:output_type -> google.protobuf.Empty
+	43, // 120: assistant_service.AssistantService.GetConversationList:output_type -> assistant_service.GetConversationListResp
+	46, // 121: assistant_service.AssistantService.GetConversationDetailList:output_type -> assistant_service.GetConversationDetailListResp
+	0,  // 122: assistant_service.AssistantService.AssistantConversionStream:output_type -> assistant_service.AssistantConversionStreamResp
+	65, // 123: assistant_service.AssistantService.ConversationDeleteByAssistantId:output_type -> google.protobuf.Empty
+	54, // 124: assistant_service.AssistantService.CustomPromptCreate:output_type -> assistant_service.CustomPromptIDResp
+	65, // 125: assistant_service.AssistantService.CustomPromptDelete:output_type -> google.protobuf.Empty
+	65, // 126: assistant_service.AssistantService.CustomPromptUpdate:output_type -> google.protobuf.Empty
+	58, // 127: assistant_service.AssistantService.CustomPromptGet:output_type -> assistant_service.CustomPromptInfo
+	60, // 128: assistant_service.AssistantService.CustomPromptGetList:output_type -> assistant_service.CustomPromptList
+	54, // 129: assistant_service.AssistantService.CustomPromptCopy:output_type -> assistant_service.CustomPromptIDResp
+	96, // [96:130] is the sub-list for method output_type
+	62, // [62:96] is the sub-list for method input_type
+	62, // [62:62] is the sub-list for extension type_name
+	62, // [62:62] is the sub-list for extension extendee
+	0,  // [0:62] is the sub-list for field type_name
 }
 
 func init() { file_proto_assistant_service_assistant_service_proto_init() }

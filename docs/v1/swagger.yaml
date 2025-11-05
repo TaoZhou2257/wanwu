@@ -1047,10 +1047,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/request.AppModelConfig'
         description: 模型
-      onlineSearchConfig:
-        allOf:
-        - $ref: '#/definitions/request.OnlineSearchConfig'
-        description: 在线搜索
       prologue:
         description: 开场白
         type: string
@@ -2472,17 +2468,6 @@ definitions:
     required:
     - modelId
     type: object
-  request.OnlineSearchConfig:
-    properties:
-      enable:
-        type: boolean
-      searchKey:
-        type: string
-      searchRerankId:
-        type: string
-      searchUrl:
-        type: string
-    type: object
   request.OrgCreate:
     properties:
       name:
@@ -3198,10 +3183,6 @@ definitions:
       name:
         description: 名称
         type: string
-      onlineSearchConfig:
-        allOf:
-        - $ref: '#/definitions/request.OnlineSearchConfig'
-        description: 在线搜索配置
       prologue:
         description: 开场白
         type: string
