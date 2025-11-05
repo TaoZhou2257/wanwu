@@ -652,6 +652,7 @@ export default {
         warning:'注意：删除应用将导致Token失效，工作流将无法继续使用。'
     },
     knowledgeManage:{
+        author:'作者',
         noData:'暂无数据',
         searchPlaceholder:'按照知识库名称搜索',
         docPlaceholder:'按照文件名称搜索',
