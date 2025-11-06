@@ -15839,10 +15839,6 @@ const docTemplate = `{
                 "schema": {
                     "description": "schema",
                     "type": "string"
-                },
-                "toolSquareId": {
-                    "description": "广场mcpId(非空表示来源于广场)",
-                    "type": "string"
                 }
             }
         },

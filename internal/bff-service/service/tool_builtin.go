@@ -6,6 +6,7 @@ import (
 	mcp_service "github.com/UnicomAI/wanwu/api/proto/mcp-service"
 	"github.com/UnicomAI/wanwu/internal/bff-service/model/request"
 	"github.com/UnicomAI/wanwu/internal/bff-service/model/response"
+	"github.com/UnicomAI/wanwu/pkg/constant"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,13 +33,7 @@ func GetToolSquareList(ctx *gin.Context, userID, orgID, name string) (*response.
 	}
 	var list []response.ToolSquareInfo
 	for _, item := range resp.Infos {
-		list = append(list, response.ToolSquareInfo{
-			ToolSquareID: item.ToolSquareId,
-			Avatar:       cacheMCPServiceAvatar(ctx, item.AvatarPath),
-			Name:         item.Name,
-			Desc:         item.Desc,
-			Tags:         getToolTags(item.Tags),
-		})
+		list = append(list, toToolSquareInfo(ctx, item))
 	}
 	return &response.ListResult{
 		List:  list,
@@ -83,7 +78,7 @@ func toToolSquareDetail(ctx *gin.Context, toolSquare *mcp_service.SquareToolDeta
 func toToolSquareInfo(ctx *gin.Context, toolSquareInfo *mcp_service.ToolSquareInfo) response.ToolSquareInfo {
 	return response.ToolSquareInfo{
 		ToolSquareID: toolSquareInfo.ToolSquareId,
-		Avatar:       cacheMCPServiceAvatar(ctx, toolSquareInfo.AvatarPath),
+		Avatar:       cacheToolAvatar(ctx, constant.ToolTypeBuiltIn, toolSquareInfo.AvatarPath),
 		Name:         toolSquareInfo.Name,
 		Desc:         toolSquareInfo.Desc,
 		Tags:         getToolTags(toolSquareInfo.Tags),

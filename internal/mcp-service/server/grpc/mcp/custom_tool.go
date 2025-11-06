@@ -44,7 +44,6 @@ func (s *Service) CreateCustomTool(ctx context.Context, req *mcp_service.CreateC
 		AuthJSON:      string(apiAuthBytes),
 		UserID:        req.Identity.UserId,
 		OrgID:         req.Identity.OrgId,
-		ToolSquareId:  req.ToolSquareId,
 	}); err != nil {
 		return nil, errStatus(errs.Code_MCPCreateCustomToolErr, err)
 	}
@@ -256,6 +255,7 @@ func (s *Service) GetToolByIdList(ctx context.Context, req *mcp_service.GetToolB
 			CustomToolId: util.Int2Str(info.ID),
 			Name:         info.Name,
 			Description:  info.Description,
+			AvatarPath:   info.AvatarPath,
 		})
 	}
 	return &mcp_service.GetToolByToolIdListResp{

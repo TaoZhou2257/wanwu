@@ -91,21 +91,6 @@ func GetCustomToolList(ctx *gin.Context) {
 	gin_util.Response(ctx, resp, err)
 }
 
-// GetCustomToolSelect
-//
-//	@Tags			tool
-//	@Summary		获取自定义工具列表（用于下拉选择）
-//	@Description	获取自定义工具列表（用于下拉选择）
-//	@Accept			json
-//	@Produce		json
-//	@Param			name	query		string	false	"CustomTool名称"
-//	@Success		200		{object}	response.Response{data=response.ListResult{list=[]response.CustomToolSelect}}
-//	@Router			/tool/custom/select [get]
-func GetCustomToolSelect(ctx *gin.Context) {
-	resp, err := service.GetCustomToolSelect(ctx, getUserID(ctx), getOrgID(ctx), ctx.Query("name"))
-	gin_util.Response(ctx, resp, err)
-}
-
 // GetCustomToolActions
 //
 //	@Tags			tool

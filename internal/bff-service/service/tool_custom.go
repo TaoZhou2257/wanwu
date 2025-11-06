@@ -58,7 +58,6 @@ func GetCustomTool(ctx *gin.Context, userID, orgID string, customToolId string) 
 			Description:  info.Description,
 			Avatar:       cacheToolAvatar(ctx, constant.ToolTypeCustom, info.AvatarPath),
 		},
-		ToolSquareID:  info.ToolSquareId,
 		Schema:        info.Schema,
 		PrivacyPolicy: info.PrivacyPolicy,
 		ApiAuth: util.ApiAuthWebRequest{
@@ -128,34 +127,6 @@ func GetCustomToolList(ctx *gin.Context, userID, orgID, name string) (*response.
 			Name:         item.Name,
 			Description:  item.Description,
 			Avatar:       cacheToolAvatar(ctx, constant.ToolTypeCustom, item.AvatarPath),
-		})
-	}
-	return &response.ListResult{
-		List:  list,
-		Total: int64(len(list)),
-	}, nil
-}
-
-func GetCustomToolSelect(ctx *gin.Context, userID, orgID, name string) (*response.ListResult, error) {
-	resp, err := mcp.GetCustomToolList(ctx.Request.Context(), &mcp_service.GetCustomToolListReq{
-		Identity: &mcp_service.Identity{
-			UserId: userID,
-			OrgId:  orgID,
-		},
-		Name: name,
-	})
-	if err != nil {
-		return nil, err
-	}
-	var list []response.CustomToolSelect
-	for _, info := range resp.List {
-		list = append(list, response.CustomToolSelect{
-			UniqueId: "tool-" + info.CustomToolId,
-			CustomToolInfo: response.CustomToolInfo{
-				CustomToolId: info.CustomToolId,
-				Name:         info.Name,
-				Description:  info.Description,
-			},
 		})
 	}
 	return &response.ListResult{

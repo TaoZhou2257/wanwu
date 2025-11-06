@@ -50,23 +50,17 @@ func GetWorkflowToolSelect(ctx *gin.Context, userId, orgId, toolType, name strin
 			Total: int64(len(list)),
 		}, nil
 	case constant.ToolTypeCustom:
-		resp, err := mcp.GetCustomToolList(ctx.Request.Context(), &mcp_service.GetCustomToolListReq{
-			Name: name,
-			Identity: &mcp_service.Identity{
-				UserId: userId,
-				OrgId:  orgId,
-			},
-		})
+		resp, err := GetCustomToolList(ctx, userId, orgId, name)
 		if err != nil {
 			return nil, err
 		}
 		var list []response.ToolSelect4Workflow
-		for _, item := range resp.List {
+		for _, item := range resp.List.([]response.CustomToolInfo) {
 			detail, err := GetCustomTool(ctx, userId, orgId, item.CustomToolId)
 			if err != nil {
 				return nil, err
 			}
-			url, _ := net_url.JoinPath(config.Cfg().Server.ApiBaseUrl, config.Cfg().DefaultIcon.ToolIcon)
+			url, _ := net_url.JoinPath(config.Cfg().Server.ApiBaseUrl, detail.Avatar.Path)
 			list = append(list, response.ToolSelect4Workflow{
 				ToolID:   item.CustomToolId,
 				ToolName: item.Name,
@@ -100,7 +94,7 @@ func GetWorkflowToolDetail(ctx *gin.Context, userId, orgId, toolId, toolType, op
 			return nil, err
 		}
 		schema = resp.Schema
-		iconUrl, _ = net_url.JoinPath(config.Cfg().Server.ApiBaseUrl, cacheMCPServiceAvatar(ctx, resp.Info.AvatarPath).Path)
+		iconUrl, _ = net_url.JoinPath(config.Cfg().Server.ApiBaseUrl, cacheToolAvatar(ctx, constant.ToolTypeBuiltIn, resp.Info.AvatarPath).Path)
 	case constant.ToolTypeCustom:
 		resp, err := mcp.GetCustomToolInfo(ctx.Request.Context(), &mcp_service.GetCustomToolInfoReq{
 			CustomToolId: toolId,
@@ -113,7 +107,7 @@ func GetWorkflowToolDetail(ctx *gin.Context, userId, orgId, toolId, toolType, op
 			return nil, err
 		}
 		schema = resp.Schema
-		iconUrl, _ = net_url.JoinPath(config.Cfg().Server.ApiBaseUrl, config.Cfg().DefaultIcon.ToolIcon)
+		iconUrl, _ = net_url.JoinPath(config.Cfg().Server.ApiBaseUrl, cacheToolAvatar(ctx, constant.ToolTypeCustom, resp.AvatarPath).Path)
 	}
 
 	inputs, outputs, err := openapiSchema2ToolActionInputsAndOutputs4Workflow(ctx.Request.Context(), schema, operationId)

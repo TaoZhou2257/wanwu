@@ -12,7 +12,6 @@ type CustomToolDetail struct {
 	ApiAuth       util.ApiAuthWebRequest `json:"apiAuth"`       // apiAuth
 	ApiList       []CustomToolActionInfo `json:"apiList"`       // action列表
 	PrivacyPolicy string                 `json:"privacyPolicy"` // 隐私政策
-	ToolSquareID  string                 `json:"toolSquareId"`  // 广场mcpId(非空表示来源于广场)
 }
 
 type CustomToolInfo struct {
@@ -27,11 +26,6 @@ type CustomToolActionInfo struct {
 	Desc   string `json:"desc"`
 	Method string `json:"method"`
 	Path   string `json:"path"`
-}
-
-type CustomToolSelect struct {
-	UniqueId string `json:"uniqueId"` // 随机unique id(每次动态生成)
-	CustomToolInfo
 }
 
 type ToolSquareDetail struct {

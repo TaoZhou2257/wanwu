@@ -200,14 +200,13 @@ message Identity {
 }
 
 message CreateCustomToolReq {
-    string schema = 1;
-    common.ApiAuthWebRequest apiAuth = 2;
-    Identity identity = 3;
+    Identity identity = 1;
+    string schema = 2;
+    common.ApiAuthWebRequest apiAuth = 3;
     string name = 4;
     string description = 5;
     string privacyPolicy = 6;
-    string toolSquareId = 7;
-    string avatarPath = 8;
+    string avatarPath = 7;
 }
 
 message GetCustomToolInfoReq {
@@ -222,8 +221,7 @@ message GetCustomToolInfoResp {
     string name = 4;
     string description = 5;
     string privacyPolicy = 6;
-    string toolSquareId = 7;
-    string avatarPath = 8;
+    string avatarPath = 7;
 }
 
 message GetCustomToolListReq {

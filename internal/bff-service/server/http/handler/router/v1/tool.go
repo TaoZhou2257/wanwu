@@ -15,7 +15,6 @@ func registerTool(apiV1 *gin.RouterGroup) {
 	mid.Sub("tool").Reg(apiV1, "/tool/custom", http.MethodDelete, v1.DeleteCustomTool, "删除自定义工具")
 	mid.Sub("tool").Reg(apiV1, "/tool/custom", http.MethodPut, v1.UpdateCustomTool, "修改自定义工具")
 	mid.Sub("tool").Reg(apiV1, "/tool/custom/list", http.MethodGet, v1.GetCustomToolList, "获取自定义工具列表")
-	mid.Sub("tool").Reg(apiV1, "/tool/custom/select", http.MethodGet, v1.GetCustomToolSelect, "获取自定义工具列表（用于下拉选择）")
 	mid.Sub("tool").Reg(apiV1, "/tool/custom/schema", http.MethodPost, v1.GetCustomToolActions, "获取可用API列表（根据Schema）")
 
 	// 内置工具
