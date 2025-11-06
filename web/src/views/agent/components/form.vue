@@ -418,7 +418,7 @@
     <!-- 内置工具详情 -->
     <ToolDeatail ref="toolDeatail" @updateDetail="updateDetail" />
     <!-- 提交至提示词 -->
-    <createPrompt ref="createPrompt"  @updateDetail="updateDetail" />
+    <createPrompt :isCustom="true" :type="promptType" ref="createPrompt" @reload="updatePrompt"/>
     <!-- 元数据设置 -->
     <el-dialog
       :visible.sync="metaSetVisible"
@@ -480,7 +480,7 @@ import { readWorkFlow } from "@/api/workflow";
 import Chat from "./chat";
 import LinkIcon from "@/components/linkIcon.vue";
 import promptTemplate from "./prompt/index.vue";
-import createPrompt from "./prompt/createPrompt.vue"
+import createPrompt from "@/components/createApp/createPrompt.vue"
 import knowledgeSelect from "@/components/knowledgeSelect.vue";
 export default {
   components: {
@@ -547,6 +547,7 @@ export default {
   },
   data() {
     return {
+      promptType: 'create',
       limitMaxTokens: 4096,
       knowledgeIndex: -1,
       currentKnowledgeId: "",
@@ -677,8 +678,11 @@ export default {
   },
   methods: {
     ...mapActions("app", ["setMaxPicNum","clearMaxPicNum"]),
+    updatePrompt(){
+        this.$refs.promptTemplate.getPromptTemplateList()
+    },
     handleShowPrompt(){
-      this.$refs.createPrompt.showDialog();
+      this.$refs.createPrompt.openDialog();
     },
     getPrompt(prompt){
       this.editForm.instructions = prompt;

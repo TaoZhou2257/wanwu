@@ -946,19 +946,7 @@ export default {
             selectTemplate: '请选择提示词模板',
             emptyText:'当前空间暂无可用的提示词资源',
             all:'全部',
-            submitToPromptLibrary:'提交至提示词库',
-            promptTitle:'提示词模板标题',
-            promptDesc:'提示词模板描述',
-            promptContent:'提示词',
-            promptIcon:'提示词模板图标',
-            submitSuccess:'提交成功',
-            submitFail:'提交失败',
-            titleRequired:'请输入提示词模板标题',
-            titleMaxLength:'标题长度不能超过50个字符',
-            descRequired:'请输入提示词模板描述',
-            descMaxLength:'描述长度不能超过200个字符',
-            promptRequired:'请输入提示词',
-            avatarRequired:'请上传提示词模板图标'
+            submitToPromptLibrary:'提交至提示词库'
         }
     },
     agentDiglog:{
