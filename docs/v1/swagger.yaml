@@ -3766,25 +3766,6 @@ definitions:
         description: 名称
         type: string
     type: object
-  response.CustomToolSelect:
-    properties:
-      avatar:
-        allOf:
-        - $ref: '#/definitions/request.Avatar'
-        description: 图标
-      customToolId:
-        description: 自定义工具id
-        type: string
-      description:
-        description: 描述
-        type: string
-      name:
-        description: 名称
-        type: string
-      uniqueId:
-        description: 随机unique id(每次动态生成)
-        type: string
-    type: object
   response.DeleteFileResp:
     properties:
       status:
@@ -4453,35 +4434,6 @@ definitions:
     properties:
       mcpServerId:
         description: mcpServerId
-        type: string
-    type: object
-  response.MCPServerCustomToolApi:
-    properties:
-      description:
-        description: 方法描述
-        type: string
-      methodName:
-        description: 方法名称
-        type: string
-    type: object
-  response.MCPServerCustomToolSelect:
-    properties:
-      customToolId:
-        description: 自定义工具id
-        type: string
-      description:
-        description: 描述
-        type: string
-      methods:
-        description: 方法
-        items:
-          $ref: '#/definitions/response.MCPServerCustomToolApi'
-        type: array
-      name:
-        description: 名称
-        type: string
-      uniqueId:
-        description: 统一的id
         type: string
     type: object
   response.MCPServerDetail:
@@ -8967,38 +8919,6 @@ paths:
       summary: 更新MCP Server工具
       tags:
       - tool
-  /mcp/server/tool/custom/select:
-    get:
-      consumes:
-      - application/json
-      description: 获取MCP Server自定义工具列表（用于下拉选择）
-      parameters:
-      - description: CustomTool名称
-        in: query
-        name: name
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  allOf:
-                  - $ref: '#/definitions/response.ListResult'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/response.MCPServerCustomToolSelect'
-                        type: array
-                    type: object
-              type: object
-      summary: 获取MCP Server自定义工具列表（用于下拉选择）
-      tags:
-      - tool
   /mcp/server/tool/openapi:
     post:
       consumes:
@@ -10787,38 +10707,6 @@ paths:
                     type: object
               type: object
       summary: 获取可用API列表（根据Schema）
-      tags:
-      - tool
-  /tool/custom/select:
-    get:
-      consumes:
-      - application/json
-      description: 获取自定义工具列表（用于下拉选择）
-      parameters:
-      - description: CustomTool名称
-        in: query
-        name: name
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  allOf:
-                  - $ref: '#/definitions/response.ListResult'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/response.CustomToolSelect'
-                        type: array
-                    type: object
-              type: object
-      summary: 获取自定义工具列表（用于下拉选择）
       tags:
       - tool
   /tool/select:

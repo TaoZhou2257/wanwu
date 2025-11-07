@@ -5992,64 +5992,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/mcp/server/tool/custom/select": {
-            "get": {
-                "description": "获取MCP Server自定义工具列表（用于下拉选择）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tool"
-                ],
-                "summary": "获取MCP Server自定义工具列表（用于下拉选择）",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "CustomTool名称",
-                        "name": "name",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ListResult"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/response.MCPServerCustomToolSelect"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/mcp/server/tool/openapi": {
             "post": {
                 "description": "创建openapi工具",
@@ -9119,64 +9061,6 @@ const docTemplate = `{
                                                             "type": "array",
                                                             "items": {
                                                                 "$ref": "#/definitions/response.CustomToolActionInfo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/tool/custom/select": {
-            "get": {
-                "description": "获取自定义工具列表（用于下拉选择）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tool"
-                ],
-                "summary": "获取自定义工具列表（用于下拉选择）",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "CustomTool名称",
-                        "name": "name",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ListResult"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/response.CustomToolSelect"
                                                             }
                                                         }
                                                     }
@@ -15867,35 +15751,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.CustomToolSelect": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "description": "图标",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/request.Avatar"
-                        }
-                    ]
-                },
-                "customToolId": {
-                    "description": "自定义工具id",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "名称",
-                    "type": "string"
-                },
-                "uniqueId": {
-                    "description": "随机unique id(每次动态生成)",
-                    "type": "string"
-                }
-            }
-        },
         "response.DeleteFileResp": {
             "type": "object",
             "properties": {
@@ -16894,47 +16749,6 @@ const docTemplate = `{
             "properties": {
                 "mcpServerId": {
                     "description": "mcpServerId",
-                    "type": "string"
-                }
-            }
-        },
-        "response.MCPServerCustomToolApi": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "description": "方法描述",
-                    "type": "string"
-                },
-                "methodName": {
-                    "description": "方法名称",
-                    "type": "string"
-                }
-            }
-        },
-        "response.MCPServerCustomToolSelect": {
-            "type": "object",
-            "properties": {
-                "customToolId": {
-                    "description": "自定义工具id",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "methods": {
-                    "description": "方法",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/response.MCPServerCustomToolApi"
-                    }
-                },
-                "name": {
-                    "description": "名称",
-                    "type": "string"
-                },
-                "uniqueId": {
-                    "description": "统一的id",
                     "type": "string"
                 }
             }

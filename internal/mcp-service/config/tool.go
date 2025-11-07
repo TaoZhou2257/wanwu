@@ -3,11 +3,12 @@ package config
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
 	grpc_util "github.com/UnicomAI/wanwu/pkg/grpc-util"
 	openapi3_util "github.com/UnicomAI/wanwu/pkg/openapi3-util"
-	"os"
-	"path/filepath"
 )
 
 type ToolConfig struct {

@@ -1,11 +1,11 @@
 package service
 
 import (
-	iam_service "github.com/UnicomAI/wanwu/api/proto/iam-service"
 	"path/filepath"
 	"strings"
 
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
+	iam_service "github.com/UnicomAI/wanwu/api/proto/iam-service"
 	knowledgebase_doc_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-doc-service"
 	"github.com/UnicomAI/wanwu/internal/bff-service/model/request"
 	"github.com/UnicomAI/wanwu/internal/bff-service/model/response"

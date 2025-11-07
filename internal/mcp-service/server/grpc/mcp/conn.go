@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	App app_service.AppServiceClient
+	app app_service.AppServiceClient
 )
 
 func StartService() error {
@@ -25,7 +25,7 @@ func StartService() error {
 	if err != nil {
 		return fmt.Errorf("init app-service connection err: %v", err)
 	}
-	App = app_service.NewAppServiceClient(AppConn)
+	app = app_service.NewAppServiceClient(AppConn)
 	log.Infof("App init success")
 	log.Infof("App: %s", config.Cfg().App.Host)
 	return nil

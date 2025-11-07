@@ -278,7 +278,7 @@ func cacheMCPServiceAvatar(ctx *gin.Context, avatarPath string) request.Avatar {
 }
 
 // cacheWorkflowAvatar 将avatar http请求地址转为前端统一访问的格式，同时在本地缓存avatar
-// 例如 http://api/static/abc/def.jpg => /v1/static/avatar/abc/def.png
+// 例如 http://IP:port/api/static/abc/def.jpg => /v1/static/avatar/abc/def.png
 func cacheWorkflowAvatar(avatarURL string) request.Avatar {
 	avatar := request.Avatar{}
 
@@ -329,7 +329,7 @@ func cacheWorkflowAvatar(avatarURL string) request.Avatar {
 			newAvatarURL += "?" + parsedURL.RawQuery
 		}
 	} else {
-		// 直接使用原始URL（如 http:localhost:8081/api/static/icon/icon-HTTP.png）
+		// 直接使用原始URL（如 http://localhost:8081/api/static/icon/icon-HTTP.png）
 		newAvatarURL = avatarURL
 	}
 	// 从HTTP URL下载文件
