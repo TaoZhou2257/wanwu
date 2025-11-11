@@ -121,17 +121,6 @@ type EmailLoginInfo struct {
 	LastUpdatePasswordAt int64
 }
 
-type OauthAppInfo struct {
-	Name         string
-	Description  string
-	ClientID     string
-	ClientSecret string
-	RedirectURI  string
-	Status       bool
-	CreatedAt    int64
-	UpdatedAt    int64
-}
-
 func toErrStatus(key string, args ...string) *err_code.Status {
 	return &err_code.Status{
 		TextKey: key,

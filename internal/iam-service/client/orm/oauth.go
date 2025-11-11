@@ -65,11 +65,12 @@ func (c *Client) UpdateOauthApp(ctx context.Context, req *model.OauthApp) *errs.
 	})
 }
 
-func (c *Client) GetOauthAppList(ctx context.Context, userID uint32) ([]*OauthAppInfo, *errs.Status) {
-	var apps []*OauthAppInfo
-	if err := sqlopt.WithUserID(userID).Apply(c.db.WithContext(ctx)).Model(&model.OauthApp{}).Find(&apps).Error; err != nil {
+func (c *Client) GetOauthAppList(ctx context.Context, userID uint32) ([]*model.OauthApp, *errs.Status) {
+	var apps []*model.OauthApp
+	if err := sqlopt.WithUserID(userID).Apply(c.db.WithContext(ctx)).Find(&apps).Error; err != nil {
 		return nil, toErrStatus("oauth_app_list", "get list failed", err.Error())
 	}
+
 	return apps, nil
 }
 
@@ -81,8 +82,8 @@ func (c *Client) UpdateOauthAppStatus(ctx context.Context, clientID string, stat
 	return nil
 }
 
-func (c *Client) GetOauthApp(ctx context.Context, clientID string) (*OauthAppInfo, *errs.Status) {
-	var app *OauthAppInfo
+func (c *Client) GetOauthApp(ctx context.Context, clientID string) (*model.OauthApp, *errs.Status) {
+	var app *model.OauthApp
 	if err := sqlopt.WithClientID(clientID).Apply(c.db.WithContext(ctx)).First(&app).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, toErrStatus("oauth_app_get", clientID, "oauth app not found")

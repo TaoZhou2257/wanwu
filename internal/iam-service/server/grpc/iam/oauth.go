@@ -6,7 +6,6 @@ import (
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
 	iam_service "github.com/UnicomAI/wanwu/api/proto/iam-service"
 	"github.com/UnicomAI/wanwu/internal/iam-service/client/model"
-	"github.com/UnicomAI/wanwu/internal/iam-service/client/orm"
 	"github.com/UnicomAI/wanwu/pkg/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -74,7 +73,7 @@ func (s *Service) GetOauthApp(ctx context.Context, req *iam_service.GetOauthAppR
 	return toOauthAppProto(app), nil
 }
 
-func toOauthAppProto(app *orm.OauthAppInfo) *iam_service.OauthApp {
+func toOauthAppProto(app *model.OauthApp) *iam_service.OauthApp {
 	if app == nil {
 		return nil
 	}
