@@ -239,6 +239,7 @@ import { selectModelList } from "@/api/modelAccess";
 import { KNOWLEDGE_GRAPH_TIPS } from "../config";
 import uploadChunk from "@/mixins/uploadChunk";
 import { delfile } from "@/api/chunkFile";
+import {USER_API} from "@/utils/requestConstants"
 export default {
   mixins: [uploadChunk],
   data() {
@@ -330,8 +331,13 @@ export default {
       }
     },
     async downloadTemplate() {
+<<<<<<< HEAD
       const url = "/user/api/v1/static/docs/graph_schema.xlsx";
       const fileName = "graph_schema.xlsx.xlsx";
+=======
+      const url = `${USER_API}/static/docs/graph_schema.xlsx`;
+      const fileName = "url_import_template.xlsx";
+>>>>>>> 5f2a863559ac84c9f304d2d176772ffabad82833
       try {
         const response = await fetch(url);
         if (!response.ok)
