@@ -7,7 +7,7 @@ tools:
     tags: ""
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
@@ -105,7 +105,7 @@ tools:
     tags: "元景-1.0,文生图"
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
@@ -139,7 +139,7 @@ tools:
     tags: "Qwen-Image,文生图,8K"
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
@@ -179,7 +179,7 @@ tools:
     tags: ""
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
@@ -211,7 +211,7 @@ tools:
     tags: "自动语音识别"
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
@@ -240,7 +240,7 @@ tools:
     tags: "图生视频"
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
@@ -280,7 +280,7 @@ tools:
     tags: ""
     need_api_key_input: true
     auth_type: "api_key_header"
-    api_key_header_prefix: "Bearer"
+    api_key_header_prefix: "bearer"
     api_key_header: "Authorization"
     api_key_query_param: ""
     api_key_value: ""
