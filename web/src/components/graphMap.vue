@@ -284,7 +284,7 @@ export default {
           Array.isArray(this.data.graph.edges))
       ) {
         const transformedData = transformGraphData(this.data.graph)
-        console.log(transformedData)
+        console.log(transformedData,'transformedData')
         this.graph.data(transformedData)
         this.graph.render()
         

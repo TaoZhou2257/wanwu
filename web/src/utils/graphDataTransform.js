@@ -13,13 +13,13 @@ function generateColorFromString(str) {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
 
-export function transformGraphData(backendData, options = {}) {
+export function transformGraphData(backendData) {
   if (!backendData) {
     return { nodes: [], edges: [] }
   }
 
-  const nodes = backendData.nodes || []
-  const edges = backendData.edges || []
+  const nodes = Array.isArray(backendData.nodes) ? backendData.nodes : []
+  const edges = Array.isArray(backendData.edges) ? backendData.edges : []
   
   const typeColorMap = {}
   nodes.forEach(node => {
@@ -29,25 +29,14 @@ export function transformGraphData(backendData, options = {}) {
     }
   })
   
-  const {
-    getNodeId = (node, index) => node.entity_name || `node_${index}`,
-    getNodeLabel = (node, index) => node.entity_name || `node_${index}`,
-    getNodeSize = (node, index) => node.pagerank ? Math.max(15, Math.min(30, node.pagerank * 100)) : 20,
-    getNodeColor = (node, index) => {
-      const entityType = node.entity_type || ''
-      return typeColorMap[entityType] || '#C6E5FF'
-    },
-    getEdgeId = (edge, index) => `e${index}`,
-    getEdgeLabel = (edge, index) => edge.description || ''
-  } = options
-
   const nodeIdMap = new Map()
 
   const transformedNodes = nodes.map((node, index) => {
-    const nodeId = getNodeId(node, index)
-    const nodeLabel = getNodeLabel(node, index)
-    const nodeSize = getNodeSize(node, index)
-    const nodeColor = getNodeColor(node, index)
+    const nodeId = node.entity_name || `node_${index}`
+    const nodeLabel = node.entity_name || `node_${index}`
+    const nodeSize = node.pagerank ? Math.max(15, Math.min(30, node.pagerank * 100)) : 20
+    const entityType = node.entity_type || ''
+    const nodeColor = typeColorMap[entityType] || '#C6E5FF'
 
     if (node && node.entity_name) {
       nodeIdMap.set(node.entity_name, nodeId)
@@ -73,8 +62,8 @@ export function transformGraphData(backendData, options = {}) {
   })
 
   const transformedEdges = edges.map((edge, index) => {
-    const edgeId = getEdgeId(edge, index)
-    const edgeLabel = getEdgeLabel(edge, index)
+    const edgeId = `e${index}`
+    const edgeLabel = edge.description || ''
 
     const source =
       nodeIdMap.get(edge && edge.source_entity) ||
@@ -111,7 +100,6 @@ export function transformGraphData(backendData, options = {}) {
       ...edge
     }
   })
-
   return {
     nodes: transformedNodes,
     edges: transformedEdges

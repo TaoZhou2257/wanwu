@@ -5,8 +5,15 @@ module.exports = {
         browsers: ['> 1%', 'last 2 versions', 'not dead']
       },
       useBuiltIns: 'usage',
-      corejs: 3
+      corejs: 3,
+      modules: false,
+      debug: false
     }]
-  ]
+  ],
+  env: {
+    production: {
+      plugins: []
+    }
+  }
 }
 

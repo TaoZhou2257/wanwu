@@ -24,6 +24,7 @@ module.exports = {
     '@antv/g6',
     '@antv/graphlib'
   ],
+  parallel: false,
   chainWebpack(config){
     config.module
       .rule('md')
