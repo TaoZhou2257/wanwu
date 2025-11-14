@@ -33,7 +33,7 @@
               </div>
 
               <div class="content_title">
-                                <el-button size="mini" type="primary" icon="el-icon-refresh" @click="reload" >{{$t('common.gpuDialog.reload')}}</el-button>
+                <el-button size="mini" type="primary" icon="el-icon-refresh" @click="reload" >{{$t('common.gpuDialog.reload')}}</el-button>
                 <el-button size="mini" type="primary" @click="$router.push(`/knowledge/graphMap/${docQuery.knowledgeId}?name=${knowledgeName}`)" v-if="graphSwitch && tableData.length > 0">知识图谱</el-button>
                 <el-button size="mini" type="primary" @click="$router.push(`/knowledge/communityReport?knowledgeId=${docQuery.knowledgeId} &name=${knowledgeName}`)" v-if="graphSwitch && tableData.length > 0">
                   <span>社区报告</span>
@@ -140,6 +140,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  v-if="graphSwitch"
                   prop="graphStatus"
                   :label="$t('knowledgeManage.graph.graphStatus')"
                 >
