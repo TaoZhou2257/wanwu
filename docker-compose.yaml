@@ -645,6 +645,7 @@ services:
       # 用于rag调用外部API的env
       GET_KB_ID_URL: http://bff-service:6668/v1/api/category/info
       KAFKA_MQ_REL_URL: http://bff-service:6668/v1/api/docstatus
+      KAFKA_MQ_KB_STATUS_URL: http://bff-service:6668/v1/api/knowledge/status
       KAFKA_DOC_STATUS_INIT_URL: http://bff-service:6668/v1/api/doc_status_init
       MODEL_PROVIDER_URL: http://bff-service:6668
       REPLACE_MINIO_DOWNLOAD_URL: ${WANWU_WEB_BASE_URL}/minio/download/api/
