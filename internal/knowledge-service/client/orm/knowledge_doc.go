@@ -116,7 +116,8 @@ func CheckKnowledgeDocSameName(ctx context.Context, userId string, knowledgeId s
 		sqlopt.WithKnowledgeID(knowledgeId),
 		sqlopt.WithName(docName),
 		sqlopt.WithFilePathMd5(docUrlMd5),
-		sqlopt.WithoutStatus(model.DocFail)).
+		sqlopt.WithoutStatus(model.DocFail),
+		sqlopt.WithDelete(0)).
 		Apply(db.GetHandle(ctx), &model.KnowledgeDoc{}).
 		Count(&count).Error
 	if err != nil {

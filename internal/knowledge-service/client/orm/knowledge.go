@@ -274,8 +274,9 @@ func CreateKnowledgeReport(ctx context.Context, knowledgeId string) error {
 		return err
 	}
 	return db.GetHandle(ctx).Transaction(func(tx *gorm.DB) error {
-		//1.更新生成条数
-		err := tx.Model(&model.KnowledgeBase{}).Where("knowledge_id=?", knowledgeId).Update("report_create_count", gorm.Expr("report_create_count + ?", 1)).Error
+		//1.更新生成条数和状态
+		err := tx.Model(&model.KnowledgeBase{}).Where("knowledge_id=?", knowledgeId).Update("report_create_count", gorm.Expr("report_create_count + ?", 1)).
+			Update("report_status", model.ReportProcessing).Error
 		if err != nil {
 			return err
 		}
