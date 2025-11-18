@@ -194,6 +194,7 @@
               v-for="(n,i) in editForm.recommendQuestion"
               @mouseenter="activeIndex = i"
               @mouseleave="activeIndex = -1"
+              :key="`${i}rml`"
             >
               <el-input
                 class="recommend--input"
@@ -660,7 +661,9 @@ export default {
   },
   computed:{
     showGraphSwitch() {
-      return this.editForm.knowledgebases && this.editForm.knowledgebases.some(item => item.graphSwitch === 1)
+      return (this.editForm.knowledgebases && 
+      this.editForm.knowledgebases.some(item => item.graphSwitch === 1)
+      )
     }
   },
   mounted() {

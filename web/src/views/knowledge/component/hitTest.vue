@@ -13,7 +13,7 @@
     <div class="block wrap-fullheight">
       <div class="test-left test-box">
         <div class="hitTest_input">
-          <h3>命中分段测试</h3>
+          <h3>{{$t('knowledgeManage.hitTestSegmentTitle')}}</h3>
           <el-input
             type="textarea"
             :rows="4"
@@ -25,11 +25,11 @@
               type="primary"
               size="small"
               @click="startTest"
-            >开始测试<span class="el-icon-caret-right"></span></el-button>
+            >{{$t('knowledgeManage.startTest')}}<span class="el-icon-caret-right"></span></el-button>
           </div>
         </div>
          <div class="hitTest_input meta_box">
-          <h3>元数据过滤配置</h3>
+          <h3>{{$t('knowledgeManage.metaFilterConfig')}}</h3>
           <metaSet ref="metaSet" class="metaSet" :knowledgeId="knowledgeId" />
         </div>
         <div class="test_form">
@@ -38,7 +38,7 @@
       </div>
       <div class="test-right test-box">
         <div class="result_title">
-          <h3>命中预测结果</h3>
+          <h3>{{$t('knowledgeManage.hitResult')}}</h3>
           <img
             src="@/assets/imgs/nodata_2x.png"
             v-if="searchList.length >0"
@@ -61,11 +61,19 @@
                 <span>
                   <span class="tag"  @click="showSectionDetail(index)">{{$t('knowledgeManage.section')}}#{{index+1}}</span>
                   <span v-if="['graph','community_report'].includes(item.contentType)" class="segment-type">
-                    {{item.contentType === 'graph' ? '#知识图谱' : '#社区报告'}}
+                    {{ item.contentType === 'graph' ? '#' + $t('knowledgeManage.graphTag') : '#' + $t('knowledgeManage.communityReportTag') }}
                   </span>
                   <span v-else>
-                    <span class="segment-type">{{item.childContentList && item.childContentList.length > 0 ? '#父子分段' : '#通用分段'}}</span>
-                    <span class="segment-length" v-if="item.childContentList && item.childContentList.length > 0" @click="showSectionDetail(index)">#{{item.childContentList.length || 0}}个子分段</span>
+                    <span class="segment-type">
+                      {{ item.childContentList && item.childContentList.length > 0 ? '#' + $t('knowledgeManage.config.parentSonSegment') : '#' + $t('knowledgeManage.config.commonSegment') }}
+                    </span>
+                    <span
+                      class="segment-length"
+                      v-if="item.childContentList && item.childContentList.length > 0"
+                      @click="showSectionDetail(index)"
+                    >
+                      {{$t('knowledgeManage.childSegmentCount',{count: item.childContentList.length || 0})}}
+                    </span>
                   </span>
                 </span>
                 <span class="score">{{$t('knowledgeManage.hitScore')}}: {{(formatScore(score[index]))}}</span>
@@ -85,7 +93,7 @@
                       class="segment-collapse-item"
                     >
                       <template slot="title">
-                        <span class="sub-badge">命中{{ item.childContentList.length }}个子分段</span>
+                        <span class="sub-badge">{{$t('knowledgeManage.hitChildSegments',{count:item.childContentList.length})}}</span>
                       </template>
                       <div class="segment-content">
                         <div 
@@ -99,7 +107,7 @@
                               <span class="segment-content">{{child.childSnippet}}</span>
                             </span>
                             <span class="segment-score">
-                              <span class="score-value">命中得分: {{ formatScore(item.childScore[childIndex]) }}</span>
+                              <span class="score-value">{{$t('knowledgeManage.hitScore')}}: {{ formatScore(item.childScore[childIndex]) }}</span>
                             </span>
                           </div>
                         </div>
@@ -107,7 +115,7 @@
                     </el-collapse-item>
                   </el-collapse>
                 </div>
-                <div class="file_name">文件名称：{{item.title}}</div>
+                <div class="file_name">{{$t('knowledgeManage.fileName')}}：{{item.title}}</div>
               </div>
             </div>
           </div>
@@ -116,7 +124,7 @@
             class="nodata"
           >
             <img src="@/assets/imgs/nodata_2x.png" />
-            <p class="nodata_tip">暂无数据</p>
+            <p class="nodata_tip">{{$t('knowledgeManage.noData')}}</p>
           </div>
         </div>
         <!-- 分段详情区域 -->
@@ -147,8 +155,7 @@ export default {
       knowledgeId:this.$route.query.knowledgeId,
       name:this.$route.query.name,
       graphSwitch:this.$route.query.graphSwitch || false,
-      activeNames: [],
-      useGraph:false
+      activeNames: []
     };
   },
   methods: {
@@ -187,8 +194,6 @@ export default {
         this.$message.warning('存在未填信息,请补充')
         return
       }
-      const { knowledgeMatchParams } = this.formInline;
-      this.$set(knowledgeMatchParams, 'useGraph', this.useGraph);
       const data = {
         ...this.formInline,
         knowledgeList:[this.knowledgeIdList],

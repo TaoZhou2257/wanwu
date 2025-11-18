@@ -126,7 +126,7 @@
               </span>
             </p>
           <div class="rl">
-            <searchConfig ref="searchConfig" @sendConfigInfo="sendConfigInfo" :setType="'rag'" :config="editForm.knowledgeConfig"/>
+            <searchConfig ref="searchConfig" @sendConfigInfo="sendConfigInfo" :setType="'rag'" :config="editForm.knowledgeConfig" :showGraphSwitch="showGraphSwitch"/>
           </div>
         </div>
         <div class="block prompt-box safety-box">
@@ -156,7 +156,7 @@
     <!-- 模型设置 -->
     <ModelSet @setModelSet="setModelSet" ref="modelSetDialog" :modelConfig="editForm.modelConfig" />
     <!-- 知识库设置 -->
-    <knowledgeSet @setKnowledgeSet="setKnowledgeSet" ref="knowledgeSetDialog" :knowledgeConfig="editForm.knowledgeConfig" :showGraphSwitch="showGraphSwitch" />
+    <knowledgeSet @setKnowledgeSet="setKnowledgeSet" ref="knowledgeSetDialog" :knowledgeConfig="editForm.knowledgeConfig" />
     <!-- apikey -->
     <ApiKeyDialog ref="apiKeyDialog" :appId="editForm.appId" :appType="'rag'" />
     <setSafety ref="setSafety" @sendSafety="sendSafety" />
@@ -306,7 +306,9 @@ export default {
   },
   computed:{
       showGraphSwitch() {
-      return this.editForm.knowledgebases && this.editForm.knowledgebases.some(item => item.graphSwitch === 1)
+      return ( this.editForm.knowledgebases && 
+      this.editForm.knowledgebases.some(item => item.graphSwitch === 1)
+      )
     }
   },
   mounted() {
