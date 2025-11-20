@@ -1,19 +1,10 @@
 package callback
 
 import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/UnicomAI/wanwu/internal/bff-service/model/response"
-
-	err_code "github.com/UnicomAI/wanwu/api/proto/err-code"
 	"github.com/UnicomAI/wanwu/internal/bff-service/model/request"
+	"github.com/UnicomAI/wanwu/internal/bff-service/model/response"
 	"github.com/UnicomAI/wanwu/internal/bff-service/service"
-	"github.com/UnicomAI/wanwu/pkg/constant"
 	gin_util "github.com/UnicomAI/wanwu/pkg/gin-util"
-	grpc_util "github.com/UnicomAI/wanwu/pkg/grpc-util"
-	mp "github.com/UnicomAI/wanwu/pkg/model-provider"
-	mp_common "github.com/UnicomAI/wanwu/pkg/model-provider/mp-common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,153 +13,22 @@ import (
 
 //	@BasePath	/callback/v1
 
-// GetModelById
+// FileUrlConvertBase64
 //
 //	@Tags		callback
-//	@Summary	根据ModelId获取模型
+//	@Summary	文件Url转换为base64
 //	@Accept		json
 //	@Produce	json
-//	@Param		modelId	path		string	true	"模型ID"
-//	@Success	200		{object}	response.Response{data=response.ModelInfo}
-//	@Router		/model/{modelId} [get]
-func GetModelById(ctx *gin.Context) {
-	modelId := ctx.Param("modelId")
-	resp, err := service.GetModelById(ctx, &request.GetModelByIdRequest{
-		BaseModelRequest: request.BaseModelRequest{ModelId: modelId}})
-	// 替换callback返回的模型中的apiKey/endpointUrl信息
-	if resp != nil && resp.Config != nil {
-		cfg := make(map[string]interface{})
-		b, err := json.Marshal(resp.Config)
-		if err != nil {
-			gin_util.Response(ctx, nil, grpc_util.ErrorStatus(err_code.Code_BFFGeneral, fmt.Sprintf("model %v marshal config err: %v", modelId, err)))
-			return
-		}
-		if err = json.Unmarshal(b, &cfg); err != nil {
-			gin_util.Response(ctx, nil, grpc_util.ErrorStatus(err_code.Code_BFFGeneral, fmt.Sprintf("model %v unmarshal config err: %v", modelId, err)))
-			return
-		}
-		// 替换apiKey, endpointUrl
-		cfg["apiKey"] = "useless-api-key"
-		endpoint := mp.ToModelEndpoint(resp.ModelId, resp.Model)
-		for k, v := range endpoint {
-			if k == "model_url" {
-				cfg["endpointUrl"] = v
-				break
-			}
-		}
-		// 替换Config
-		resp.Config = cfg
+//	@Param		data	body		request.FileUrlConvertBase64Req	true	"文件Url转换base64请求参数"
+//	@Success	200		{object}	response.Response{data=string}
+//	@Router		/file/url/base64 [post]
+func FileUrlConvertBase64(ctx *gin.Context) {
+	var req request.FileUrlConvertBase64Req
+	if !gin_util.Bind(ctx, &req) {
+		return
 	}
+	resp, err := service.FileUrlConvertBase64(ctx, req.FileUrl)
 	gin_util.Response(ctx, resp, err)
-}
-
-// ModelChatCompletions
-//
-//	@Tags		callback
-//	@Summary	Model Chat Completions
-//	@Accept		json
-//	@Produce	json
-//	@Param		modelId	path		string				true	"模型ID"
-//	@Param		data	body		mp_common.LLMReq{}	true	"请求参数"
-//	@Success	200		{object}	mp_common.LLMResp{}
-//	@Router		/model/{modelId}/chat/completions [post]
-func ModelChatCompletions(ctx *gin.Context) {
-	var data mp_common.LLMReq
-	if !gin_util.Bind(ctx, &data) {
-		return
-	}
-	service.ModelChatCompletions(ctx, ctx.Param("modelId"), &data)
-}
-
-// ModelEmbeddings
-//
-//	@Tags		callback
-//	@Summary	Model Embeddings
-//	@Accept		json
-//	@Produce	json
-//	@Param		modelId	path		string						true	"模型ID"
-//	@Param		data	body		mp_common.EmbeddingReq{}	true	"请求参数"
-//	@Success	200		{object}	mp_common.EmbeddingResp{}
-//	@Router		/model/{modelId}/embeddings [post]
-func ModelEmbeddings(ctx *gin.Context) {
-	var data mp_common.EmbeddingReq
-	if !gin_util.Bind(ctx, &data) {
-		return
-	}
-	service.ModelEmbeddings(ctx, ctx.Param("modelId"), &data)
-}
-
-// ModelRerank
-//
-//	@Tags		callback
-//	@Summary	Model Rerank
-//	@Accept		json
-//	@Produce	json
-//	@Param		modelId	path		string					true	"模型ID"
-//	@Param		data	body		mp_common.RerankReq{}	true	"请求参数"
-//	@Success	200		{object}	mp_common.RerankResp{}
-//	@Router		/model/{modelId}/rerank [post]
-func ModelRerank(ctx *gin.Context) {
-	var data mp_common.RerankReq
-	if !gin_util.Bind(ctx, &data) {
-		return
-	}
-	service.ModelRerank(ctx, ctx.Param("modelId"), &data)
-}
-
-// ModelOcr
-//
-//	@Tags		callback
-//	@Summary	Model Ocr
-//	@Accept		multipart/form-data
-//	@Produce	json
-//	@Param		modelId	path		string	true	"模型ID"
-//	@Param		file	formData	file	true	"文件"
-//	@Success	200		{object}	mp_common.OcrResp{}
-//	@Router		/model/{modelId}/ocr [post]
-func ModelOcr(ctx *gin.Context) {
-	var data mp_common.OcrReq
-	if !gin_util.BindForm(ctx, &data) {
-		return
-	}
-	service.ModelOcr(ctx, ctx.Param("modelId"), &data)
-}
-
-// ModelPdfParser
-//
-//	@Tags		callback
-//	@Summary	Model PdfParser
-//	@Accept		multipart/form-data
-//	@Produce	json
-//	@Param		modelId		path		string	true	"模型ID"
-//	@Param		file		formData	file	true	"文件"
-//	@Param		file_name	formData	string	true	"文件名"
-//	@Success	200			{object}	mp_common.PdfParserResp{}
-//	@Router		/model/{modelId}/pdf-parser [post]
-func ModelPdfParser(ctx *gin.Context) {
-	var data mp_common.PdfParserReq
-	if !gin_util.BindForm(ctx, &data) {
-		return
-	}
-	service.ModelPdfParser(ctx, ctx.Param("modelId"), &data)
-}
-
-// ModelGui
-//
-//	@Tags		callback
-//	@Summary	Model Gui
-//	@Accept		json
-//	@Produce	json
-//	@Param		modelId	path		string				true	"模型ID"
-//	@Param		data	body		mp_common.GuiReq{}	true	"请求参数"
-//	@Success	200		{object}	mp_common.GuiResp{}
-//	@Router		/model/{modelId}/gui [post]
-func ModelGui(ctx *gin.Context) {
-	var data mp_common.GuiReq
-	if !gin_util.Bind(ctx, &data) {
-		return
-	}
-	service.ModelGui(ctx, ctx.Param("modelId"), &data)
 }
 
 // UpdateDocStatus
@@ -253,113 +113,6 @@ func SelectKnowledgeInfoByName(ctx *gin.Context) {
 		return
 	}
 	resp, err := service.SelectKnowledgeInfoByName(ctx, req.UserId, req.OrgId, &req)
-	gin_util.Response(ctx, resp, err)
-}
-
-// GetWorkflowList
-//
-//	@Tags			callback
-//	@Summary		根据userId和spaceId获取Workflow
-//	@Description	根据userId和spaceId获取Workflow
-//	@Accept			json
-//	@Produce		json
-//	@Param			userId	query		string	true	"获取工作流参数userId"
-//	@Param			orgId	query		string	true	"获取工作流参数orgId"
-//	@Success		200		{object}	response.Response
-//	@Router			/workflow/list [get]
-func GetWorkflowList(ctx *gin.Context) {
-	var req request.GetWorkflowListReq
-	if !gin_util.BindQuery(ctx, &req) {
-		return
-	}
-	resp, err := service.GetAppList(ctx, req.UserId, req.OrgId, constant.AppTypeWorkflow)
-	gin_util.Response(ctx, resp, err)
-}
-
-// GetWorkflowCustomTool
-//
-//	@Tags			callback
-//	@Summary		获取自定义工具详情
-//	@Description	获取自定义工具详情
-//	@Accept			json
-//	@Produce		json
-//	@Param			customToolId	query		string	true	"customToolId"
-//	@Success		200				{object}	response.Response{data=response.CustomToolDetail}
-//	@Router			/workflow/tool/custom [get]
-func GetWorkflowCustomTool(ctx *gin.Context) {
-	resp, err := service.GetCustomTool(ctx, "", "", ctx.Query("customToolId"))
-	gin_util.Response(ctx, resp, err)
-}
-
-// GetWorkflowSquareTool
-//
-//	@Tags			callback
-//	@Summary		获取内置工具详情
-//	@Description	获取内置工具详情
-//	@Accept			json
-//	@Produce		json
-//	@Param			toolSquareId	query		string	true	"toolSquareId"
-//	@Param			userID			query		string	true	"用户ID"
-//	@Param			orgID			query		string	true	"组织ID"
-//	@Success		200				{object}	response.Response{data=response.ToolSquareDetail}
-//	@Router			/workflow/tool/square [get]
-func GetWorkflowSquareTool(ctx *gin.Context) {
-	resp, err := service.GetToolSquareDetail(ctx, "", "", ctx.Query("toolSquareId"))
-	gin_util.Response(ctx, resp, err)
-}
-
-// WorkflowUploadFileByBase64
-//
-//	@Tags		callback
-//	@Summary	通过base64上传文件
-//	@Accept		json
-//	@Produce	json
-//	@Param		data	body		request.WorkflowUploadFileByBase64Req	true	"通过base64格式上传文件参数"
-//	@Success	200		{object}	response.Response{data=response.UploadFileByWorkflowResp}
-//	@Router		/workflow/upload/file/base64 [post]
-func WorkflowUploadFileByBase64(ctx *gin.Context) {
-	var req request.WorkflowUploadFileByBase64Req
-	if !gin_util.Bind(ctx, &req) {
-		return
-	}
-	resp, err := service.UploadFileByWorkflow(ctx, req.FileName, req.File)
-	gin_util.Response(ctx, resp, err)
-}
-
-// WorkflowUploadFile
-//
-//	@Tags		callback
-//	@Summary	通过二进制上传文件
-//	@Accept		multipart/form-data
-//	@Produce	json
-//	@Param		file		formData	file	true	"文件"
-//	@Param		fileName	formData	string	true	"文件名"
-//	@Success	200			{object}	response.Response{data=response.UploadFileByWorkflowResp}
-//	@Router		/workflow/upload/file [post]
-func WorkflowUploadFile(ctx *gin.Context) {
-	var req request.WorkflowUploadFileReq
-	if !gin_util.BindForm(ctx, &req) {
-		return
-	}
-	resp, err := service.UploadFileToWorkflow(ctx, &req)
-	gin_util.Response(ctx, resp, err)
-}
-
-// FileUrlConvertBase64
-//
-//	@Tags		callback
-//	@Summary	文件Url转换为base64
-//	@Accept		json
-//	@Produce	json
-//	@Param		data	body		request.FileUrlConvertBase64Req	true	"文件Url转换base64请求参数"
-//	@Success	200		{object}	response.Response{data=string}
-//	@Router		/file/url/base64 [post]
-func FileUrlConvertBase64(ctx *gin.Context) {
-	var req request.FileUrlConvertBase64Req
-	if !gin_util.Bind(ctx, &req) {
-		return
-	}
-	resp, err := service.FileUrlConvertBase64(ctx, req.FileUrl)
 	gin_util.Response(ctx, resp, err)
 }
 

@@ -20,7 +20,6 @@ var (
 		"/v1/user/permission": true,
 		"/v1/user/info":       true,
 		"/v1/org/select":      true,
-		"/v1/model/list":      true,
 	}
 )
 

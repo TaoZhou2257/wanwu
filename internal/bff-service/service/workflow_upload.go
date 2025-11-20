@@ -45,9 +45,10 @@ func UploadFileToWorkflow(ctx *gin.Context, req *request.WorkflowUploadFileReq) 
 		return nil, err
 	}
 	base64Str := base64.StdEncoding.EncodeToString(fileBytes)
-	return UploadFileByWorkflow(ctx, req.FileName, base64Str)
+	return UploadFileBase64ToWorkflow(ctx, req.FileName, base64Str)
 }
-func UploadFileByWorkflow(ctx *gin.Context, fileName, file string) (*response.UploadFileByWorkflowResp, error) {
+
+func UploadFileBase64ToWorkflow(ctx *gin.Context, fileName, file string) (*response.UploadFileByWorkflowResp, error) {
 	url, _ := net_url.JoinPath(config.Cfg().Workflow.Endpoint, config.Cfg().Workflow.UploadFileUri)
 	ret := &response.UploadFileByWorkflowResp{}
 	requestBody := map[string]string{

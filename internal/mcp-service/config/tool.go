@@ -3,10 +3,10 @@ package config
 import (
 	"context"
 	"fmt"
-	"github.com/ThinkInAIXYZ/go-mcp/protocol"
 	"os"
 	"path/filepath"
 
+	"github.com/ThinkInAIXYZ/go-mcp/protocol"
 	openapi3_util "github.com/UnicomAI/wanwu/pkg/openapi3-util"
 )
 

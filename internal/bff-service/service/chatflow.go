@@ -85,8 +85,7 @@ func CreateChatflowConversation(ctx *gin.Context, userId, orgId, workflowId, con
 		OrgId:            orgId,
 	})
 	if err != nil {
-		log.Errorf("create chatflow conversation record err%v", err)
-		return nil, grpc_util.ErrorStatusWithKey(errs.Code_BFFGeneral, "bff_chatflow_conversation_create", err.Error())
+		return nil, err
 	}
 	return &response.OpenAPIChatflowCreateConversationResponse{
 		ConversationId: strconv.Itoa(int(ret.ConversationData.Id)),
@@ -99,8 +98,7 @@ func ChatflowChat(ctx *gin.Context, userId, orgId, workflowId, conversationId, m
 		ConversionId: conversationId,
 	})
 	if err != nil {
-		log.Errorf("get conversation info err:%v", err)
-		return grpc_util.ErrorStatusWithKey(errs.Code_BFFGeneral, "bff_chatflow_chat", err.Error())
+		return err
 	}
 	// 创建 HTTP 请求
 	resp, err := resty.New().
@@ -166,7 +164,7 @@ func ChatflowChat(ctx *gin.Context, userId, orgId, workflowId, conversationId, m
 	for scan.Scan() {
 		// 写入数据到响应体（添加双换行符符合SSE格式）
 		if _, err := ctx.Writer.Write([]byte(scan.Text() + "\n")); err != nil {
-			log.Debugf("chatflow id [%v]chat conversationId [%v]: failed to write to client: %v", workflowId, conversationId, err)
+			log.Errorf("chatflow id [%v]chat conversationId [%v]: failed to write to client: %v", workflowId, conversationId, err)
 			break
 		}
 		// 刷新缓冲区，确保数据立即发送到客户端
@@ -178,7 +176,7 @@ func ChatflowChat(ctx *gin.Context, userId, orgId, workflowId, conversationId, m
 		if errors.Is(err, context.Canceled) {
 			log.Debugf("chatflow id [%v]chat conversationId [%v]: client disconnected: %v", workflowId, conversationId, err)
 		} else {
-			log.Debugf("chatflow id [%v]chat conversationId [%v]: failed to scan response body: %v", workflowId, conversationId, err)
+			log.Errorf("chatflow id [%v]chat conversationId [%v]: failed to scan response body: %v", workflowId, conversationId, err)
 		}
 	}
 	return nil

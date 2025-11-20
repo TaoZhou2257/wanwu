@@ -3,6 +3,8 @@ package orm
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	knowledgebase_report_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-report-service"
 	"github.com/UnicomAI/wanwu/internal/knowledge-service/client/model"
 	"github.com/UnicomAI/wanwu/internal/knowledge-service/client/orm/sqlopt"
@@ -12,7 +14,6 @@ import (
 	"github.com/UnicomAI/wanwu/internal/knowledge-service/service"
 	"github.com/UnicomAI/wanwu/pkg/log"
 	"gorm.io/gorm"
-	"time"
 )
 
 func SelectKnowledgeReportById(ctx context.Context, importId string) (*model.KnowledgeReportImportTask, error) {

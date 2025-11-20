@@ -222,6 +222,7 @@ func (c *UpdateMetaValueReq) Check() error {
 	}
 	return nil
 }
+
 func (c *CreateKnowledgeReq) Check() error {
 	if !util.IsAlphanumeric(c.Name) {
 		errMsg := fmt.Sprintf("知识库名称只能包含中文、数字、小写英文，符号之只能包含下划线和减号 参数(%v)", c.Name)

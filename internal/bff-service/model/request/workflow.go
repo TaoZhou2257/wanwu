@@ -45,11 +45,3 @@ type WorkflowUploadFileByBase64Req struct {
 func (u *WorkflowUploadFileByBase64Req) Check() error {
 	return nil
 }
-
-type FileUrlConvertBase64Req struct {
-	FileUrl string `form:"fileUrl" json:"fileUrl" validate:"required"` // 文件URL
-}
-
-func (f *FileUrlConvertBase64Req) Check() error {
-	return nil
-}
