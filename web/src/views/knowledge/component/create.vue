@@ -2,11 +2,7 @@
   <div>
     <el-dialog
       top="10vh"
-      :title="
-        this.isEdit
-          ? $t('knowledgeManage.editInfo')
-          : $t('knowledgeManage.createKnowledge')
-      "
+      :title="getTitle()"
       :close-on-click-modal="false"
       :visible.sync="dialogVisible"
       width="70%"
@@ -22,7 +18,7 @@
         @submit.native.prevent
       >
         <el-form-item
-          :label="$t('knowledgeManage.knowledgeName') + '：'"
+          :label="category === 0 ? $t('knowledgeManage.knowledgeName') + '：' : $t('knowledgeManage.qaDatabase.name') + '：'"
           prop="name"
         >
           <el-input
@@ -57,7 +53,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="knowledgeGraph.switch">
+        <el-form-item prop="knowledgeGraph.switch" v-if="category === 0">
           <template #label>
             <span>{{ $t("knowledgeManage.create.knowledgeGraph") }}:</span>
             <el-tooltip
@@ -241,6 +237,12 @@ import { KNOWLEDGE_GRAPH_TIPS } from "../config";
 import uploadChunk from "@/mixins/uploadChunk";
 import { delfile } from "@/api/chunkFile";
 export default {
+  props: {
+    category: {
+      type: Number,
+      default: 0
+    }
+  },
   mixins: [uploadChunk],
   data() {
     let checkName = (rule, value, callback) => {
@@ -327,6 +329,21 @@ export default {
       //下拉框显示的时候请求模型列表
       if (val) {
         this.getModelData();
+      }
+    },
+    getTitle(){
+      if(this.category === 0){
+        if(this.isEdit){
+          return this.$t('knowledgeManage.editInfo')
+        }else{
+          return this.$t('knowledgeManage.createKnowledge')
+        }
+      }else{
+        if(this.isEdit){
+          return this.$t('knowledgeManage.qaDatabase.editInfo')
+        }else{
+          return this.$t('knowledgeManage.qaDatabase.createKnowledge')
+        }
       }
     },
     async downloadTemplate() {
@@ -549,13 +566,17 @@ export default {
       });
     },
     createKnowledge() {
-      createKnowledgeItem(this.ruleForm)
+      const data = {
+        ...this.ruleForm,
+        category: this.category,
+      };
+      createKnowledgeItem(data)
         .then((res) => {
           if (res.code === 0) {
             this.$message.success(
               this.$t("knowledgeManage.create.createSuccess")
             );
-            this.$emit("reloadData");
+            this.$emit("reloadData",this.category);
             this.dialogVisible = false;
           }
         })
@@ -574,7 +595,7 @@ export default {
             this.$message.success(
               this.$t("knowledgeManage.create.editSuccess")
             );
-            this.$emit("reloadData");
+            this.$emit("reloadData",this.category);
             this.clearform();
             this.dialogVisible = false;
           }

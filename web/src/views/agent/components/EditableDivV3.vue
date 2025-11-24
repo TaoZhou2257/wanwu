@@ -32,9 +32,11 @@
       <div v-if="fileType === 'doc/*'" class="echo-img-box echo-doc-box">
         <img :src="require('@/assets/imgs/fileicon.png')" class="docIcon" />
         <div class="docInfo">
-          <p class="docInfo_name">{{$t('knowledgeManage.fileName')}}：{{ fileList[0]["name"] }}</p>
+          <p class="docInfo_name">
+            {{ $t("knowledgeManage.fileName") }}：{{ fileList[0]["name"] }}
+          </p>
           <p class="docInfo_size">
-            {{$t('knowledgeManage.fileSize')}}：{{
+            {{ $t("knowledgeManage.fileSize") }}：{{
               fileList[0]["size"] > 1024
                 ? (fileList[0]["size"] / (1024 * 1024)).toFixed(5) + " MB"
                 : fileList[0]["size"] + " bytes"
@@ -88,7 +90,7 @@
             >
             <!-- <img class="editable--send" :src="require('@/assets/imgs/send.png')" @click="preSend" /> -->
             <el-button type="primary" class="editable--send" @click="preSend"
-              ><span>{{$t('agent.send')}}</span>
+              ><span>{{ $t("agent.send") }}</span>
               <img :src="require('@/assets/imgs/sendIcon.png')"
             /></el-button>
           </div>
