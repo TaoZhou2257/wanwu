@@ -245,7 +245,7 @@ export default {
     },
     copycb() {
       this.$message.success(this.$t("agent.copyTips"));
-    },
+    }
   },
 };
 </script>

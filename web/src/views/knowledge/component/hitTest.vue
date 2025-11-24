@@ -13,7 +13,7 @@
     <div class="block wrap-fullheight">
       <div class="test-left test-box">
         <div class="hitTest_input">
-          <h3>{{$t('knowledgeManage.hitTestSegmentTitle')}}</h3>
+          <h3>{{$t('knowledgeManage.hitTest.title')}}</h3>
           <el-input
             type="textarea"
             :rows="4"
@@ -29,7 +29,7 @@
           </div>
         </div>
          <div class="hitTest_input meta_box">
-          <h3>{{$t('knowledgeManage.metaFilterConfig')}}</h3>
+          <h3>{{$t('knowledgeManage.hitTest.metaDataFilter')}}</h3>
           <metaSet ref="metaSet" class="metaSet" :knowledgeId="knowledgeId" />
         </div>
         <div class="test_form">

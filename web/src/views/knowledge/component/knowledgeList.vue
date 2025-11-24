@@ -6,11 +6,7 @@
           <div class="create-img-wrap">
             <img
               class="create-type"
-              :src="
-                category === 0
-                  ? require('@/assets/imgs/create_knowledge.svg')
-                  : require('@/assets/imgs/create_qa.png')
-              "
+              src="@/assets/imgs/create_knowledge.svg"
               alt=""
             />
             <img
@@ -20,11 +16,7 @@
             />
             <div class="create-filter"></div>
           </div>
-          <span>{{
-            category === 0
-              ? $t("knowledgeManage.createKnowledge")
-              : $t("knowledgeManage.createQaDatabase")
-          }}</span>
+          <span>创建知识库</span>
         </div>
       </div>
       <template v-if="listData && listData.length">
@@ -39,14 +31,7 @@
               class="logo"
               :src="require('@/assets/imgs/knowledgeIcon.png')"
             />
-            <p :class="['smartDate']">
-              {{ n.docCount || 0 }}
-              {{
-                category === 0
-                  ? $t("knowledgeManage.docCountUnit")
-                  : $t("knowledgeManage.qaCountUnit")
-              }}
-            </p>
+            <p :class="['smartDate']">{{ n.docCount || 0 }}个文档</p>
           </div>
           <div class="info rl">
             <p class="name" :title="n.name">
@@ -147,18 +132,13 @@ import tagDialog from "./tagDialog.vue";
 import PowerManagement from "./power/index.vue";
 import { mapActions } from "vuex";
 export default {
-  components: { tagDialog, PowerManagement },
-  props: {
-    appData: {
-      type: Array,
-      required: true,
-      default: [],
-    },
-    category: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+  components:{tagDialog, PowerManagement},
+  props:{
+    appData:{
+      type:Array,
+      required:true,
+      default:[]
+    }
   },
   watch: {
     appData: {
@@ -221,50 +201,40 @@ export default {
     editItem(row) {
       this.$emit("editItem", row);
     },
-    relodaData(category) {
-      this.$emit("reloadData", category);
+    relodaData(){
+      this.$emit('reloadData');
     },
-    deleteItem(knowledgeId) {
-      this.$confirm(
-        this.$t("knowledgeManage.delKnowledgeTips"),
-        this.$t("knowledgeManage.tip"),
-        {
-          confirmButtonText: this.$t("common.confirm.confirm"),
-          cancelButtonText: this.$t("common.confirm.cancel"),
-          type: "warning",
-          beforeClose: (action, instance, done) => {
-            if (action === "confirm") {
-              instance.confirmButtonLoading = true;
-              delKnowledgeItem({ knowledgeId })
-                .then((res) => {
-                  if (res.code === 0) {
-                    this.$message.success(
-                      this.$t("knowledgeManage.operateSuccess")
-                    );
-                    this.$emit("reloadData", this.category);
-                  }
-                })
-                .catch(() => {})
-                .finally(() => {
-                  done();
-                  setTimeout(() => {
-                    instance.confirmButtonLoading = false;
-                  }, 300);
-                });
-            } else {
-              done();
-            }
-          },
+    deleteItem(knowledgeId){
+      this.$confirm(this.$t('knowledgeManage.delKnowledgeTips'), this.$t('knowledgeManage.tip'), {
+        confirmButtonText: this.$t('common.confirm.confirm'),
+        cancelButtonText: this.$t('common.confirm.cancel'),
+        type: "warning",
+        beforeClose:(action, instance, done) =>{
+          if(action === 'confirm'){
+            instance.confirmButtonLoading = true;
+            delKnowledgeItem({knowledgeId})
+              .then(res =>{
+                if(res.code === 0){
+                  this.$message.success(this.$t('knowledgeManage.operateSuccess'));
+                  this.$emit('reloadData')
+                }
+              })
+              .catch(() => {})
+              .finally(() =>{
+                done();
+                setTimeout(() => {
+                  instance.confirmButtonLoading = false;
+                }, 300);
+              })
+          }else{
+            done()
+          }
         }
       ).then(() => {});
     },
-    toDocList(n) {
-      if (this.category === 0) {
-        this.$router.push({ path: `/knowledge/doclist/${n.knowledgeId}` });
-      } else {
-        this.$router.push({ path: `/knowledge/qa/docList/${n.knowledgeId}` });
-      }
-      this.setPermissionType(n.permissionType);
+    toDocList(n){
+      this.$router.push({path:`/knowledge/doclist/${n.knowledgeId}`});
+      this.setPermissionType(n.permissionType)
     },
     showPowerManagement(knowledgeItem) {
       this.$refs.powerManagement.knowledgeId = knowledgeItem.knowledgeId;
