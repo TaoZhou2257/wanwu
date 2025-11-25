@@ -86,3 +86,12 @@ export const exportWorkflow = (params, appType) => {
         responseType: 'blob'
     });
 };
+
+// 工作流/对话流互转
+export const transformWorkflow = (data) => {
+    return request({
+        url: `${USER_API}/appspace/workflow/transform`,
+        method: "post",
+        data,
+    });
+};

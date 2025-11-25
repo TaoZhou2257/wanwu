@@ -138,6 +138,12 @@
               >
                 {{$t('common.button.export')}}
               </el-dropdown-item>
+              <el-dropdown-item
+                command="transform"
+                v-if="[workflow, chat].includes(n.appType)"
+              >
+                {{$t('common.button.transform') + (n.appType === workflow ? $t('appSpace.chat') : $t('appSpace.workflow'))}}
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -172,7 +178,7 @@
 <script>
 import { AppType } from "@/utils/commonSet";
 import { deleteApp, appCancelPublish, copyAgnetTemplate, appPublish, copyTextQues, copyAgentApp } from "@/api/appspace";
-import { copyWorkFlow, exportWorkflow } from "@/api/workflow";
+import { copyWorkFlow, exportWorkflow, transformWorkflow } from "@/api/workflow";
 import { setFavorite } from "@/api/explore";
 import { AGENT, RAG, CHAT, WORKFLOW } from "@/utils/commonSet";
 
@@ -351,6 +357,11 @@ export default {
     jumpToWorkflowPublicSet(row) {
       this.$router.push({path:`/workflow/publishSet`, query: {appId: row.appId, appType: row.appType, name: row.name}})
     },
+    workflowTransform(row) {
+      transformWorkflow({appId: row.appId, appType: row.appType}).then(() => {
+        this.$emit('reloadData')
+      })
+    },
     workflowOperation(method, row) {
       switch (method) {
         case "edit":
@@ -372,7 +383,11 @@ export default {
           this.jumpToWorkflowPublicSet(row);
           break;
         case 'export':
-          this.workflowExport(row)
+          this.workflowExport(row);
+          break;
+        case 'transform':
+          this.workflowTransform(row);
+          break;
       }
     },
     chatDelete(row) {
@@ -404,7 +419,11 @@ export default {
           this.jumpToWorkflowPublicSet(row);
           break;
         case 'export':
-          this.workflowExport(row)
+          this.workflowExport(row);
+          break;
+        case 'transform':
+          this.workflowTransform(row);
+          break;
       }
     },
     async showDeleteConfirm(tips){
