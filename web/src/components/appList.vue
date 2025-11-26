@@ -27,8 +27,6 @@
         :key="`${i}sm`"
         :style="`cursor: ${isCanClick(n) ? 'pointer' : 'default'} !important;`"
         @click.stop="isCanClick(n) && toEdit(n)"
-        @mouseenter="mouseEnter(n)"
-        @mouseleave="mouseLeave(n)"
       >
         <el-image
           v-if="n.avatar && n.avatar.path"
@@ -155,14 +153,6 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <div
-          class="copy-editor"
-          v-if="n.appType === 'agentTemplate' && n.isShowCopy"
-          @click.stop="copyTemplate(n)"
-        >
-          <span class="el-icon-plus add"></span>
-          <span>{{ $t("common.button.copy") }}</span>
-        </div>
       </div>
     </div>
     <el-empty
@@ -204,7 +194,6 @@ import { AppType } from "@/utils/commonSet";
 import {
   deleteApp,
   appCancelPublish,
-  copyAgnetTemplate,
   appPublish,
   copyTextQues,
   copyAgentApp,
@@ -226,7 +215,6 @@ export default {
       required: true,
       default: [],
     },
-    agent_type: "agent_template",
     isShowTool: false,
     isShowPublished: false,
     appFrom: {
@@ -267,27 +255,6 @@ export default {
     };
   },
   methods: {
-    copyTemplate(n) {
-      copyAgnetTemplate({ assistantTemplateId: n.assistantTemplateId }).then(
-        (res) => {
-          if (res.code === 0) {
-            this.$message.success(this.$t("list.copySuccess"));
-            const id = res.data.assistantId;
-            this.$router.push({ path: `/agent/test?id=${id}` });
-          }
-        }
-      );
-    },
-    mouseEnter(n) {
-      if (n.appType === "agentTemplate") {
-        n.isShowCopy = true;
-      }
-    },
-    mouseLeave(n) {
-      if (n.appType === "agentTemplate") {
-        n.isShowCopy = false;
-      }
-    },
     handleClose() {
       this.dialogVisible = false;
     },

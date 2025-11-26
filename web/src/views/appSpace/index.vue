@@ -108,16 +108,6 @@ export default {
         },
       },
       currentTypeObj: {},
-      agentSwitch: [
-        {
-          type: "template",
-          name: this.$t("appSpace.agentTemp"),
-        },
-        {
-          type: "auto",
-          name: this.$t("appSpace.agentAuto"),
-        },
-      ],
     };
   },
   watch: {
@@ -222,30 +212,6 @@ export default {
 .header-right {
   display: inline-block;
   float: right;
-}
-.agent_type_switch {
-  margin-top: 20px;
-  width: 300px;
-  height: 40px;
-  border-bottom: 1px solid #333;
-  display: flex;
-  justify-content: space-between;
-  .agent_type_item {
-    cursor: pointer;
-    height: 100%;
-    width: 50%;
-    color: #333;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 40px;
-    font-size: 14px;
-  }
-  .agentActive {
-    color: #fff;
-    background: #333;
-    border-radius: 0;
-    font-weight: bold;
-  }
 }
 .workflow-tabs {
   margin-top: 20px;
