@@ -37,9 +37,9 @@
           :src="basePath + '/user/api/' + n.avatar.path"
           :key="`${i}-${n.appId}-avatar`"
         ></el-image>
-        <span :class="['tag-app', `${n.appType}-tag`]">{{
-          apptype[n.appType] || ""
-        }}</span>
+        <span :class="['tag-app', `${n.appType}-tag`]">
+          {{ apptype[n.appType] || "" }}
+        </span>
         <img
           v-if="apptype[n.appType]"
           class="tag-img"
@@ -73,13 +73,15 @@
               :content="n.user.userName"
               placement="top-start"
             >
-              <span class="user-name">{{
-                n.user
-                  ? n.user.userName.length > 6
-                    ? n.user.userName.substring(0, 6) + "..."
-                    : n.user.userName
-                  : ""
-              }}</span>
+              <span class="user-name">
+                {{
+                  n.user
+                    ? n.user.userName.length > 6
+                      ? n.user.userName.substring(0, 6) + "..."
+                      : n.user.userName
+                    : ""
+                }}
+              </span>
             </el-tooltip>
             <img
               v-if="!n.isFavorite"
@@ -183,14 +185,14 @@
           :key="item.key"
           style="margin-bottom: 5px"
         >
-          <el-radio :label="item.key" v-model="publishType">{{
-            item.value
-          }}</el-radio>
+          <el-radio :label="item.key" v-model="publishType">
+            {{ item.value }}
+          </el-radio>
         </div>
         <div style="text-align: right; margin-top: 15px; margin-bottom: -10px">
-          <el-button size="mini" type="primary" @click="doPublish">{{
-            $t("common.button.confirm")
-          }}</el-button>
+          <el-button size="mini" type="primary" @click="doPublish">
+            {{ $t("common.button.confirm") }}
+          </el-button>
         </div>
       </div>
     </el-dialog>
