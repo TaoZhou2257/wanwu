@@ -94,8 +94,9 @@ export default {
         }
       });
     },
-    handleUploadFile(fileId) {
-      this.uploadedFileId = fileId;
+    handleUploadFile(...args) {
+      const [, , filePath] = args;
+      this.uploadedFileId = filePath;
     },
     handleConfirm() {
       if (!this.uploadedFileId) {
