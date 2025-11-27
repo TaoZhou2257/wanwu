@@ -96,11 +96,23 @@
               </div>
               <div>
                 <div class="resultContent">
-                  {{ item.snippet.slice(0, 100) }}...
+                  <template v-if="item.contentType !== 'qa'">
+                    {{ item.snippet.slice(0, 100) }}...
+                  </template>
+                  <template v-else>
+                    <div>
+                      <span>{{$t('knowledgeManage.qaDatabase.question')}} :</span>
+                      {{item.question}}
+                    </div>
+                    <div>
+                      <span>{{$t('knowledgeManage.qaDatabase.answer')}} :</span>
+                      {{item.answer}}
+                    </div>
+                  </template>
                 </div>
                 <div
                   class="resultChildContent"
-                  v-if="item.childContentList.length > 0"
+                  v-if="item.childContentList && item.childContentList.length > 0"
                 >
                   <el-collapse
                     v-model="activeNames"
@@ -175,12 +187,6 @@ import metaSet from "@/components/metaSet";
 import sectionShow from "./sectionShow.vue";
 export default {
   components: { LinkIcon, searchConfig, metaSet, sectionShow },
-  props: {
-    type: {
-      type: String,
-      default: "",
-    },
-  },
   data() {
     return {
       md: md,
@@ -193,6 +199,7 @@ export default {
       knowledgeId: this.$route.query.knowledgeId,
       name: this.$route.query.name,
       graphSwitch: this.$route.query.graphSwitch || false,
+      type:this.$route.query.type || '',
       activeNames: [],
     };
   },
