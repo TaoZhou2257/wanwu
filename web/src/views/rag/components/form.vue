@@ -261,7 +261,6 @@ export default {
           topPEnable: true,
           frequencyPenaltyEnable: true,
         },
-        rerankParams: "",
         knowledgeBaseConfig: {
           config:{
             keywordPriority: 0.8, //关键词权重
@@ -305,7 +304,6 @@ export default {
       workFlowInfos: [],
       workflowList: [],
       modelParams: "",
-      rerankParams: "",
       platform: this.$platform,
       isPublish: false,
       modleOptions: [],
@@ -348,12 +346,12 @@ export default {
           });
           if (changed && !this.isUpdating) {
             const isMixPriorityMatch =
-              newVal["knowledgeConfig"]["matchType"] === "mix" &&
-              newVal["knowledgeConfig"]["priorityMatch"];
+              newVal["knowledgeBaseConfig"]['config']["matchType"] === "mix" &&
+              newVal["knowledgeBaseConfig"]['config']["priorityMatch"];
             if (
               newVal["modelParams"] !== "" ||
               (isMixPriorityMatch &&
-                !newVal["knowledgeConfig"]["rerankModelId"])
+                !newVal["knowledgeBaseConfig"]['config']["rerankModelId"])
             ) {
               this.updateInfo();
             }
@@ -401,6 +399,7 @@ export default {
     },
     //设置知识库或问答库召回参数
     knowledgeRecallSet(data,type){
+      console.log(data)
       this.editForm[type]['config'] = data;
     },
     chiSwitchChange(value) {
@@ -457,10 +456,9 @@ export default {
               this.editForm.modelConfig = res.data.modelConfig.config;
             }
 
-            this.editForm.rerankParams = res.data.rerankConfig.modelId;
-
-            this.editForm.knowledgeConfig.rerankModelId =
-              res.data.rerankConfig.modelId;
+            this.editForm.knowledgeBaseConfig.config.rerankModelId = res.data.rerankConfig.modelId;
+            this.editForm.qaKnowledgeBaseConfig.config.rerankModelId = res.data.qaRerankConfig.modelId;
+            
             this.$nextTick(() => {
               this.isSettingFromDetail = false;
             });
@@ -564,13 +562,16 @@ export default {
           (item) => item.modelId === this.editForm.modelParams
         );
         if (
-          this.editForm.knowledgeConfig.matchType === "mix" &&
-          this.editForm.knowledgeConfig.priorityMatch === 1
+          this.editForm.knowledgeBaseConfig.config.matchType === "mix" &&
+          this.editForm.knowledgeBaseConfig.config.priorityMatch === 1
         ) {
-          this.editForm.knowledgeConfig.rerankModelId = "";
+          this.editForm.knowledgeBaseConfig.config.rerankModelId = "";
         }
         const rerankInfo = this.rerankOptions.find(
-          (item) => item.modelId === this.editForm.knowledgeConfig.rerankModelId
+          (item) => item.modelId === this.editForm.knowledgeBaseConfig.config.rerankModelId
+        );
+        const qaRerankInfo = this.rerankOptions.find(
+          (item) => item.modelId === this.editForm.qaKnowledgeBaseConfig.config.rerankModelId
         );
         let fromParams = {
           ragId: this.editForm.appId,
@@ -590,6 +591,13 @@ export default {
             modelId: rerankInfo ? rerankInfo.modelId : "",
             modelType: rerankInfo ? rerankInfo.modelType : "",
             provider: rerankInfo ? rerankInfo.provider : "",
+          },
+          qaRerankConfig:{
+            displayName: qaRerankInfo ? qaRerankInfo.displayName : "",
+            model: qaRerankInfo ? qaRerankInfo.model : "",
+            modelId: qaRerankInfo ? qaRerankInfo.modelId : "",
+            modelType: qaRerankInfo ? qaRerankInfo.modelType : "",
+            provider: qaRerankInfo ? qaRerankInfo.provider : "",
           },
           safetyConfig: this.editForm.safetyConfig,
         };
