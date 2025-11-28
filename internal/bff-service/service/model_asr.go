@@ -3,16 +3,16 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/UnicomAI/wanwu/internal/bff-service/config"
-	mp_yuanjing "github.com/UnicomAI/wanwu/pkg/model-provider/mp-yuanjing"
 	"net/http"
 
 	err_code "github.com/UnicomAI/wanwu/api/proto/err-code"
 	model_service "github.com/UnicomAI/wanwu/api/proto/model-service"
+	"github.com/UnicomAI/wanwu/internal/bff-service/config"
 	gin_util "github.com/UnicomAI/wanwu/pkg/gin-util"
 	grpc_util "github.com/UnicomAI/wanwu/pkg/grpc-util"
 	mp "github.com/UnicomAI/wanwu/pkg/model-provider"
 	mp_common "github.com/UnicomAI/wanwu/pkg/model-provider/mp-common"
+	mp_yuanjing "github.com/UnicomAI/wanwu/pkg/model-provider/mp-yuanjing"
 	"github.com/gin-gonic/gin"
 )
 

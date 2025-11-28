@@ -3,6 +3,7 @@ package message_builder
 import (
 	"context"
 	"encoding/json"
+
 	rag_manage_service "github.com/UnicomAI/wanwu/internal/rag-service/service/rag-manage-service"
 )
 

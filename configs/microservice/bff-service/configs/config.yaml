@@ -172,7 +172,7 @@ models :
   - model_id: "Asr"
     model_type: "asr"
     provider: "YuanJing"
-    endpoint: "https://maas-api.ai-yuanjing.com//openapi/synchronous/asr/audio/file/transfer/unicom/sync/file/asr"
+    endpoint: "https://maas-api.ai-yuanjing.com/openapi/synchronous/asr/audio/file/transfer/unicom/sync/file/asr"
 
 workflow-template:
   server_mode: local

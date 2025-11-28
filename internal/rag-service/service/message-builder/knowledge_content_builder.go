@@ -2,6 +2,7 @@ package message_builder
 
 import (
 	"context"
+
 	rag_manage_service "github.com/UnicomAI/wanwu/internal/rag-service/service/rag-manage-service"
 	"github.com/UnicomAI/wanwu/pkg/log"
 )

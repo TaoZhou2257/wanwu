@@ -2,6 +2,7 @@ package message_builder
 
 import (
 	"context"
+
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
 	rag_service "github.com/UnicomAI/wanwu/api/proto/rag-service"
 	"github.com/UnicomAI/wanwu/internal/rag-service/client/model"
