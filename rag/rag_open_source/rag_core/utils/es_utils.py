@@ -174,8 +174,8 @@ def get_weighted_rerank(query, weights, search_list, top_k):
                 "search_list": []
             }
 
-        search_list_infos[user_id]["base_names"].append(item)
-        search_list_infos[user_id]["search_list"].append(base_name)
+        search_list_infos[user_id]["base_names"].append(base_name)
+        search_list_infos[user_id]["search_list"].append(item)
 
     rescored_search_list = []
     sorted_score_list = []

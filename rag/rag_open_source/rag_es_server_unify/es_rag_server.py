@@ -2112,8 +2112,9 @@ def vector_search():
     min_score = data.get("threshold", 0)
     metadata_filtering_conditions = data.get("metadata_filtering_conditions", [])
     embedding_model_id = kb_info_ops.get_uk_kb_emb_model_id(user_id, base_names[0])
-    logger.info(f"用户:{user_id},请求查询的base_names为:{base_names},embedding_model_id:{embedding_model_id}")
-    logger.info(f"用户请求的query为:{query}")
+    logger.info(f"用户:{user_id},请求查询的base_names为:{base_names}, query: {query}, topK: {top_k}, "
+                f"threshold: {min_score}, metadata_filtering_conditions: {metadata_filtering_conditions},"
+                f"embedding_model_id:{embedding_model_id}")
     try:
 
         exists_base_names = kb_info_ops.get_uk_qa_name_list(user_id)  # 从映射表中获取
@@ -2171,8 +2172,8 @@ def text_search():
     query = data.get("question")
     min_score = data.get("threshold", 0)
     metadata_filtering_conditions = data.get("metadata_filtering_conditions", [])
-    logger.info(f"用户:{user_id},请求查询的base_names为:{base_names}")
-    logger.info(f"用户请求的query为:{query}")
+    logger.info(f"用户:{user_id},请求查询的base_names为:{base_names}, query: {query}, topK: {top_k}, "
+                f"threshold: {min_score}, metadata_filtering_conditions: {metadata_filtering_conditions}")
     try:
 
         exists_base_names = kb_info_ops.get_uk_qa_name_list(user_id)  # 从映射表中获取
