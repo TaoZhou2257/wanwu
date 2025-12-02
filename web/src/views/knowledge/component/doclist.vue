@@ -605,7 +605,7 @@ export default {
           this.$message.success(this.$t("common.info.delete"));
         }
       } finally {
-        await this.getTableData(this.docQuery);
+        this.reLoadDocList();
         this.loading = false;
       }
     },
@@ -632,7 +632,7 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        this.handleDelete(this.selectedTableData.map((item) => item.docId));
+        this.handleDelete(this.selectedDocIds);
       }).catch(() => {});
     },
     async getTableData(data) {
