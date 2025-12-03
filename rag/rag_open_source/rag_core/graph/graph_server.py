@@ -126,7 +126,10 @@ async def extrac_graph_data(request: Request):
         dataset_config.corpus_path = "data/demo/custom_corpus.json"
         dataset_config.schema_path = "schemas/custom.json"
         dataset_config.graph_output = "output/graphs/custom_new.json"
-        config.prompts["construction"]["general"] = prompt_templates.general_zh_prompt_template
+        if schema:
+            config.prompts["construction"]["general"] = prompt_templates.general_zh_prompt_template
+        else:  # 如果没有指定 schema，则使用通用模板，暂不区分中英文模版
+            config.prompts["construction"]["general"] = prompt_templates.GENERAL_ZH
         config.construction.LLM_MODEL = llm_model
         config.construction.LLM_BASE_URL = llm_base_url
         config.construction.LLM_API_KEY = llm_api_key
