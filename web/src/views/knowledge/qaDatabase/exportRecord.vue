@@ -43,7 +43,7 @@
         min-width="140"
       >
         <template slot-scope="scope">
-          <span :class="['status-text', statusClass(scope.row.status)]">
+          <span class="status-text">
             {{ formatStatus(scope.row.status) }}
           </span>
         </template>
@@ -57,7 +57,7 @@
           <el-button
             type="text"
             size="mini"
-            :disabled="[0, 1, 3].includes(scope.row.status)"
+            :disabled="[STATUS_PENDING, STATUS_PROCESSING, STATUS_FAILED].includes(scope.row.status)"
             @click="handleDownload(scope.row)"
           >
             {{ $t("knowledgeManage.qaExport.download") }}
@@ -90,6 +90,12 @@
 <script>
 import commonMixin from "@/mixins/common";
 import { getQaExportRecordList, delQaRecord } from "@/api/qaDatabase";
+import {
+  STATUS_FAILED,
+  STATUS_FINISHED,
+  STATUS_PENDING,
+  STATUS_PROCESSING
+} from "@/views/knowledge/constants";
 
 export default {
   name: "QaExportRecord",
@@ -111,11 +117,15 @@ export default {
         total: 0,
       },
       statusMap: {
-        0: this.$t("knowledgeManage.qaExportStatus.processing"),
-        1: this.$t("knowledgeManage.qaExportStatus.exporting"),
-        2: this.$t("knowledgeManage.qaExportStatus.finished"),
-        3: this.$t("knowledgeManage.qaExportStatus.failed"),
+        [STATUS_PENDING]: this.$t("knowledgeManage.qaExportStatus.pending"),
+        [STATUS_PROCESSING]: this.$t("knowledgeManage.qaExportStatus.processing"),
+        [STATUS_FINISHED]: this.$t("knowledgeManage.qaExportStatus.finished"),
+        [STATUS_FAILED]: this.$t("knowledgeManage.qaExportStatus.failed"),
       },
+      STATUS_FAILED,
+      STATUS_FINISHED,
+      STATUS_PENDING,
+      STATUS_PROCESSING
     };
   },
   methods: {
@@ -156,11 +166,6 @@ export default {
     },
     formatStatus(status) {
       return this.statusMap[status] || this.$t("knowledgeManage.noStatus");
-    },
-    statusClass(status) {
-      if (status === 1) return "success";
-      if (status === 2) return "error";
-      return "pending";
     },
     handleDownload(row) {
       const url = row.filePath;

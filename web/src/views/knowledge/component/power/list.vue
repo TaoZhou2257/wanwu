@@ -33,9 +33,9 @@
                 size="small" 
                 class="permission-select"
               >
-                <el-option label="可读" :value="0"></el-option>
-                <el-option label="可编辑" :value="10"></el-option>
-                <el-option label="管理员" :value="20"></el-option>
+                <el-option label="可读" :value="POWER_TYPE_READ"></el-option>
+                <el-option label="可编辑" :value="POWER_TYPE_EDIT"></el-option>
+                <el-option label="管理员" :value="POWER_TYPE_ADMIN"></el-option>
               </el-select>
             </div>
           </template>
@@ -108,6 +108,14 @@
 <script>
 import { getUserPower,editUserPower,delUserPower } from "@/api/knowledge";
 import { POWER_TYPE } from "@/views/knowledge/config";
+import {
+  INITIAL,
+  POWER_TYPE_READ,
+  POWER_TYPE_EDIT,
+  POWER_TYPE_ADMIN,
+  POWER_TYPE_SYSTEM_ADMIN,
+} from "@/views/knowledge/constants";
+
 export default {
   name: 'PowerList',
   props: {
@@ -117,7 +125,7 @@ export default {
     },
     permissionType:{
       type:Number,
-      default:0
+      default: POWER_TYPE_READ
     }
   },
   data() {
@@ -125,32 +133,36 @@ export default {
       powerType: POWER_TYPE,
       tableData: [],
       name:'',
-      loading:false
+      loading:false,
+      POWER_TYPE_READ,
+      POWER_TYPE_EDIT,
+      POWER_TYPE_ADMIN,
+      POWER_TYPE_SYSTEM_ADMIN,
     }
   },
   methods: {
     showEdit(row){
       if (row.editing) return false;
       return (
-        !this.permissionType === 0 ||
-        !this.permissionType === 10 ||
-        (this.permissionType === 20 && row.permissionType === 0) ||
-        (this.permissionType === 20 && row.permissionType === 10) ||
-        (this.permissionType === 30 && row.permissionType === 0) ||
-        (this.permissionType === 30 && row.permissionType === 10) ||
-        (this.permissionType === 30 && row.permissionType === 20)
+        !this.permissionType === POWER_TYPE_READ ||
+        !this.permissionType === POWER_TYPE_EDIT ||
+        (this.permissionType === POWER_TYPE_ADMIN && row.permissionType === POWER_TYPE_READ) ||
+        (this.permissionType === POWER_TYPE_ADMIN && row.permissionType === POWER_TYPE_EDIT) ||
+        (this.permissionType === POWER_TYPE_SYSTEM_ADMIN && row.permissionType === POWER_TYPE_READ) ||
+        (this.permissionType === POWER_TYPE_SYSTEM_ADMIN && row.permissionType === POWER_TYPE_EDIT) ||
+        (this.permissionType === POWER_TYPE_SYSTEM_ADMIN && row.permissionType === POWER_TYPE_ADMIN)
       );
     },
     showInfo(row){
       if (row.editing) return false;
       return (
-        row.permissionType === 0 ||
-        row.permissionType === 10 ||
-        (this.permissionType === 0 && !row.transfer) ||
-        (this.permissionType === 20 && !row.transfer) ||
-        (this.permissionType === 20 && row.permissionType === 20)||
-        (this.permissionType === 10 && row.permissionType === 30) ||
-        (this.permissionType === 10 && row.permissionType === 20)
+        row.permissionType === POWER_TYPE_READ ||
+        row.permissionType === POWER_TYPE_EDIT ||
+        (this.permissionType === POWER_TYPE_READ && !row.transfer) ||
+        (this.permissionType === POWER_TYPE_ADMIN && !row.transfer) ||
+        (this.permissionType === POWER_TYPE_ADMIN && row.permissionType === POWER_TYPE_ADMIN)||
+        (this.permissionType === POWER_TYPE_EDIT && row.permissionType === POWER_TYPE_SYSTEM_ADMIN) ||
+        (this.permissionType === POWER_TYPE_EDIT && row.permissionType === POWER_TYPE_ADMIN)
       );
     },
     getFilterResult(name) {

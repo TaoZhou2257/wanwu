@@ -28,7 +28,7 @@
         <el-descriptions-item :label="$t('knowledgeManage.communityReport.segmentType')">{{
          communityReportStatus[res.status]
         }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('knowledgeManage.communityReport.lastImportStatus')" v-if="res.status === 2">{{
+        <el-descriptions-item :label="$t('knowledgeManage.communityReport.lastImportStatus')" v-if="res.status === STATUS_FINISHED">{{
          communityImportStatus[res.lastImportStatus]
         }}</el-descriptions-item>
       </el-descriptions>
@@ -46,14 +46,14 @@
             @click="generateReport"
             size="mini"
             :loading="loading.stop"
-            :disabled="!res.canGenerate || permissionType === 0"
+            :disabled="!res.canGenerate || permissionType === POWER_TYPE_READ"
             >{{ res.generateLabel === '' ? $t('knowledgeManage.communityReport.generate') : res.generateLabel }}</el-button>
         <el-button
           type="primary"
           @click="createReport"
           size="mini"
           :loading="loading.stop"
-          :disabled="!res.canAddReport || permissionType === 0"
+          :disabled="!res.canAddReport || permissionType === POWER_TYPE_READ"
           >{{ $t('knowledgeManage.communityReport.addCommunityReport') }}</el-button>
       </div>
 
@@ -71,7 +71,7 @@
                   <span>{{ item.title.length > 10 ? item.title.substring(0, 10) + '...' : item.title }}</span>
                 </el-tooltip>
                 <div>
-                  <el-dropdown @command="handleCommand" placement="bottom" v-if="permissionType !== 0">
+                  <el-dropdown @command="handleCommand" placement="bottom" v-if="permissionType !== POWER_TYPE_READ">
                     <span class="el-dropdown-link">
                       <i class="el-icon-more more"></i>
                     </span>
@@ -116,6 +116,15 @@ import { COMMUNITY_REPORT_STATUS,COMMUNITY_IMPORT_STATUS } from "@/views/knowled
 import {mapGetters} from 'vuex';
 import commonMixin from "@/mixins/common";
 import createReport from "./create.vue";
+import {
+  STATUS_FINISHED,
+  INITIAL,
+  POWER_TYPE_READ,
+  POWER_TYPE_EDIT,
+  POWER_TYPE_ADMIN,
+  POWER_TYPE_SYSTEM_ADMIN,
+} from "@/views/knowledge/constants";
+
 export default {
   components:{createReport},
   mixins: [commonMixin],
@@ -137,6 +146,11 @@ export default {
       },
       communityReportStatus: COMMUNITY_REPORT_STATUS,
       communityImportStatus: COMMUNITY_IMPORT_STATUS,
+      STATUS_FINISHED,
+      POWER_TYPE_READ,
+      POWER_TYPE_EDIT,
+      POWER_TYPE_ADMIN,
+      POWER_TYPE_SYSTEM_ADMIN,
     };
   },
   computed: {
@@ -145,13 +159,13 @@ export default {
   created() {
     this.obj = this.$route.query;
     this.getList();
-    if (this.permissionType === -1 || this.permissionType === null || this.permissionType === undefined) {
+    if (this.permissionType === INITIAL || this.permissionType === null || this.permissionType === undefined) {
         const savedData = localStorage.getItem('permission_data')
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData)
                 const savedPermissionType = parsed && parsed.app && parsed.app.permissionType
-                if (savedPermissionType !== undefined && savedPermissionType !== -1) {
+                if (savedPermissionType !== undefined && savedPermissionType !== INITIAL) {
                     this.$store.dispatch('app/setPermissionType', savedPermissionType)
                 }
             } catch(e) {

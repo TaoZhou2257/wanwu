@@ -222,14 +222,14 @@
                       :type="
                         scope.row &&
                         scope.row.status &&
-                        [0, 1, 3].includes(Number(scope.row.status))
+                        [QA_STATUS_PENDING, QA_STATUS_PROCESSING, QA_STATUS_FAILED].includes(Number(scope.row.status))
                           ? 'info'
                           : ''
                       "
                       :disabled="
                         scope.row &&
                         scope.row.status &&
-                        [0, 1, 3].includes(Number(scope.row.status))
+                        [QA_STATUS_PENDING, QA_STATUS_PROCESSING, QA_STATUS_FAILED].includes(Number(scope.row.status))
                       "
                       @click="handleEdit(scope.row)"
                     >
@@ -242,12 +242,12 @@
                       :disabled="
                         scope.row &&
                         scope.row.status &&
-                        [0, 1, 3].includes(Number(scope.row.status))
+                        [QA_STATUS_PENDING, QA_STATUS_PROCESSING, QA_STATUS_FAILED].includes(Number(scope.row.status))
                       "
                       :type="
                         scope.row &&
                         scope.row.status &&
-                        [0, 1, 3].includes(Number(scope.row.status))
+                        [QA_STATUS_PENDING, QA_STATUS_PROCESSING, QA_STATUS_FAILED].includes(Number(scope.row.status))
                           ? 'info'
                           : ''
                       "
@@ -348,7 +348,20 @@ import {
   qaTips
 } from "@/api/qaDatabase";
 import { mapGetters } from "vuex";
-import { COMMUNITY_IMPORT_STATUS, DROPDOWN_GROUPS } from "../config";
+import {COMMUNITY_IMPORT_STATUS, DROPDOWN_GROUPS, QA_STATUS_OPTIONS} from "../config";
+import {
+  INITIAL,
+  POWER_TYPE_READ,
+  POWER_TYPE_ADMIN,
+  POWER_TYPE_EDIT,
+  POWER_TYPE_SYSTEM_ADMIN,
+  QA_STATUS_ALL,
+  QA_STATUS_FAILED,
+  QA_STATUS_FINISHED,
+  QA_STATUS_PENDING,
+  QA_STATUS_PROCESSING,
+} from "@/views/knowledge/constants";
+
 export default {
   components: {
     Pagination,
@@ -371,12 +384,12 @@ export default {
       docQuery: {
         name: "",
         knowledgeId: this.$route.params.id,
-        status: -1,
+        status: QA_STATUS_ALL,
       },
       fileList: [],
       listApi: getQaPairList,
       tableData: [],
-      knowLegOptions: this.getKnowOptions(),
+      knowLegOptions: QA_STATUS_OPTIONS,
       knowledgeData: [],
       currentKnowValue: null,
       timer: null,
@@ -388,7 +401,11 @@ export default {
       selectedTableData: [],
       selectedDocIds: [],
       qaImportStatus: COMMUNITY_IMPORT_STATUS,
-      dropdownGroups: DROPDOWN_GROUPS
+      dropdownGroups: DROPDOWN_GROUPS,
+      QA_STATUS_FAILED,
+      QA_STATUS_FINISHED,
+      QA_STATUS_PENDING,
+      QA_STATUS_PROCESSING
     };
   },
   watch: {
@@ -408,13 +425,13 @@ export default {
   computed: {
     ...mapGetters("app", ["permissionType"]),
     hasManagePerm() {
-      return [10, 20, 30].includes(this.permissionType);
+      return [POWER_TYPE_EDIT, POWER_TYPE_ADMIN, POWER_TYPE_SYSTEM_ADMIN].includes(this.permissionType);
     }
   },
   mounted() {
     this.getTableData(this.docQuery);
     if (
-      this.permissionType === -1 ||
+      this.permissionType === INITIAL ||
       this.permissionType === null ||
       this.permissionType === undefined
     ) {
@@ -424,7 +441,7 @@ export default {
           const parsed = JSON.parse(savedData);
           const savedPermissionType =
             parsed && parsed.app && parsed.app.permissionType;
-          if (savedPermissionType !== undefined && savedPermissionType !== -1) {
+          if (savedPermissionType !== undefined && savedPermissionType !== INITIAL) {
             this.$store.dispatch("app/setPermissionType", savedPermissionType);
           }
         } catch (e) {}
@@ -467,7 +484,7 @@ export default {
         this.docQuery.status !== undefined &&
         this.docQuery.status !== null &&
         this.docQuery.status !== "" &&
-        this.docQuery.status !== -1
+        this.docQuery.status !== QA_STATUS_ALL
       ) {
         params.status = this.docQuery.status;
       }
@@ -638,28 +655,6 @@ export default {
     handleSearch(val) {
       this.docQuery.name = val;
       this.getTableData(this.docQuery);
-    },
-    getKnowOptions() {
-      const commonOptions = [
-        { label: this.$t("knowledgeManage.all"), value: -1 },
-        {
-          label: this.$t("knowledgeManage.communityReport.taskPending"),
-          value: 0,
-        },
-        {
-          label: this.$t("knowledgeManage.communityReport.taskProcessing"),
-          value: 1,
-        },
-        {
-          label: this.$t("knowledgeManage.communityReport.taskFinished"),
-          value: 2,
-        },
-        {
-          label: this.$t("knowledgeManage.communityReport.taskFailed"),
-          value: 3,
-        },
-      ];
-      return commonOptions;
     },
     async handleDelete(QAPairIdList) {
       this.loading = true;

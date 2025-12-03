@@ -30,7 +30,7 @@
             size="small"
             icon="el-icon-plus"
             @click="showCreate"
-            :disabled="[0, 10].includes(permissionType)"
+            :disabled="[POWER_TYPE_READ, POWER_TYPE_EDIT].includes(permissionType)"
           >新增</el-button>
         </div>
         <PowerList ref="powerList" v-if="currentView === 'list'" @transfer="showTransfer" :knowledgeId="knowledgeId" :permissionType="permissionType" />
@@ -67,6 +67,14 @@
 import PowerList from "./list.vue";
 import PowerCreate from "./create.vue";
 import { transferUserPower,addUserPower } from "@/api/knowledge";
+import {
+  INITIAL,
+  POWER_TYPE_READ,
+  POWER_TYPE_EDIT,
+  POWER_TYPE_ADMIN,
+  POWER_TYPE_SYSTEM_ADMIN,
+} from "@/views/knowledge/constants";
+
 export default {
   name: "PowerManagement",
   inject: ['reloadKnowledgeData'],
@@ -80,9 +88,14 @@ export default {
       dialogVisible: false,
       knowledgeId:'',
       knowledgeName:'',
-      permissionType:'',
+      permissionType:INITIAL,
       currentTransferUser: null,
-      userName:''
+      userName:'',
+      INITIAL,
+      POWER_TYPE_READ,
+      POWER_TYPE_EDIT,
+      POWER_TYPE_ADMIN,
+      POWER_TYPE_SYSTEM_ADMIN,
     };
   },
   computed: {

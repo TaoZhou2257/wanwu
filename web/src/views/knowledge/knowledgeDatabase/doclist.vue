@@ -84,7 +84,7 @@
                   size="mini"
                   type="primary"
                   @click="showMeta"
-                  v-if="[10, 20, 30].includes(permissionType)"
+                  v-if="[POWER_TYPE_EDIT, POWER_TYPE_ADMIN, POWER_TYPE_SYSTEM_ADMIN].includes(permissionType)"
                 >
                   {{ $t("knowledgeManage.docList.metaDataManagement") }}
                 </el-button>
@@ -104,7 +104,7 @@
                   type="primary"
                   :underline="false"
                   @click="handleUpload"
-                  v-if="[10, 20, 30].includes(permissionType)"
+                  v-if="[POWER_TYPE_EDIT, POWER_TYPE_ADMIN, POWER_TYPE_SYSTEM_ADMIN].includes(permissionType)"
                 >
                   {{ $t("knowledgeManage.fileUpload") }}
                 </el-button>
@@ -129,7 +129,7 @@
                 <el-table-column
                   type="selection"
                   reserve-selection
-                  v-if="[10, 20, 30].includes(permissionType)"
+                  v-if="[POWER_TYPE_EDIT, POWER_TYPE_ADMIN, POWER_TYPE_SYSTEM_ADMIN].includes(permissionType)"
                   width="55"
                 >
                 </el-table-column>
@@ -189,7 +189,7 @@
                   <template slot-scope="scope">
                     <span
                       :class="[
-                        [4, 5].includes(scope.row.status) ? 'error' : '',
+                        [KNOWLEDGE_STATUS_CHECK_FAIL, KNOWLEDGE_STATUS_FAIL].includes(scope.row.status) ? 'error' : '',
                       ]"
                     >
                       {{ filterStatus(scope.row.status) }}
@@ -199,7 +199,7 @@
                       effect="light"
                       :content="scope.row.errorMsg ? scope.row.errorMsg : ''"
                       placement="top"
-                      v-if="scope.row.status === 5"
+                      v-if="scope.row.status === KNOWLEDGE_STATUS_FAIL"
                       popper-class="custom-tooltip"
                     >
                       <span
@@ -244,10 +244,10 @@
                       size="mini"
                       round
                       @click="handleDel(scope.row)"
-                      :disabled="[2, 3].includes(Number(scope.row.status))"
-                      v-if="[10, 20, 30].includes(permissionType)"
+                      :disabled="[KNOWLEDGE_STATUS_CHECKING, KNOWLEDGE_STATUS_ANALYSING].includes(Number(scope.row.status))"
+                      v-if="[POWER_TYPE_EDIT, POWER_TYPE_ADMIN, POWER_TYPE_SYSTEM_ADMIN].includes(permissionType)"
                       :type="
-                        [2, 3].includes(Number(scope.row.status)) ? 'info' : ''
+                        [KNOWLEDGE_STATUS_CHECKING, KNOWLEDGE_STATUS_ANALYSING].includes(Number(scope.row.status)) ? 'info' : ''
                       "
                     >
                       {{ $t("common.button.delete") }}
@@ -256,11 +256,11 @@
                       size="mini"
                       round
                       :type="
-                        [0, 3, 5].includes(Number(scope.row.status))
+                        [KNOWLEDGE_STATUS_PENDING_PROCESSING, KNOWLEDGE_STATUS_ANALYSING, KNOWLEDGE_STATUS_FAIL].includes(Number(scope.row.status))
                           ? 'info'
                           : ''
                       "
-                      :disabled="[0, 3, 5].includes(Number(scope.row.status))"
+                      :disabled="[KNOWLEDGE_STATUS_PENDING_PROCESSING, KNOWLEDGE_STATUS_ANALYSING, KNOWLEDGE_STATUS_FAIL].includes(Number(scope.row.status))"
                       @click="handleView(scope.row)"
                     >
                       {{ $t("knowledgeManage.view") }}
@@ -338,7 +338,22 @@ import {
   updateDocMeta,
 } from "@/api/knowledge";
 import { mapGetters } from "vuex";
-import { KNOWLEDGE_GRAPH_STATUS } from "../config";
+import {KNOWLEDGE_GRAPH_STATUS, KNOWLEDGE_STATUS_OPTIONS} from "../config";
+import {
+  INITIAL,
+  POWER_TYPE_EDIT,
+  POWER_TYPE_ADMIN,
+  POWER_TYPE_SYSTEM_ADMIN,
+  KNOWLEDGE_STATUS_UPLOADED,
+  KNOWLEDGE_STATUS_ALL,
+  KNOWLEDGE_STATUS_PENDING_PROCESSING,
+  KNOWLEDGE_STATUS_FINISH,
+  KNOWLEDGE_STATUS_CHECKING,
+  KNOWLEDGE_STATUS_ANALYSING,
+  KNOWLEDGE_STATUS_CHECK_FAIL,
+  KNOWLEDGE_STATUS_FAIL,
+} from "@/views/knowledge/constants";
+
 export default {
   components: {
     Pagination,
@@ -355,14 +370,14 @@ export default {
       docQuery: {
         docName: "",
         knowledgeId: this.$route.params.id,
-        status: -1,
+        status: KNOWLEDGE_STATUS_ALL,
       },
       fileList: [],
       listApi: getDocList,
       title_tips: "",
       showTips: false,
       tableData: [],
-      knowLegOptions: this.getKnowOptions(),
+      knowLegOptions: KNOWLEDGE_STATUS_OPTIONS,
       knowledgeData: [],
       currentKnowValue: null,
       timer: null,
@@ -376,6 +391,16 @@ export default {
       graphSwitch: false,
       showGraphReport: false,
       knowledgeGraphStatus: KNOWLEDGE_GRAPH_STATUS,
+      POWER_TYPE_EDIT,
+      POWER_TYPE_ADMIN,
+      POWER_TYPE_SYSTEM_ADMIN,
+      KNOWLEDGE_STATUS_ALL,
+      KNOWLEDGE_STATUS_PENDING_PROCESSING,
+      KNOWLEDGE_STATUS_FINISH,
+      KNOWLEDGE_STATUS_CHECKING,
+      KNOWLEDGE_STATUS_ANALYSING,
+      KNOWLEDGE_STATUS_CHECK_FAIL,
+      KNOWLEDGE_STATUS_FAIL,
     };
   },
   watch: {
@@ -406,7 +431,7 @@ export default {
   mounted() {
     this.getTableData(this.docQuery);
     if (
-      this.permissionType === -1 ||
+      this.permissionType === INITIAL ||
       this.permissionType === null ||
       this.permissionType === undefined
     ) {
@@ -416,7 +441,7 @@ export default {
           const parsed = JSON.parse(savedData);
           const savedPermissionType =
             parsed && parsed.app && parsed.app.permissionType;
-          if (savedPermissionType !== undefined && savedPermissionType !== -1) {
+          if (savedPermissionType !== undefined && savedPermissionType !== INITIAL) {
             this.$store.dispatch("app/setPermissionType", savedPermissionType);
           }
         } catch (e) {}
@@ -557,18 +582,6 @@ export default {
       this.docQuery.docName = val;
       this.getTableData(this.docQuery);
     },
-    getKnowOptions() {
-      const commonOptions = [
-        { label: this.$t("knowledgeManage.all"), value: -1 },
-        { label: this.$t("knowledgeManage.finish"), value: 1 },
-        { label: this.$t("knowledgeManage.fail"), value: 5 },
-        { label: this.$t("knowledgeManage.analysising"), value: 3 },
-        { label: this.$t("knowledgeManage.checkFail"), value: 4 },
-        { label: this.$t("knowledgeManage.pendingProcessing"), value: 0 },
-        { label: this.$t("knowledgeManage.checking"), value: 2 },
-      ];
-      return commonOptions;
-    },
     submitDocname(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -663,31 +676,8 @@ export default {
       this.getTableData({ ...this.docQuery, pageNo: 1 });
     },
     filterStatus(status) {
-      switch (status) {
-        case 0:
-          return this.$t("knowledgeManage.pendingProcessing");
-          break;
-        case 1:
-          return this.$t("knowledgeManage.finish");
-          break;
-        case 2:
-          return this.$t("knowledgeManage.checking");
-          break;
-        case 3:
-          return this.$t("knowledgeManage.analysising");
-          break;
-        case 4:
-          return this.$t("knowledgeManage.checkFail");
-          break;
-        case 5:
-          return this.$t("knowledgeManage.fail");
-          break;
-        case -2:
-          return this.$t("knowledgeManage.beUploaded");
-          break;
-        default:
-          return this.$t("knowledgeManage.noStatus");
-      }
+      const statusOption = KNOWLEDGE_STATUS_OPTIONS.find(option => option.value === status);
+      return statusOption ? statusOption.label : this.$t("knowledgeManage.noStatus");
     },
     handleView(row) {
       this.$router.push({
@@ -711,7 +701,7 @@ export default {
       this.tableData = data;
       if (tableInfo && tableInfo.docKnowledgeInfo) {
         this.graphSwitch =
-          tableInfo.docKnowledgeInfo.graphSwitch === 1 ? true : false;
+          tableInfo.docKnowledgeInfo.graphSwitch === 1;
         this.showGraphReport = tableInfo.docKnowledgeInfo.showGraphReport;
         this.knowledgeName = tableInfo.docKnowledgeInfo.knowledgeName;
       } else {

@@ -111,13 +111,13 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   command="edit"
-                  v-if="[30].includes(n.permissionType)"
+                  v-if="[POWER_TYPE_SYSTEM_ADMIN].includes(n.permissionType)"
                 >
                   {{ $t("common.button.edit") }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   command="delete"
-                  v-if="[30].includes(n.permissionType)"
+                  v-if="[POWER_TYPE_SYSTEM_ADMIN].includes(n.permissionType)"
                 >
                   {{ $t("common.button.delete") }}
                 </el-dropdown-item>
@@ -151,6 +151,14 @@ import { AppType } from "@/utils/commonSet";
 import tagDialog from "./tagDialog.vue";
 import PowerManagement from "./power/index.vue";
 import { mapActions } from "vuex";
+import {
+  INITIAL,
+  POWER_TYPE_READ,
+  POWER_TYPE_EDIT,
+  POWER_TYPE_ADMIN,
+  POWER_TYPE_SYSTEM_ADMIN,
+} from "@/views/knowledge/constants";
+
 export default {
   components: { tagDialog, PowerManagement },
   props: {
@@ -180,6 +188,11 @@ export default {
       basePath: this.$basePath,
       listData: [],
       title: this.$t("knowledgeManage.createTag"),
+      INITIAL,
+      POWER_TYPE_READ,
+      POWER_TYPE_EDIT,
+      POWER_TYPE_ADMIN,
+      POWER_TYPE_SYSTEM_ADMIN,
     };
   },
 
@@ -199,7 +212,7 @@ export default {
       return tags;
     },
     addTag(id, n) {
-      if ([0].includes(n.permissionType)) {
+      if ([POWER_TYPE_READ].includes(n.permissionType)) {
         this.$message.warning(this.$t("knowledgeSelect.noOperationPermission"));
         return;
       }
