@@ -38,21 +38,25 @@ def upload_file():
     responses:
       200:
         description: 上传成功
-        schema:
-          type: object
-          properties:
-            download_link:
-              type: string
-              description: 文件的下载链接
-              example: "http://base-url/callback/filename.jpg"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                download_link:
+                  type: string
+                  description: 文件的下载链接
+                  example: "http://base-url/callback/filename.jpg"
       500:
         description: 服务器内部错误
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
-              example: "Failed to upload file to Minio."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Failed to upload file to Minio."
     """
     try:
         uploaded_file = request.files["file"]

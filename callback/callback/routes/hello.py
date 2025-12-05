@@ -24,43 +24,50 @@ def get_hello():
     responses:
       200:
         description: 返回信息
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 状态码
-              example: 0
-            msg:
-              type: string
-              description: 描述信息
-              example: "success"
-            data:
-              type: string
-              example: Hello, {username}!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 状态码
+                  example: 0
+                msg:
+                  type: string
+                  description: 描述信息
+                  example: "success"
+                data:
+                  type: string
+                  example: Hello, {username}!
       400:
         description: 业务逻辑错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
       500:
         description: 服务内部错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-              example: 200000
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
     """
     username = request.args.get("username")
     if not username:
@@ -89,43 +96,50 @@ def post_hello():
     responses:
       200:
         description: 返回信息
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 状态码
-              example: 0
-            msg:
-              type: string
-              description: 描述信息
-              example: "success"
-            data:
-              type: string
-              example: Hello, {username}!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 状态码
+                  example: 0
+                msg:
+                  type: string
+                  description: 描述信息
+                  example: "success"
+                data:
+                  type: string
+                  example: Hello, {username}!
       400:
         description: 业务逻辑错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
       500:
         description: 服务内部错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-              example: 200000
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
     """
     data = request.get_json()
     if data is None:
@@ -157,43 +171,50 @@ def put_hello():
     responses:
       200:
         description: 返回信息
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 状态码
-              example: 0
-            msg:
-              type: string
-              description: 描述信息
-              example: "success"
-            data:
-              type: string
-              example: Hello, {username}!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 状态码
+                  example: 0
+                msg:
+                  type: string
+                  description: 描述信息
+                  example: "success"
+                data:
+                  type: string
+                  example: Hello, {username}!
       400:
         description: 业务逻辑错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
       500:
         description: 服务内部错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-              example: 200000
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
     """
     username = request.form["username"]
     if not username:

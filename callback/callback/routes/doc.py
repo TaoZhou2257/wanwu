@@ -18,7 +18,7 @@ def req_chat_doc():
     description: |
       接收用户 query 和文档 URL，对文档进行切块解析并根据 RAG 生成 Prompt。
     tags:
-      - DOC
+      - doc
     requestBody:
       description: 请求参数
       required: true
@@ -41,12 +41,14 @@ def req_chat_doc():
     responses:
       200:
         description: 生成并上传成功
-        schema:
-          type: object
-          properties:
-            prompt:
-              type: string
-              description: 根据文档内容生成的 Prompt
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                  description: 根据文档内容生成的 Prompt
     """
     data = request.get_json()
 
@@ -95,36 +97,43 @@ def generate_file_to_minio():
     responses:
       200:
         description: 生成并上传成功
-        schema:
-          type: object
-          properties:
-            download_link:
-              type: string
-              description: 生成文件的 MinIO 下载链接
-              example: "http://minio-url/bucket/my-document.docx"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                download_link:
+                  type: string
+                  description: 生成文件的 MinIO 下载链接
+                  example: "http://minio-url/bucket/my-document.docx"
       400:
         description: 业务逻辑错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
       500:
         description: 服务内部错误
-        schema:
-          type: object
-          properties:
-            code:
-              type: integer
-              description: 错误码
-              example: 200000
-            msg:
-              type: string
-              description: 错误描述信息
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: 错误码
+                  example: 200000
+                msg:
+                  type: string
+                  description: 错误描述信息
     """
 
     formatted_markdown = request.form.get("formatted_markdown")

@@ -12,6 +12,7 @@ from utils.trace import register_tracing
 
 def create_app():
     app = Flask(__name__)
+    app.json.ensure_ascii = False
     app.config["SWAGGER"] = {"openapi": "3.0.1"}
     # 初始化 swagger
     Swagger(app)
