@@ -280,6 +280,19 @@
                     <el-button
                       size="mini"
                       round
+                      @click="handleConfig(scope.row)"
+                      :disabled="
+                        ![KNOWLEDGE_STATUS_FINISH].includes(
+                          Number(scope.row.status),
+                        )
+                      "
+                      v-if="hasManagePerm"
+                    >
+                      {{ $t('knowledgeManage.segmentConfig') }}
+                    </el-button>
+                    <el-button
+                      size="mini"
+                      round
                       :type="
                         [
                           KNOWLEDGE_STATUS_PENDING_PROCESSING,
@@ -376,6 +389,7 @@ import {
   uploadFileTips,
   updateDocMeta,
   exportDoc,
+  getDocConfig,
 } from '@/api/knowledge';
 import { mapGetters } from 'vuex';
 import {
@@ -750,6 +764,26 @@ export default {
           this.handleDelete([data.docId]);
         })
         .catch(() => {});
+    },
+    handleConfig(data) {
+      getDocConfig({
+        docId: data.docId,
+        knowledgeId: this.docQuery.knowledgeId,
+      }).then(res => {
+        if (res.code === 0) {
+          this.$router.push({
+            path: '/knowledge/fileUpload',
+            query: {
+              id: this.docQuery.knowledgeId,
+              name: this.knowledgeName,
+              mode: 'config',
+              title: data.docName,
+              docId: data.docId,
+              config: res.data,
+            },
+          });
+        }
+      });
     },
     handleBatchDelete() {
       this.$confirm(
