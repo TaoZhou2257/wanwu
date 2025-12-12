@@ -72,20 +72,11 @@ export default {
       handler(val) {
         if (val) {
           this.tagList = val;
+          this.checkTagList();
         }
       },
       deep: true,
       immediate: true,
-    },
-    selectData: {
-      handler(val) {
-        if (val) {
-          this.tagList = this.tagList.map(tag => ({
-            ...tag,
-            checked: val.some(item => item.splitterValue == tag.splitterValue),
-          }));
-        }
-      },
     },
   },
   data() {
@@ -97,6 +88,16 @@ export default {
     };
   },
   methods: {
+    checkTagList() {
+      this.tagList = this.tagList.map(tag => ({
+        ...tag,
+        checked: this.selectData.length
+          ? this.selectData.some(
+              item => item.splitterValue === tag.splitterValue,
+            )
+          : false,
+      }));
+    },
     submitDialog() {
       const data = this.tagList.filter(item => item.checked);
       this.$emit('checkData', data);
@@ -106,10 +107,8 @@ export default {
       this.$emit('delItem', item);
     },
     showDialog(data = []) {
-      this.selectData = [];
-      if (data.length) {
-        this.selectData = data;
-      }
+      this.selectData = data;
+      this.checkTagList();
       this.dialogVisible = true;
     },
     handleClose() {

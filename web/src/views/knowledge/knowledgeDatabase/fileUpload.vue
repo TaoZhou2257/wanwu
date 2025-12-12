@@ -788,10 +788,7 @@ export default {
       this.$nextTick(() => {
         const { splitter, subSplitter } = this.ruleForm.docSegment;
         const filterByType = values =>
-          this.splitOptions.filter(
-            item =>
-              values.includes(item.splitterValue) && item.type === 'preset',
-          );
+          this.splitOptions.filter(item => values.includes(item.splitterValue));
         this.checkSplitter = {
           splitter: filterByType(splitter),
           subSplitter: filterByType(subSplitter),
