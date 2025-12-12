@@ -2918,7 +2918,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.GetDraftIntelligenceInfoData"
+                                            "$ref": "#/definitions/response.CozeGetDraftIntelligenceInfoData"
                                         }
                                     }
                                 }
@@ -2969,7 +2969,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.DraftIntelligenceListData"
+                                            "$ref": "#/definitions/response.CozeDraftIntelligenceListData"
                                         }
                                     }
                                 }
@@ -5264,6 +5264,11 @@ const docTemplate = `{
                         "name": "knowledgeId",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "transfer",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -17603,26 +17608,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.ConnectorInfo": {
-            "type": "object",
-            "properties": {
-                "connector_status": {
-                    "type": "integer"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "share_link": {
-                    "type": "string"
-                }
-            }
-        },
         "response.ConversationCreateResp": {
             "type": "object",
             "properties": {
@@ -17696,6 +17681,178 @@ const docTemplate = `{
                 }
             }
         },
+        "response.CozeConnectorInfo": {
+            "type": "object",
+            "properties": {
+                "connector_status": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "share_link": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CozeDraftIntelligenceListData": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean"
+                },
+                "intelligences": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.CozeIntelligenceData"
+                    }
+                },
+                "next_cursor_id": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.CozeFavoriteInfo": {
+            "type": "object",
+            "properties": {
+                "fav_time": {
+                    "type": "string"
+                },
+                "is_fav": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.CozeGetDraftIntelligenceInfoData": {
+            "type": "object",
+            "properties": {
+                "basic_info": {
+                    "$ref": "#/definitions/response.CozeIntelligenceBasicInfo"
+                },
+                "intelligence_type": {
+                    "type": "integer"
+                },
+                "owner_info": {
+                    "$ref": "#/definitions/response.CozeUser"
+                },
+                "publish_info": {
+                    "$ref": "#/definitions/response.CozeIntelligencePublishInfo"
+                }
+            }
+        },
+        "response.CozeIntelligenceBasicInfo": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enterprise_id": {
+                    "type": "string"
+                },
+                "icon_uri": {
+                    "type": "string"
+                },
+                "icon_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "integer"
+                },
+                "owner_id": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "publish_time": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "space_id": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "update_time": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "response.CozeIntelligenceData": {
+            "type": "object",
+            "properties": {
+                "basic_info": {
+                    "$ref": "#/definitions/response.CozeIntelligenceBasicInfo"
+                },
+                "favorite_info": {
+                    "$ref": "#/definitions/response.CozeFavoriteInfo"
+                },
+                "owner_info": {
+                    "$ref": "#/definitions/response.CozeUser"
+                },
+                "permission_info": {
+                    "$ref": "#/definitions/response.CozeIntelligencePermissionInfo"
+                },
+                "publish_info": {
+                    "$ref": "#/definitions/response.CozeIntelligencePublishInfo"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.CozeIntelligencePermissionInfo": {
+            "type": "object",
+            "properties": {
+                "can_delete": {
+                    "type": "boolean"
+                },
+                "can_view": {
+                    "type": "boolean"
+                },
+                "in_collaboration": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.CozeIntelligencePublishInfo": {
+            "type": "object",
+            "properties": {
+                "connectors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.CozeConnectorInfo"
+                    }
+                },
+                "has_published": {
+                    "type": "boolean"
+                },
+                "publish_time": {
+                    "type": "string"
+                }
+            }
+        },
         "response.CozeUser": {
             "type": "object",
             "properties": {
@@ -17710,9 +17867,29 @@ const docTemplate = `{
                     "example": "0"
                 },
                 "user_label": {
-                    "$ref": "#/definitions/response.UserLabel"
+                    "$ref": "#/definitions/response.CozeUserLabel"
                 },
                 "user_unique_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CozeUserLabel": {
+            "type": "object",
+            "properties": {
+                "icon_uri": {
+                    "type": "string"
+                },
+                "icon_url": {
+                    "type": "string"
+                },
+                "jump_link": {
+                    "type": "string"
+                },
+                "label_id": {
+                    "type": "string"
+                },
+                "label_name": {
                     "type": "string"
                 }
             }
@@ -18206,7 +18383,7 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "ocrModelId": {
+                "parserModelId": {
                     "description": "ocr模型id",
                     "type": "string"
                 }
@@ -18449,26 +18626,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.DraftIntelligenceListData": {
-            "type": "object",
-            "properties": {
-                "has_more": {
-                    "type": "boolean"
-                },
-                "intelligences": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/response.IntelligenceData"
-                    }
-                },
-                "next_cursor_id": {
-                    "type": "string"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "response.EmbeddingModelInfo": {
             "type": "object",
             "properties": {
@@ -18534,34 +18691,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.FavoriteInfo": {
-            "type": "object",
-            "properties": {
-                "fav_time": {
-                    "type": "string"
-                },
-                "is_fav": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "response.GetDraftIntelligenceInfoData": {
-            "type": "object",
-            "properties": {
-                "basic_info": {
-                    "$ref": "#/definitions/response.IntelligenceBasicInfo"
-                },
-                "intelligence_type": {
-                    "type": "integer"
-                },
-                "owner_info": {
-                    "$ref": "#/definitions/response.CozeUser"
-                },
-                "publish_info": {
-                    "$ref": "#/definitions/response.IntelligencePublishInfo"
-                }
-            }
-        },
         "response.GetKnowledgeKeywordListResp": {
             "type": "object",
             "properties": {
@@ -18617,110 +18746,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.IntelligenceBasicInfo": {
-            "type": "object",
-            "properties": {
-                "create_time": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "enterprise_id": {
-                    "type": "string"
-                },
-                "icon_uri": {
-                    "type": "string"
-                },
-                "icon_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "integer"
-                },
-                "owner_id": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "publish_time": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "space_id": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "update_time": {
-                    "type": "string",
-                    "example": "0"
-                }
-            }
-        },
-        "response.IntelligenceData": {
-            "type": "object",
-            "properties": {
-                "basic_info": {
-                    "$ref": "#/definitions/response.IntelligenceBasicInfo"
-                },
-                "favorite_info": {
-                    "$ref": "#/definitions/response.FavoriteInfo"
-                },
-                "owner_info": {
-                    "$ref": "#/definitions/response.CozeUser"
-                },
-                "permission_info": {
-                    "$ref": "#/definitions/response.IntelligencePermissionInfo"
-                },
-                "publish_info": {
-                    "$ref": "#/definitions/response.IntelligencePublishInfo"
-                },
-                "type": {
-                    "type": "integer"
-                }
-            }
-        },
-        "response.IntelligencePermissionInfo": {
-            "type": "object",
-            "properties": {
-                "can_delete": {
-                    "type": "boolean"
-                },
-                "can_view": {
-                    "type": "boolean"
-                },
-                "in_collaboration": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "response.IntelligencePublishInfo": {
-            "type": "object",
-            "properties": {
-                "connectors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/response.ConnectorInfo"
-                    }
-                },
-                "has_published": {
-                    "type": "boolean"
-                },
-                "publish_time": {
                     "type": "string"
                 }
             }
@@ -20968,26 +20993,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.UserLabel": {
-            "type": "object",
-            "properties": {
-                "icon_uri": {
-                    "type": "string"
-                },
-                "icon_url": {
-                    "type": "string"
-                },
-                "jump_link": {
-                    "type": "string"
-                },
-                "label_id": {
-                    "type": "string"
-                },
-                "label_name": {
-                    "type": "string"
-                }
-            }
-        },
         "response.UserOrgPermission": {
             "type": "object",
             "properties": {
@@ -21222,7 +21227,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/v1",
 	Schemes:          []string{},
 	Title:            "AI Agent Productivity Platform API",
-	Description:      "## HTTP Header\r\n| Header        | 说明      |\r\n| ------------- | --------- |\r\n| Authorization | JWT token |\r\n| X-Language    | 语言Code  |\r\n| X-Org-Id      | 组织ID    |\r\n| X-Client-Id   | 客户端标识|\r\n\r\n## HTTP Status\r\n| HTTP Status             | 说明                   |\r\n| ----------------------- | ---------------------- |\r\n| 200, StatusOK           | 请求返回成功           |\r\n| 400, StatusBadRequest   | 请求返回失败，用于业务 |\r\n| 401, StatusUnauthorized | JWT认证失败            |\r\n| 403, StatusForbidden    | 没有权限               |\r\n\r\n## 权限-菜单对应表\r\n| 一级权限        | 二级权限  | 三级权限 | 一级菜单 | 二级菜单 | 三级菜单 |\r\n|-------------|-------|------|------|------|------|\r\n| guest       |       |      | 【访客】 |      |      |\r\n| common      |       |      | 【通用】 |      |      |\r\n| permission  |       |      | 权限管理 |      |      |\r\n| permission  | user  |      | 权限管理 | 用户管理 |      |\r\n| permission  | org   |      | 权限管理 | 组织管理 |      |\r\n| permission  | role  |      | 权限管理 | 角色管理 |      |\r\n\r\n## `/v1/user/permission`返回用例\r\n```json\r\n{\r\n  \"code\": 0,\r\n  \"data\": {\r\n    \"orgPermission\": {\r\n      \"org\": {\"id\": \"test-org-id\", \"name\": \"test-org-name\"},\r\n      \"permissions\": [\r\n        {\"perm\": \"permission\"},\r\n        {\"perm\": \"permission.user\"},\r\n        {\"perm\": \"permission.org\"},\r\n        {\"perm\": \"permission.role\"}\r\n      ]\r\n    }\r\n  },\r\n  \"msg\": \"操作成功\"\r\n}\r\n```",
+	Description:      "## HTTP Header\n| Header        | 说明      |\n| ------------- | --------- |\n| Authorization | JWT token |\n| X-Language    | 语言Code  |\n| X-Org-Id      | 组织ID    |\n| X-Client-Id   | 客户端标识|\n\n## HTTP Status\n| HTTP Status             | 说明                   |\n| ----------------------- | ---------------------- |\n| 200, StatusOK           | 请求返回成功           |\n| 400, StatusBadRequest   | 请求返回失败，用于业务 |\n| 401, StatusUnauthorized | JWT认证失败            |\n| 403, StatusForbidden    | 没有权限               |\n\n## 权限-菜单对应表\n| 一级权限        | 二级权限  | 三级权限 | 一级菜单 | 二级菜单 | 三级菜单 |\n|-------------|-------|------|------|------|------|\n| guest       |       |      | 【访客】 |      |      |\n| common      |       |      | 【通用】 |      |      |\n| permission  |       |      | 权限管理 |      |      |\n| permission  | user  |      | 权限管理 | 用户管理 |      |\n| permission  | org   |      | 权限管理 | 组织管理 |      |\n| permission  | role  |      | 权限管理 | 角色管理 |      |\n\n## `/v1/user/permission`返回用例\n```json\n{\n  \"code\": 0,\n  \"data\": {\n    \"orgPermission\": {\n      \"org\": {\"id\": \"test-org-id\", \"name\": \"test-org-name\"},\n      \"permissions\": [\n        {\"perm\": \"permission\"},\n        {\"perm\": \"permission.user\"},\n        {\"perm\": \"permission.org\"},\n        {\"perm\": \"permission.role\"}\n      ]\n    }\n  },\n  \"msg\": \"操作成功\"\n}\n```",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

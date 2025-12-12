@@ -1,27 +1,27 @@
 package response
 
-type GetDraftIntelligenceListResponse struct {
-	Data DraftIntelligenceListData `json:"data"`
-	Code int32                     `json:"code"`
-	Msg  string                    `json:"msg"`
+type CozeGetDraftIntelligenceListResponse struct {
+	Data CozeDraftIntelligenceListData `json:"data"`
+	Code int32                         `json:"code"`
+	Msg  string                        `json:"msg"`
 }
-type DraftIntelligenceListData struct {
-	Intelligences []*IntelligenceData `json:"intelligences"`
-	Total         int32               `json:"total"`
-	HasMore       bool                `json:"has_more"`
-	NextCursorID  string              `json:"next_cursor_id"`
-}
-
-type IntelligenceData struct {
-	BasicInfo      IntelligenceBasicInfo      `json:"basic_info"`
-	Type           int64                      `json:"type"`
-	PublishInfo    IntelligencePublishInfo    `json:"publish_info"`
-	PermissionInfo IntelligencePermissionInfo `json:"permission_info"`
-	OwnerInfo      *CozeUser                  `json:"owner_info"`
-	FavoriteInfo   *FavoriteInfo              `json:"favorite_info"`
+type CozeDraftIntelligenceListData struct {
+	Intelligences []*CozeIntelligenceData `json:"intelligences"`
+	Total         int32                   `json:"total"`
+	HasMore       bool                    `json:"has_more"`
+	NextCursorID  string                  `json:"next_cursor_id"`
 }
 
-type IntelligenceBasicInfo struct {
+type CozeIntelligenceData struct {
+	BasicInfo      CozeIntelligenceBasicInfo      `json:"basic_info"`
+	Type           int64                          `json:"type"`
+	PublishInfo    CozeIntelligencePublishInfo    `json:"publish_info"`
+	PermissionInfo CozeIntelligencePermissionInfo `json:"permission_info"`
+	OwnerInfo      *CozeUser                      `json:"owner_info"`
+	FavoriteInfo   *CozeFavoriteInfo              `json:"favorite_info"`
+}
+
+type CozeIntelligenceBasicInfo struct {
 	ID             int64   `json:"id,string"`
 	Name           string  `json:"name"`
 	Description    string  `json:"description"`
@@ -37,13 +37,13 @@ type IntelligenceBasicInfo struct {
 	OrganizationID *int64  `json:"organization_id,omitempty"`
 }
 
-type IntelligencePublishInfo struct {
-	PublishTime  string           `json:"publish_time"`
-	HasPublished bool             `json:"has_published"`
-	Connectors   []*ConnectorInfo `json:"connectors"`
+type CozeIntelligencePublishInfo struct {
+	PublishTime  string               `json:"publish_time"`
+	HasPublished bool                 `json:"has_published"`
+	Connectors   []*CozeConnectorInfo `json:"connectors"`
 }
 
-type ConnectorInfo struct {
+type CozeConnectorInfo struct {
 	ID              string `json:"id"`
 	Name            string `json:"name"`
 	Icon            string `json:"icon"`
@@ -51,21 +51,21 @@ type ConnectorInfo struct {
 	ShareLink       string `json:"share_link,omitempty"`
 }
 
-type IntelligencePermissionInfo struct {
+type CozeIntelligencePermissionInfo struct {
 	InCollaboration bool `json:"in_collaboration"`
 	CanDelete       bool `json:"can_delete"`
 	CanView         bool `json:"can_view"`
 }
 
 type CozeUser struct {
-	UserID         int64      `json:"user_id,string"`
-	Nickname       string     `json:"nickname"`
-	AvatarURL      string     `json:"avatar_url"`
-	UserUniqueName string     `json:"user_unique_name"`
-	UserLabel      *UserLabel `json:"user_label"`
+	UserID         int64          `json:"user_id,string"`
+	Nickname       string         `json:"nickname"`
+	AvatarURL      string         `json:"avatar_url"`
+	UserUniqueName string         `json:"user_unique_name"`
+	UserLabel      *CozeUserLabel `json:"user_label"`
 }
 
-type UserLabel struct {
+type CozeUserLabel struct {
 	LabelID   string `json:"label_id"`
 	LabelName string `json:"label_name"`
 	IconURI   string `json:"icon_uri"`
@@ -73,7 +73,7 @@ type UserLabel struct {
 	JumpLink  string `json:"jump_link"`
 }
 
-type FavoriteInfo struct {
+type CozeFavoriteInfo struct {
 	IsFav   bool   `json:"is_fav"`
 	FavTime string `json:"fav_time"`
 }
@@ -85,15 +85,15 @@ type CozeCreateProjectConversationDefResponse struct {
 	Msg      string `json:"msg"`
 }
 
-type GetDraftIntelligenceInfoResponse struct {
-	Data *GetDraftIntelligenceInfoData `json:"data"`
-	Code int32                         `json:"code"`
-	Msg  string                        `json:"msg"`
+type CozeGetDraftIntelligenceInfoResponse struct {
+	Data *CozeGetDraftIntelligenceInfoData `json:"data"`
+	Code int32                             `json:"code"`
+	Msg  string                            `json:"msg"`
 }
 
-type GetDraftIntelligenceInfoData struct {
-	IntelligenceType int64                    `json:"intelligence_type"`
-	BasicInfo        *IntelligenceBasicInfo   `json:"basic_info"`
-	PublishInfo      *IntelligencePublishInfo `json:"publish_info,omitempty"`
-	OwnerInfo        *CozeUser                `json:"owner_info,omitempty"`
+type CozeGetDraftIntelligenceInfoData struct {
+	IntelligenceType int64                        `json:"intelligence_type"`
+	BasicInfo        *CozeIntelligenceBasicInfo   `json:"basic_info"`
+	PublishInfo      *CozeIntelligencePublishInfo `json:"publish_info,omitempty"`
+	OwnerInfo        *CozeUser                    `json:"owner_info,omitempty"`
 }

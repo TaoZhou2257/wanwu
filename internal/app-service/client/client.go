@@ -53,5 +53,5 @@ type IClient interface {
 	CreateConversation(ctx context.Context, userId, orgId, appId, appType, conversationId, conversationName string) *err_code.Status
 	GetChatflowApplication(ctx context.Context, orgId, userId, workflowId string) (*model.ChatflowApplcation, *err_code.Status)
 	GetChatflowApplicationByApplicationID(ctx context.Context, orgId, userId, applicationId string) (*model.ChatflowApplcation, *err_code.Status)
-	CreateChatflowApplication(ctx context.Context, orgId, userId, applicationId, workflowId string) *err_code.Status
+	CreateChatflowApplication(ctx context.Context, orgId, userId, workflowId, applicationId string) *err_code.Status
 }

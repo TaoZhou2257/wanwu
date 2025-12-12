@@ -3112,8 +3112,7 @@ const docTemplate = `{
         "request.WorkflowUploadFileByBase64Req": {
             "type": "object",
             "required": [
-                "file",
-                "fileExt"
+                "file"
             ],
             "properties": {
                 "file": {

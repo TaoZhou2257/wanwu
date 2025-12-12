@@ -4,15 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	knowledgebase_doc_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-doc-service"
 	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	knowledgebase_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-service"
-
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
+	knowledgebase_doc_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-doc-service"
+	knowledgebase_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-service"
 	"github.com/UnicomAI/wanwu/internal/knowledge-service/client/model"
 	"github.com/UnicomAI/wanwu/internal/knowledge-service/client/orm/sqlopt"
 	async_task "github.com/UnicomAI/wanwu/internal/knowledge-service/pkg/async-task"

@@ -1,7 +1,6 @@
 package model
 
 // 存储Chatflow关联的智能体应用信息（应用广场）
-
 type ChatflowApplcation struct {
 	ID        uint32 `gorm:"primary_key"`
 	CreatedAt int64  `gorm:"autoCreateTime:milli;index:idx_chatflow_application_created_at"`

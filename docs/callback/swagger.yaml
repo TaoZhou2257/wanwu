@@ -1440,7 +1440,6 @@ definitions:
         type: string
     required:
     - file
-    - fileExt
     type: object
   response.CustomToolActionInfo:
     properties:

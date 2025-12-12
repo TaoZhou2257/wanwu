@@ -121,7 +121,7 @@ func ChatflowConvert(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			data	body		request.ChatflowApplicationListReq	true	"关联智能体请求参数"
-//	@Success		200		{object}	response.Response{data=response.DraftIntelligenceListData}
+//	@Success		200		{object}	response.Response{data=response.CozeDraftIntelligenceListData}
 //	@Router			/chatflow/application/list [post]
 func ChatflowApplicationList(ctx *gin.Context) {
 	var req request.ChatflowApplicationListReq
@@ -141,7 +141,7 @@ func ChatflowApplicationList(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			data	body		request.ChatflowApplicationInfoReq	true	"关联智能体请求参数"
-//	@Success		200		{object}	response.Response{data=response.GetDraftIntelligenceInfoData}
+//	@Success		200		{object}	response.Response{data=response.CozeGetDraftIntelligenceInfoData}
 //	@Router			/chatflow/application/info [post]
 func ChatflowApplicationInfo(ctx *gin.Context) {
 	var req request.ChatflowApplicationInfoReq

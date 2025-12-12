@@ -219,7 +219,7 @@ func ChatflowChat(ctx *gin.Context, userId, orgId, workflowId, conversationId, m
 	return nil
 }
 
-func ChatflowApplicationList(ctx *gin.Context, userId, orgId, workflowId string) (*response.DraftIntelligenceListData, error) {
+func ChatflowApplicationList(ctx *gin.Context, userId, orgId, workflowId string) (*response.CozeDraftIntelligenceListData, error) {
 	// 1.先获取workflow-wanwu的draft intelligence list信息
 	getDraftUrl, _ := net_url.JoinPath(config.Cfg().Workflow.Endpoint, config.Cfg().Workflow.GetDraftIntelligenceListUri)
 	// 构造referer url
@@ -233,7 +233,7 @@ func ChatflowApplicationList(ctx *gin.Context, userId, orgId, workflowId string)
 	q := u.Query()
 	q.Set("workflow_id", workflowId)
 	u.RawQuery = q.Encode()
-	getDraftRet := &response.GetDraftIntelligenceListResponse{}
+	getDraftRet := &response.CozeGetDraftIntelligenceListResponse{}
 	if resp, err := resty.New().
 		R().
 		SetContext(ctx).
@@ -264,7 +264,7 @@ func ChatflowApplicationList(ctx *gin.Context, userId, orgId, workflowId string)
 	if appRet.ApplicationId != "" {
 		getDraftRet.Data.Intelligences[0].BasicInfo.ID, _ = strconv.ParseInt(appRet.ApplicationId, 10, 64)
 		// 构造 DraftIntelligenceListData
-		return &response.DraftIntelligenceListData{
+		return &response.CozeDraftIntelligenceListData{
 			Intelligences: getDraftRet.Data.Intelligences,
 			Total:         1,
 			HasMore:       false,
@@ -304,7 +304,7 @@ func ChatflowApplicationList(ctx *gin.Context, userId, orgId, workflowId string)
 	}
 	getDraftRet.Data.Intelligences[0].BasicInfo.ID, _ = strconv.ParseInt(ret.UniqueID, 10, 64)
 	// 构造 DraftIntelligenceListData
-	return &response.DraftIntelligenceListData{
+	return &response.CozeDraftIntelligenceListData{
 		Intelligences: getDraftRet.Data.Intelligences,
 		Total:         1,
 		HasMore:       false,
@@ -312,7 +312,7 @@ func ChatflowApplicationList(ctx *gin.Context, userId, orgId, workflowId string)
 	}, nil
 }
 
-func ChatflowApplicationInfo(ctx *gin.Context, userId, orgId string, req request.ChatflowApplicationInfoReq) (*response.GetDraftIntelligenceInfoData, error) {
+func ChatflowApplicationInfo(ctx *gin.Context, userId, orgId string, req request.ChatflowApplicationInfoReq) (*response.CozeGetDraftIntelligenceInfoData, error) {
 	// 先去app通过applicationId和userId查出workflowId
 	resp, err := app.GetChatflowByApplicationID(ctx, &app_service.GetChatflowByApplicationIDReq{
 		OrgId:         orgId,
@@ -325,7 +325,7 @@ func ChatflowApplicationInfo(ctx *gin.Context, userId, orgId string, req request
 	// 再去workflow接口获取draft intelligence info
 	url, _ := net_url.JoinPath(config.Cfg().Workflow.Endpoint, config.Cfg().Workflow.GetDraftIntelligenceInfoUri)
 	// 构造请求
-	getDraftInfoResp := &response.GetDraftIntelligenceInfoResponse{}
+	getDraftInfoResp := &response.CozeGetDraftIntelligenceInfoResponse{}
 	if resp, err := resty.New().
 		R().
 		SetContext(ctx).

@@ -54,7 +54,7 @@ func (s *Service) GetChatflowByApplicationID(ctx context.Context, req *app_servi
 }
 
 func (s *Service) CreateChatflowApplication(ctx context.Context, req *app_service.CreateChatflowApplicationReq) (*emptypb.Empty, error) {
-	err := s.cli.CreateChatflowApplication(ctx, req.OrgId, req.UserId, req.ApplicationId, req.WorkflowId)
+	err := s.cli.CreateChatflowApplication(ctx, req.OrgId, req.UserId, req.WorkflowId, req.ApplicationId)
 	if err != nil {
 		return nil, errStatus(errs.Code_AppConversation, err)
 	}
