@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/UnicomAI/wanwu/internal/knowledge-service/pkg/db"
 	"strings"
 	"time"
+
+	"github.com/UnicomAI/wanwu/internal/knowledge-service/pkg/db"
 
 	errs "github.com/UnicomAI/wanwu/api/proto/err-code"
 	knowledgebase_doc_service "github.com/UnicomAI/wanwu/api/proto/knowledgebase-doc-service"
@@ -64,7 +65,7 @@ func (s *Service) GetDocList(ctx context.Context, req *knowledgebase_doc_service
 
 	//按文档名字查询列表
 	list, total, err := orm.GetDocList(ctx, "", "", req.KnowledgeId,
-		req.DocName, req.DocTag, util.BuildDocReqStatusList(int(req.Status)), docIdList, req.PageSize, req.PageNum)
+		req.DocName, req.DocTag, util.BuildDocReqStatusList(req.Status), util.BuildDocReqGraphStatusList(req.GraphStatus), docIdList, req.PageSize, req.PageNum)
 	if err != nil {
 		log.Errorf("获取知识库列表失败(%v)  参数(%v)", err, req)
 		return nil, util.ErrCode(errs.Code_KnowledgeBaseSelectFailed)

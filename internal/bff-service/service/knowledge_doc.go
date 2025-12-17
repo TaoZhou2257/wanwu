@@ -28,12 +28,13 @@ func GetDocList(ctx *gin.Context, userId, orgId string, r *request.DocListReq) (
 	resp, err := knowledgeBaseDoc.GetDocList(ctx.Request.Context(), &knowledgebase_doc_service.GetDocListReq{
 		KnowledgeId: r.KnowledgeId,
 		DocName:     strings.TrimSpace(r.DocName),
-		Status:      int32(r.Status),
+		Status:      r.Status,
 		PageSize:    int32(r.PageSize),
 		PageNum:     int32(r.PageNo),
 		UserId:      userId,
 		OrgId:       orgId,
 		MetaValue:   strings.TrimSpace(r.MetaValue),
+		GraphStatus: r.GraphStatus,
 	})
 	if err != nil {
 		return nil, err

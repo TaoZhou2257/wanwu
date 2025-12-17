@@ -20,10 +20,11 @@ type DocConfigReq struct {
 }
 
 type DocListReq struct {
-	KnowledgeId string `json:"knowledgeId" form:"knowledgeId" validate:"required"`
-	DocName     string `json:"docName" form:"docName"`
-	Status      int    `json:"status" form:"status"` // 当前状态  -1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败、
-	MetaValue   string `json:"metaValue" form:"metaValue"`
+	KnowledgeId string  `json:"knowledgeId" form:"knowledgeId" validate:"required"`
+	DocName     string  `json:"docName" form:"docName"`
+	Status      []int32 `json:"status" form:"status"` // 文档状态：-1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败
+	MetaValue   string  `json:"metaValue" form:"metaValue"`
+	GraphStatus []int32 `json:"graphStatus" form:"graphStatus"` // 图谱状态：-1.全部 0.待处理 1.解析中 2.解析成功 3.解析失败
 	PageSearch
 	CommonCheck
 }

@@ -62,12 +62,13 @@ type KnowledgeGraph struct {
 
 // GetDocList 查询知识库文件列表
 func GetDocList(ctx context.Context, userId, orgId, knowledgeId, name, tag string,
-	statusList []int, docIdList []string, pageSize int32, pageNum int32) ([]*model.KnowledgeDoc, int64, error) {
+	statusList []int, graphStatusList []int, docIdList []string, pageSize int32, pageNum int32) ([]*model.KnowledgeDoc, int64, error) {
 	tx := sqlopt.SQLOptions(sqlopt.WithPermit(orgId, userId),
 		sqlopt.WithKnowledgeID(knowledgeId),
 		sqlopt.LikeName(name),
 		sqlopt.LikeTag(tag),
 		sqlopt.WithStatusList(statusList),
+		sqlopt.WithGraphStatusList(graphStatusList),
 		sqlopt.WithDocIDsNonEmpty(docIdList),
 		sqlopt.WithDelete(0)).
 		Apply(db.GetHandle(ctx), &model.KnowledgeDoc{})
