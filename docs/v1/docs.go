@@ -4041,7 +4041,7 @@ const docTemplate = `{
             }
         },
         "/knowledge/doc/list": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "JWT": []
@@ -4060,37 +4060,13 @@ const docTemplate = `{
                 "summary": "获取文档列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "docName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "knowledgeId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "name": "metaValue",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "pageNo",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "当前状态  -1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败、",
-                        "name": "status",
-                        "in": "query"
+                        "description": "文档列表查询请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.DocListReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -15061,6 +15037,44 @@ const docTemplate = `{
                 "docUrl": {
                     "description": "文档url",
                     "type": "string"
+                }
+            }
+        },
+        "request.DocListReq": {
+            "type": "object",
+            "required": [
+                "knowledgeId",
+                "pageSize"
+            ],
+            "properties": {
+                "docName": {
+                    "type": "string"
+                },
+                "graphStatus": {
+                    "description": "图谱状态：-1.全部 0.待处理 1.解析中 2.解析成功 3.解析失败",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "knowledgeId": {
+                    "type": "string"
+                },
+                "metaValue": {
+                    "type": "string"
+                },
+                "pageNo": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "文档状态：-1-全部， 0-待处理， 1- 处理完成， 2-正在审核中，3-正在解析中，4-审核未通过，5-解析失败",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

@@ -58,13 +58,14 @@ service KnowledgeBaseDocService {
 message GetDocListReq{
   string knowledgeId = 1;
   string docName = 2;
-  int32 status = 3;
+  repeated int32 status = 3;
   int32 pageSize = 4;
   int32 pageNum = 5;
   string userId = 6;
   string orgId = 7;
   string docTag = 8; //文档标签
   string metaValue = 9;
+  repeated int32 graphStatus = 10; //图谱状态
 }
 
 message GetDocDetailReq{
