@@ -126,13 +126,12 @@
                 @visible-change="visibleChange"
                 :loading-text="$t('knowledgeManage.create.modelLoading')"
                 class="cover-input-icon model-select"
-                :disabled="isPublish"
                 :loading="modelLoading"
                 filterable
                 value-key="modelId"
               >
                 <el-option
-                  v-for="item in modleOptions"
+                  v-for="item in modelOptions"
                   :key="item.modelId"
                   :label="item.displayName"
                   :value="item.modelId"
@@ -364,9 +363,7 @@ export default {
       workFlowInfos: [],
       workflowList: [],
       modelParams: '',
-      isPublish: false,
-      publishType: '',
-      modleOptions: [],
+      modelOptions: [],
       selectKnowledge: [],
       loadingPercent: 10,
       nameStatus: '',
@@ -433,10 +430,6 @@ export default {
         this.getDetail(); //获取详情
         this.apiKeyRootUrl(); //获取api跟地址
       }, 500);
-    }
-    //判断是否发布
-    if (this.$route.query.publish) {
-      this.isPublish = true;
     }
   },
   methods: {
@@ -541,7 +534,7 @@ export default {
     },
     setModelInfo(val) {
       if (!val) return;
-      const selectedModel = this.modleOptions.find(
+      const selectedModel = this.modelOptions.find(
         item => item.modelId === val,
       );
       if (selectedModel) {
@@ -648,7 +641,7 @@ export default {
       this.modelLoading = true;
       const res = await selectModelList();
       if (res.code === 0) {
-        this.modleOptions = (res.data.list || []).filter(item => {
+        this.modelOptions = (res.data.list || []).filter(item => {
           return item.config && item.config.visionSupport !== 'support';
         });
 
@@ -662,7 +655,7 @@ export default {
       this.isUpdating = true;
       try {
         //模型数据
-        const modeInfo = this.modleOptions.find(
+        const modeInfo = this.modelOptions.find(
           item => item.modelId === this.editForm.modelParams,
         );
         if (
