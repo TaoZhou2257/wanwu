@@ -180,6 +180,9 @@
     # arm64系統執行:
     docker compose --env-file .env --env-file .env.image.arm64 down
     ```
+
+5. 拉取中介軟體等鏡像遇到困難？我們在網盤準備了一份鏡像備份，請依照其中的README操作：[萬悟鏡像備份](https://pan.baidu.com/e/1cupIcEP2RBwi_hOr4xQnFQ?pwd=ae86)
+
 - **源碼啟動（開發）**
 
 1. 基於上述Docker安裝步驟，將系統服務完整啟動

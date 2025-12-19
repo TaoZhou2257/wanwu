@@ -182,6 +182,8 @@ The platform has been successfully applied in multiple industries such as **fina
     docker compose --env-file .env --env-file .env.image.arm64 down
     ```
 
+5. Having trouble pulling middleware or other Docker images? We've prepared a backup of the images on Netdisk. Please follow the instructions in its README file: [Wanwu Docker Image Backup](https://pan.baidu.com/e/1cupIcEP2RBwi_hOr4xQnFQ?pwd=ae86)
+
 - **Source Code Start (Development)**
 
 1. Based on the above Docker installation steps, start the system service completely

@@ -193,6 +193,8 @@
     docker compose --env-file .env --env-file .env.image.arm64 down
     ```
 
+5. 拉取中间件等镜像遇到困难？我们在网盘准备了一份镜像备份，请按照其中README操作：[万悟镜像备份](https://pan.baidu.com/e/1cupIcEP2RBwi_hOr4xQnFQ?pwd=ae86)
+
 - **源码启动（开发）**
 
 1. 基于上述Docker安装步骤，将系统服务完整启动
