@@ -34,7 +34,7 @@ export const QWEN = 'Qwen';
 export const HUOSHAN = 'HuoShan';
 export const INFINI = 'Infini';
 export const DEEPSEEK = 'DeepSeek';
-export const QIANFAN = 'Qianfan';
+export const QIANFAN = 'QianFan';
 
 export const PROVIDER_OBJ = {
   [OPENAI_API]: 'OpenAI-API-compatible',
