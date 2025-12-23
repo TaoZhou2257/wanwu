@@ -104,6 +104,8 @@ export const TYPE_OBJ = {
     [QWEN]: 'sk-b************c70d',
     [HUOSHAN]: 'd8008ac0-****-****-****-**************',
     [INFINI]: 'sk-nw****gzjb6',
+    [DEEPSEEK]: 'sk-14082***********************5e95',
+    [QIANFAN]: 'bce-v3/ALTAK******82d1',
   },
   inferUrl: {
     [OCR]: 'https://maas-api.ai-yuanjing.com/openapi/v1',
@@ -115,6 +117,8 @@ export const TYPE_OBJ = {
     [QWEN]: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
     [HUOSHAN]: 'https://ark.cn-beijing.volces.com/api/v3',
     [INFINI]: 'https://cloud.infini-ai.com/maas/v1',
+    [DEEPSEEK]: 'https://api.deepseek.com',
+    [QIANFAN]: 'https://qianfan.baidubce.com/v2',
     [ASR]:
       'https://maas-api.ai-yuanjing.com/openapi/synchronous/asr/audio/file/transfer/unicom/sync/file/asr',
   },
