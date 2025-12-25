@@ -17,8 +17,8 @@ export const MODEL_TYPE_OBJ = {
   [OCR]: 'OCR',
   [GUI]: 'GUI',
   [PDF_PARSER]: i18n.t('modelAccess.type.pdfParser'),
-  [OCR_DS]: 'OCR-DeepSeek',
-  [OCR_PADDLE]: 'OCR-PaddleOCR',
+  /*[OCR_DS]: 'OCR-DeepSeek',
+  [OCR_PADDLE]: 'OCR-PaddleOCR',*/
   // [ASR]: i18n.t('modelAccess.type.asr')
 };
 
