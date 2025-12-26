@@ -47,7 +47,7 @@
               <span>{{ scope.row.key.slice(0, 6) + '******' }}</span>
               <i
                 class="el-icon-copy-document copy-icon"
-                :title="$t('appManage.button.copy')"
+                :title="$t('common.button.copy')"
                 @click="
                   () => {
                     copy(scope.row.key) && copyCb();
@@ -123,7 +123,7 @@
         @refreshData="refreshData"
       />
     </div>
-    <CreateApiKeyDialog ref="createApiKeyDialog" :reloadData="reloadData" />
+    <CreateApiKeyDialog ref="createApiKeyDialog" @reloadData="reloadData" />
   </div>
 </template>
 
@@ -151,8 +151,8 @@ export default {
   methods: {
     copy,
     copyCb,
-    reloadData() {
-      this.getTableData({ pageNo: 1 });
+    reloadData(params) {
+      this.getTableData(params);
     },
     async getTableData(params) {
       this.loading = true;

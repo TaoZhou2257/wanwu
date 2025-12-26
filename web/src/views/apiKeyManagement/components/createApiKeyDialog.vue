@@ -102,12 +102,13 @@ export default {
       this.form = obj;
     },
     handleClose() {
+      this.setFormValue();
       this.$refs.form.resetFields();
       this.dialogVisible = false;
     },
-    openDialog(row = {}) {
+    openDialog(row) {
       this.row = row;
-      this.isEdit = Boolean(row.keyId);
+      this.isEdit = Boolean(row && row.keyId);
       this.setFormValue(row);
 
       this.dialogVisible = true;
@@ -126,7 +127,7 @@ export default {
           if (res.code === 0) {
             this.$message.success(this.$t('common.message.success'));
             this.dialogVisible = false;
-            this.$emit('reloadData');
+            this.$emit('reloadData', this.isEdit ? {} : { pageNo: 1 });
           }
         } finally {
           this.submitLoading = false;

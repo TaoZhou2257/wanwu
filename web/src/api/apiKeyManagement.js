@@ -20,7 +20,7 @@ export const createApiKey = data => {
 // 编辑
 export const editApiKey = data => {
   return service({
-    url: `${USER_API}/api/key/update`,
+    url: `${USER_API}/api/key`,
     method: 'put',
     data,
   });
