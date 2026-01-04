@@ -1368,7 +1368,7 @@ export default {
       deleteSuccess: '删除成功',
     },
   },
-  agentDiglog: {
+  agentDialog: {
     createApp: '智能体创建',
     editApp: '智能体编辑',
     agentLogo: '智能体图标',
@@ -1383,7 +1383,7 @@ export default {
     nameRules: '请填写智能体名称',
     uploadImg: '请上传智能体图标',
   },
-  ragDiglog: {
+  ragDialog: {
     createApp: '文本问答创建',
     editApp: '文本问答编辑',
     agentLogo: '文本问答图标',
