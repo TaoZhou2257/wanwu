@@ -158,6 +158,9 @@
               <i class="el-icon-more icon edit-icon" @click.stop />
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="copy">
+                {{ $t('common.button.copy') }}
+              </el-dropdown-item>
               <el-dropdown-item command="export">
                 {{ $t('common.button.export') }}
               </el-dropdown-item>
