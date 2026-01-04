@@ -28,7 +28,7 @@
             prop="name"
             :label="$t('role.table.name')"
             align="left"
-            width="200"
+            width="150"
           />
           <el-table-column
             prop="permissions"
@@ -46,11 +46,25 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="remark"
+            :label="$t('role.dialog.remark')"
+            width="150"
+            align="left"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.remark || '--' }}
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="creator.name"
             :label="$t('role.table.creator')"
             width="120"
             align="left"
-          />
+          >
+            <template slot-scope="scope">
+              {{ scope.row.creator ? scope.row.creator.name || '--' : '--' }}
+            </template>
+          </el-table-column>
           <el-table-column
             prop="createdAt"
             :label="$t('role.table.createAt')"
@@ -60,7 +74,7 @@
           <el-table-column
             v-if="isAdmin"
             align="left"
-            width="180"
+            width="150"
             :label="$t('role.table.status')"
           >
             <template slot-scope="scope">
