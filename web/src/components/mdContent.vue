@@ -37,4 +37,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/showDocs/showdoc.scss';
+.mark__content .markdown-body {
+  background: rgba(255, 255, 255, 0);
+}
 </style>
