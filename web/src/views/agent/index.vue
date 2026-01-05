@@ -78,6 +78,7 @@ import {
 } from '@/api/agent';
 import { getApiKeyRoot } from '@/api/appspace';
 import sseMethod from '@/mixins/sseMethod';
+import { MULTIPLE_AGENT, SINGLE_AGENT } from '@/views/agent/constants';
 export default {
   components: { CommonLayout, Chat },
   mixins: [sseMethod],
@@ -97,7 +98,7 @@ export default {
       appUrlInfo: {},
       editForm: {
         assistantId: '',
-        category: 1,
+        category: SINGLE_AGENT,
         avatar: {},
         name: '',
         desc: '',

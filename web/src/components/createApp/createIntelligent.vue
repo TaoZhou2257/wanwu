@@ -91,6 +91,7 @@
 import { uploadAvatar } from '@/api/user';
 import { createAgent, updateAgent } from '@/api/agent';
 import { mapActions, mapGetters } from 'vuex';
+import { MULTIPLE_AGENT, SINGLE_AGENT } from '@/views/agent/constants';
 export default {
   props: {
     type: {
@@ -105,14 +106,14 @@ export default {
     return {
       agentCategoryList: [
         {
-          category: 1,
-          img: 'setting-gear.png',
+          category: SINGLE_AGENT,
+          img: 'agent_single.png',
           text: this.$t('agentDialog.singleAgent'),
           desc: this.$t('agentDialog.singleAgentDesc'),
         },
         {
-          category: 2,
-          img: 'setting-effect.png',
+          category: MULTIPLE_AGENT,
+          img: 'agent_multiple.png',
           text: this.$t('agentDialog.multipleAgent'),
           desc: this.$t('agentDialog.multipleAgentDesc'),
         },
@@ -124,7 +125,7 @@ export default {
       dialogVisible: false,
       assistantId: '',
       form: {
-        category: 1,
+        category: SINGLE_AGENT,
         name: '',
         desc: '',
         avatar: {
@@ -218,7 +219,7 @@ export default {
     },
     clearForm() {
       this.form = {
-        category: 1,
+        category: SINGLE_AGENT,
         name: '',
         desc: '',
         avatar: {

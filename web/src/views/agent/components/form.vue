@@ -298,7 +298,7 @@
           </div>
         </div>
         <!-- 知识库库配置 -->
-        <div class="block">
+        <div class="block" v-if="editForm.category === SINGLE_AGENT">
           <knowledgeDataField
             :knowledgeConfig="editForm.knowledgeBaseConfig"
             :category="0"
@@ -312,7 +312,7 @@
           />
         </div>
 
-        <div class="block">
+        <div class="block" v-if="editForm.category === SINGLE_AGENT">
           <p class="block-title common-set">
             <span class="common-set-label">
               {{ $t('agent.form.tool') }}
@@ -508,6 +508,7 @@ import metaSet from '@/components/metaSet';
 import ModelSet from './modelSetDialog';
 import { selectModelList, getRerankList } from '@/api/modelAccess';
 import { AGENT } from '@/utils/commonSet';
+import { MULTIPLE_AGENT, SINGLE_AGENT } from '@/views/agent/constants';
 import {
   deleteMcp,
   enableMcp,
@@ -618,6 +619,8 @@ export default {
   data() {
     return {
       AGENT,
+      SINGLE_AGENT,
+      MULTIPLE_AGENT,
       disableClick: false,
       version: '',
       promptType: 'create',
@@ -664,7 +667,7 @@ export default {
         ],
       },
       editForm: {
-        category: 1,
+        category: SINGLE_AGENT,
         newAgent: false,
         functionCalling: '',
         visionsupport: '',
