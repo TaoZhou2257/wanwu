@@ -279,7 +279,6 @@ import { appPublish, getApiKeyRoot } from '@/api/appspace';
 import CreateTxtQues from '@/components/createApp/createRag.vue';
 import ModelSet from './modelSetDialog.vue';
 import metaSet from '@/components/metaSet';
-import knowledgeSet from './knowledgeSetDialog.vue';
 import setSafety from '@/components/setSafety';
 import VersionPopover from '@/components/versionPopover';
 import { getRerankList, selectModelList } from '@/api/modelAccess';
@@ -299,7 +298,6 @@ export default {
     Chat,
     CreateTxtQues,
     ModelSet,
-    knowledgeSet,
     setSafety,
     VersionPopover,
     searchConfig,
@@ -679,9 +677,6 @@ export default {
     },
     showModelSet() {
       this.$refs.modelSetDialog.showDialog();
-    },
-    showKnowledgeSet() {
-      this.$refs.knowledgeSetDialog.showDialog();
     },
     editAgent() {
       this.$refs.createTxtQues.openDialog();

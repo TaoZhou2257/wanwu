@@ -335,7 +335,7 @@ export default {
                   this.setStoreSessionStatus(0);
                   endStr += worldObj.world;
                   endStr = convertLatexSyntax(endStr);
-                  endStr = parseSub(endStr, lastIndex);
+                  endStr = parseSub(endStr, lastIndex, search_list);
                   let fillData = {
                     ...commonData,
                     response: md.render(endStr),
@@ -530,7 +530,7 @@ export default {
                   this.setStoreSessionStatus(0);
                   endStr += worldObj.world;
                   endStr = convertLatexSyntax(endStr);
-                  endStr = parseSub(endStr, lastIndex);
+                  endStr = parseSub(endStr, lastIndex, search_list);
                   const finalResponse = String(endStr);
                   let fillData = {
                     ...commonData,

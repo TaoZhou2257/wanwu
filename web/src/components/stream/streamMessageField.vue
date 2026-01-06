@@ -66,9 +66,9 @@
                           style="width: 30px !important"
                         />
                         <div class="docInfo">
-                          <p class="docInfo_name">文件名称：{{ file.name }}</p>
+                          <p class="docInfo_name">{{ $t('knowledgeManage.fileName') }}:{{ file.name }}</p>
                           <p class="docInfo_size">
-                            文件大小:{{ getFileSizeDisplay(file.size) }}
+                            {{ $t('knowledgeManage.fileSize') }}:{{ getFileSizeDisplay(file.size) }}
                           </p>
                         </div>
                       </div>
@@ -117,8 +117,8 @@
           class="session-answer"
           :id="'message-container' + i"
         >
+        <!-- v-if="[0].includes(n.qa_type)" -->
           <div
-            v-if="[0, 1, 2, 3, 4, 6, 20, 21, 10].includes(n.qa_type)"
             class="session-answer-wrapper"
           >
             <img class="logo" :src="'/user/api/' + defaultUrl" />
@@ -128,13 +128,6 @@
                 class="deepseek"
                 @click="toggle($event, i)"
               >
-                <!-- <template v-if="n.qa_type === 20">
-                  <img
-                    :src="require('@/assets/imgs/tool-icon.png')"
-                    class="think_icon"
-                  />
-                  {{ n.toolText }}
-                </template> -->
                 <template>
                   <img
                     :src="require('@/assets/imgs/think-icon.png')"
@@ -160,14 +153,14 @@
               ></div>
             </div>
           </div>
-          <div v-else class="session-answer-wrapper">
+          <!-- <div v-else class="session-answer-wrapper">
             <img class="logo" :src="'/user/api/' + defaultUrl" />
             <div v-if="n.code === 7" class="answer-content session-error">
               <i class="el-icon-warning"></i>
               &nbsp;{{ n.response }}
             </div>
             <div v-else class="answer-content" v-html="n.response"></div>
-          </div>
+          </div> -->
           <!--文件-->
           <div
             v-if="n.gen_file_url_list && n.gen_file_url_list.length"
@@ -192,7 +185,7 @@
             >
               <div
                 class="serach-list-item"
-                v-if="showSearchList(j, n.qa_type, n.citations)"
+                v-if="showSearchList(j,n.citations)"
               >
                 <span @click="collapseClick(n, m, j)">
                   <i
@@ -203,7 +196,7 @@
                         : 'el-icon-caret-right',
                     ]"
                   ></i>
-                  出处：
+                  {{ $t('agent.source') }}：
                 </span>
                 <a
                   v-if="m.link"
@@ -219,7 +212,6 @@
                     class="subTag"
                     :data-parents-index="i"
                     :data-collapse="m.collapse ? 'true' : 'false'"
-                    v-if="n.qa_type === 1 || n.qa_type === 0"
                   >
                     {{ j + 1 }}
                   </sub>
@@ -401,12 +393,16 @@ export default {
     this.setupScrollListener();
     smoothscroll.polyfill();
     document.addEventListener('click', this.handleCitationClick);
+    document.addEventListener('click', this.handleCitationBtnClick);
     window.addEventListener('resize', this.handleWindowResize);
     this.updateAllFileScrollStates();
   },
   beforeDestroy() {
     if (this.handleCitationClick) {
       document.removeEventListener('click', this.handleCitationClick);
+    }
+    if (this.handleCitationBtnClick) {
+      document.removeEventListener('click', this.handleCitationBtnClick);
     }
     const container = document.getElementById(this.scrollContainerId);
     if (container) {
@@ -424,6 +420,22 @@ export default {
     }
   },
   methods: {
+    handleCitationBtnClick(e){
+      const target = e.target;
+      if (target.classList.contains('citation-tips-content-icon')) {
+        const index = target.dataset.index;
+        const citation = Number(target.dataset.citation);
+        const historyItem = this.session_data.history[index]
+        console.log(historyItem);
+        if(historyItem && historyItem.searchList){
+          const searchItem = historyItem.searchList[citation-1];
+          if (searchItem) {
+            const j = historyItem.searchList.indexOf(searchItem);
+            this.collapseClick(historyItem, searchItem, j);
+          }
+        }
+      }
+    },
     updateAllFileScrollStates() {
       this.session_data.history.forEach((item, index) => {
         if (item.fileList && item.fileList.length > 0) {
@@ -508,8 +520,7 @@ export default {
         },
       });
     },
-    showSearchList(j, qa_type, citations) {
-      // return qa_type === 1 ? citations.includes(j + 1) : true;
+    showSearchList(j, citations) {
       return (citations|| []).includes(j + 1);
     },
     setCitations(index) {
@@ -600,6 +611,7 @@ export default {
       // 处理 think 标签
       if (thinkEnd.test(data)) {
         // n.thinkText = '已深度思考';
+        n.thinkText = this.$t('agent.thinked');
         if (!thinkStart.test(data)) {
           data = '<think>\n' + data;
         }
@@ -608,11 +620,12 @@ export default {
       // 新增处理 tool 标签
       if (toolEnd.test(data)) {
         // n.toolText = '已使用工具';
+        n.thinkText = this.$t('agent.thinked');
         if (!toolStart.test(data)) {
           data = '<tool>\n' + data;
         }
       }
-      n.thinkText = '思考结束';
+      
       // 统一替换为 section 标签
       return data
         .replace(/think>/gi, 'section>')
@@ -705,7 +718,7 @@ export default {
     },
     replaceLastData(index, data) {
       if (!data.response) {
-        data.response = '无响应数据';
+        data.response = this.$t('app.noResponse');
       }
       this.$set(this.session_data.history, index, data);
       this.scrollBottom();
@@ -795,7 +808,7 @@ export default {
       this.session_data.history = this.session_data.history.filter(item => {
         if (item.pending) {
           item.responseLoading = false;
-          item.pendingResponse = '本次回答已被终止';
+          item.pendingResponse = this.$t('app.stopStream');
         }
         return item;
       });
