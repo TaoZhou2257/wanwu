@@ -239,7 +239,7 @@ export default {
             return { ...n, hover: false, active: false };
           });
           if (noInit) {
-            this.historyList[0].active = true; 
+            this.historyList[0].active = true;
           } else {
             this.historyClick[this.historyList[0]];
           }
@@ -395,8 +395,8 @@ export default {
 }
 
 // weburl适配移动端样式
-/deep/ .chatBg,
-/deep/ .explore-container {
+::v-deep .chatBg,
+::v-deep .explore-container {
   @media (max-width: 768px) {
     .el-aside {
       position: fixed !important;
