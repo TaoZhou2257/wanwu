@@ -33,14 +33,13 @@
         </div>
       </div>
       <div class="header-right">
-        <div class="header-api" v-if="publishType">
+        <div class="header-api">
           <el-tag effect="plain" class="root-url">
             {{ $t('rag.form.apiRootUrl') }}
           </el-tag>
           {{ apiURL }}
         </div>
         <el-button
-          v-if="publishType"
           @click="$router.push('/openApiKey')"
           plain
           class="apikeyBtn"
