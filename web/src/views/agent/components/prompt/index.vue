@@ -143,7 +143,7 @@
 
 <script>
 import promptDialog from './promptDialog.vue';
-import { md } from '@/mixins/marksown-it.js';
+import { md } from '@/mixins/markdown-it.js';
 import {
   getPromptTemplateList,
   getPromptBuiltInList,

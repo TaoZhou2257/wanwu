@@ -91,7 +91,7 @@ import {
   OpenurlConverHistory,
 } from '@/api/agent';
 import sseMethod from '@/mixins/sseMethod';
-import { md } from '@/mixins/marksown-it';
+import { md } from '@/mixins/markdown-it';
 import { mapGetters } from 'vuex';
 export default {
   inject: {

@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { md } from '@/mixins/marksown-it.js';
+import { md } from '@/mixins/markdown-it.js';
 export default {
   name: 'PromptDialog',
   inject: ['getPrompt'],

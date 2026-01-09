@@ -401,7 +401,7 @@
 
 <script>
 import smoothscroll from 'smoothscroll-polyfill';
-import { md } from '@/mixins/marksown-it';
+import { md } from '@/mixins/markdown-it';
 import { marked } from 'marked';
 var highlight = require('highlight.js');
 import 'highlight.js/styles/atom-one-dark.css';

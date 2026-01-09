@@ -7,7 +7,7 @@ import { i18n } from '@/lang';
 
 var originalFetch = window.fetch;
 
-import { md } from './marksown-it';
+import { md } from './markdown-it';
 import $ from './jquery.min.js';
 import { OPENURL_API, USER_API } from '@/utils/requestConstants';
 
